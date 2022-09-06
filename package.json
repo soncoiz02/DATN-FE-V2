@@ -1,0 +1,38 @@
+{
+  "name": "datn-fe-v2",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint --ext .js,.ts,.jsx,.tsx src",
+    "lint:fix": "eslint --fix src/**/*.{js,jsx,json}",
+    "format": "yarn lint --fix & yarn prettier --write src/**/*.{js,jsx}",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "vite": "^1.0.0-rc.13",
+    "vite-plugin-react": "^4.0.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx}": [
+      "yarn format",
+      "git add ."
+    ]
+  }
+}
