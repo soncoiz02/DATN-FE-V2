@@ -4,6 +4,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import GlassBox from './components/GlassBox'
+import MainButton from './components/MainButton'
 import RHFProvider from './components/ReactHookForm/RHFProvider'
 import RHFTextField from './components/ReactHookForm/RHFTextField'
 
@@ -33,9 +34,9 @@ const App = () => {
       </GlassBox>
       <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <RHFTextField name='name' label='Name' />
-        <Button type='submit' variant='contained'>
+        <MainButton colorType='primary' type='submit'>
           Submit
-        </Button>
+        </MainButton>
       </RHFProvider>
     </Container>
   )
