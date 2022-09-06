@@ -12,9 +12,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@hookform/resolvers": "^2.9.7",
     "@mui/material": "^5.10.3",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "react-hook-form": "^7.34.2",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",

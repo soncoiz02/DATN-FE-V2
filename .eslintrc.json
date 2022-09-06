@@ -19,6 +19,7 @@
     "react/function-component-definition": "off",
     "react/jsx-indent": "off",
     "react/prop-types": "off",
+    "jsx-quotes": ["error", "single"],
     "camelcase": "error",
     "spaced-comment": "error",
     "quotes": ["error", "single"],
