@@ -1,0 +1,60 @@
+const responsiveFontSizes = ({ sm, md, lg }) => ({
+  '@media (min-width: 600px)': {
+    fontSize: sm,
+  },
+  '@media (min-width: 900px)': {
+    fontSize: md,
+  },
+  '@media (min-width: 1200)': {
+    fontSize: lg,
+  },
+})
+
+const FONT_EXTRABOLD = 800
+const FONT_BOLD = 700
+const FONT_SEMIBOLD = 600
+const FONT_MEDIUM = 500
+const FONT_REGULAR = 400
+
+const typography = {
+  fontFamily: "'Mulish', sans-serif",
+  h1: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 30, md: 40, lg: 50 }),
+  },
+  h2: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 18, md: 20, lg: 24 }),
+  },
+  h3: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 164, md: 18, lg: 20 }),
+  },
+  h6: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
+  },
+  body1: {
+    fontWeight: FONT_REGULAR,
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+  },
+  body2: {
+    fontWeight: FONT_REGULAR,
+    ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
+  },
+  buttonText: {
+    fontWeight: FONT_BOLD,
+    fontStyle: 'normal',
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+  },
+  subTitle1: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+  },
+  subTitle2: {
+    fontWeight: FONT_REGULAR,
+    ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
+  },
+}
+
+export default typography

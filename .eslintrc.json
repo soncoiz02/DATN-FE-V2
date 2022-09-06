@@ -11,9 +11,26 @@
   },
   "plugins": ["react", "prettier"],
   "rules": {
+    "no-unused-vars": "warn",
     "semi": 0,
     "comma-dangle": 0,
-    "prettier/prettier": "error",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/react-in-jsx-scope": "off",
+    "react/function-component-definition": "off",
+    "react/jsx-indent": "off",
+    "react/prop-types": "off",
+    "camelcase": "error",
+    "spaced-comment": "error",
+    "quotes": ["error", "single"],
+    "no-duplicate-imports": "off",
+    "linebreak-style": "off",
+    "indent": "off",
+    "prefer-destructuring": [
+      1,
+      {
+        "object": true,
+        "array": false
+      }
+    ]
   }
 }
