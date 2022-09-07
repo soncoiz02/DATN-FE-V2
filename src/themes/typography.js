@@ -1,11 +1,11 @@
 const responsiveFontSizes = ({ sm, md, lg }) => ({
-  '@media (min-width: 600px)': {
+  '@media (min-width: 0)': {
     fontSize: sm,
   },
-  '@media (min-width: 900px)': {
+  '@media (min-width: 768px)': {
     fontSize: md,
   },
-  '@media (min-width: 1200)': {
+  '@media (min-width: 1200px)': {
     fontSize: lg,
   },
 })
@@ -30,6 +30,10 @@ const typography = {
     fontWeight: FONT_BOLD,
     ...responsiveFontSizes({ sm: 164, md: 18, lg: 20 }),
   },
+  h5: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+  },
   h6: {
     fontWeight: FONT_BOLD,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
@@ -42,16 +46,16 @@ const typography = {
     fontWeight: FONT_REGULAR,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
   },
-  buttonText: {
+  button: {
     fontWeight: FONT_BOLD,
-    fontStyle: 'normal',
+    textTransform: 'normal',
     ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
   },
-  subTitle1: {
+  subtitle1: {
     fontWeight: FONT_BOLD,
     ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
   },
-  subTitle2: {
+  subtitle2: {
     fontWeight: FONT_REGULAR,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
   },

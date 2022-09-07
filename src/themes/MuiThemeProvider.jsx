@@ -2,11 +2,13 @@ import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from '@
 import React from 'react'
 import palette from './palette'
 import typography from './typography'
+import breakpoint from './breakpoint'
 
 const MuiThemeProvider = ({ children }) => {
   const muiTheme = createTheme({
     typography,
     palette,
+    breakpoints: breakpoint,
   })
 
   return (
