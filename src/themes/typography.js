@@ -28,10 +28,14 @@ const typography = {
   },
   h3: {
     fontWeight: FONT_BOLD,
-    ...responsiveFontSizes({ sm: 164, md: 18, lg: 20 }),
+    ...responsiveFontSizes({ sm: 16, md: 18, lg: 20 }),
+  },
+  h4: {
+    fontWeight: FONT_BOLD,
+    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
   },
   h5: {
-    fontWeight: FONT_BOLD,
+    fontWeight: FONT_MEDIUM,
     ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
   },
   h6: {
@@ -39,11 +43,11 @@ const typography = {
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
   },
   body1: {
-    fontWeight: FONT_REGULAR,
+    fontWeight: FONT_MEDIUM,
     ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
   },
   body2: {
-    fontWeight: FONT_REGULAR,
+    fontWeight: FONT_MEDIUM,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
   },
   button: {

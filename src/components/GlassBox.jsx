@@ -1,8 +1,12 @@
 import { Box, styled } from '@mui/material'
 import React from 'react'
 
-const GlassBox = ({ children, opacity }) => {
-  return <CustomBox opacity={opacity}>{children}</CustomBox>
+const GlassBox = ({ children, opacity, ...other }) => {
+  return (
+    <CustomBox {...other} opacity={opacity}>
+      {children}
+    </CustomBox>
+  )
 }
 
 const CustomBox = styled(Box)`
