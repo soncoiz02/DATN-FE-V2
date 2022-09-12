@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import GlassBox from '../../../components/GlassBox'
 import DescriptionTab from '../../../sections/client/detail-services/DescriptionTab'
+import RatedTab from '../../../sections/client/detail-services/RatedTab'
 import ServiceInfo from '../../../sections/client/detail-services/ServiceInfo'
 
 const TabPanel = ({ children, value, index, ...other }) => {
@@ -35,9 +36,7 @@ const DetailService = () => {
             <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
           </CustomTab>
           <DescriptionTab value={tabValue} index={0} />
-          <TabPanel value={tabValue} index={1}>
-            Tab 2
-          </TabPanel>
+          <RatedTab value={tabValue} index={1} />
         </Stack>
       </GlassBox>
     </Stack>
