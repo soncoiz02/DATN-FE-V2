@@ -1,16 +1,21 @@
 import { Edit, Star } from '@mui/icons-material'
 import {
+  Avatar,
   Box,
   Button,
   Divider,
   Grid,
   LinearProgress,
+  List,
+  ListItem,
+  ListItemAvatar,
   Stack,
   styled,
   Typography,
 } from '@mui/material'
 import { yellow } from '@mui/material/colors'
 import React from 'react'
+import ListStar from '../../../components/ListStar'
 
 const RatedTab = ({ index, value, ...other }) => {
   return (
@@ -22,7 +27,7 @@ const RatedTab = ({ index, value, ...other }) => {
       {...other}
     >
       <Box>
-        <Stack gap={3}>
+        <Stack gap={4}>
           <Stack
             direction={{ xs: 'column', md: 'row' }}
             alignItems='center'
@@ -114,6 +119,26 @@ const RatedTab = ({ index, value, ...other }) => {
               </CustomOutlineButton>
             </Stack>
           </Stack>
+          <List sx={{ width: '100%' }}>
+            <ListItem>
+              <Stack direction='row' gap={3}>
+                <ListItemAvatar>
+                  <Avatar sx={{ width: '50px', height: '50px' }} />
+                </ListItemAvatar>
+                <Stack gap={1}>
+                  <Stack gap={1} direction='row' alignItems='center'>
+                    <ListStar spacing={0} number={5} size={20} />
+                    <Typography variant='body2'>1 ngày trước</Typography>
+                  </Stack>
+                  <Typography variant='body1'>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores necessitatibus
+                    aperiam, enim libero, aliquam ab quia porro dignissimos illum nesciunt autem
+                    voluptas dolorum excepturi aliquid est facilis veritatis ut! Assumenda.
+                  </Typography>
+                </Stack>
+              </Stack>
+            </ListItem>
+          </List>
         </Stack>
       </Box>
     </div>
@@ -124,6 +149,9 @@ const PrimaryColorText = styled('span')(({ theme }) => ({
   color: theme.palette.primary.main,
   fontSize: '24px',
   fontWeight: 700,
+  '@media screen and (max-width: 767px)': {
+    fontSize: '20px',
+  },
 }))
 
 const CustomProgress = styled(LinearProgress)({
