@@ -4,7 +4,7 @@ import GlassBox from '../../../components/GlassBox'
 import { Star } from '@mui/icons-material'
 import { yellow } from '@mui/material/colors'
 import MainButton from '../../../components/MainButton'
-const ServiceInfo = () => {
+const ServiceInfo = ({ onOpenModal }) => {
   const theme = useTheme()
   return (
     <GlassBox>
@@ -42,6 +42,7 @@ const ServiceInfo = () => {
             <MainButton
               colorType='secondary'
               sx={{ alignSelf: 'center', marginTop: 'auto', padding: '10px 40px' }}
+              onClick={onOpenModal}
             >
               Đăng ký dịch vụ
             </MainButton>

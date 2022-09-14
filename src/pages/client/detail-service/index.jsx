@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import GlassBox from '../../../components/GlassBox'
 import DescriptionTab from '../../../sections/client/detail-services/DescriptionTab'
+import ModalRegisterService from '../../../sections/client/detail-services/ModalRegisterService'
 import RatedTab from '../../../sections/client/detail-services/RatedTab'
 import ServiceInfo from '../../../sections/client/detail-services/ServiceInfo'
 
@@ -26,9 +27,10 @@ const TabPanel = ({ children, value, index, ...other }) => {
 
 const DetailService = () => {
   const [tabValue, setTabValue] = useState(0)
+  const [openModal, setOpenModal] = useState(false)
   return (
     <Stack gap={4}>
-      <ServiceInfo />
+      <ServiceInfo onOpenModal={() => setOpenModal(true)} />
       <GlassBox opacity={0.8}>
         <Stack gap={3}>
           <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
@@ -39,6 +41,7 @@ const DetailService = () => {
           <RatedTab value={tabValue} index={1} />
         </Stack>
       </GlassBox>
+      <ModalRegisterService openModal={openModal} onCloseModal={() => setOpenModal(false)} />
     </Stack>
   )
 }
