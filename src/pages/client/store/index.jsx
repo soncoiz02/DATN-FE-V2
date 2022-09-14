@@ -61,7 +61,7 @@ const Store = () => {
                             Excellence Spa Đỗ Quang
                           </Typography>
                           <Rating name='size-small' readOnly defaultValue={5}></Rating>
-                          <Typography variant='subtitle3' noWrap>
+                          <Typography variant='subtitle2' sx={{ fontSize: '14px' }} noWrap>
                             Địa chỉ: 138 Trần Bình, Mỹ Đình 2, Nam Từ Liêm, Hà Nội
                           </Typography>
                         </Stack>
@@ -110,7 +110,7 @@ const Store = () => {
                             Excellence Spa Đỗ Quang
                           </Typography>
                           <Rating name='size-small' readOnly defaultValue={5}></Rating>
-                          <Typography variant='subtitle3' noWrap>
+                          <Typography variant='subtitle2' sx={{ fontSize: '14px' }} noWrap>
                             Địa chỉ: 138 Trần Bình, Mỹ Đình 2, Nam Từ Liêm, Hà Nội
                           </Typography>
                         </Stack>
@@ -155,11 +155,11 @@ const Store = () => {
                           alignItems='flex-start'
                           spacing={0}
                         >
-                          <Typography variant='h3' color={theme.palette.text.secondary}>
+                          <Typography variant='h3' color='#00BC6D'>
                             Excellence Spa Đỗ Quang
                           </Typography>
                           <Rating name='size-small' readOnly defaultValue={5}></Rating>
-                          <Typography variant='subtitle3' noWrap>
+                          <Typography variant='subtitle2' sx={{ fontSize: '14px' }} noWrap>
                             Địa chỉ: 138 Trần Bình, Mỹ Đình 2, Nam Từ Liêm, Hà Nội
                           </Typography>
                         </Stack>
@@ -173,7 +173,7 @@ const Store = () => {
                     </Box>
                   </CardContent>
                   <CardActions sx={{ padding: '0 30px 30px 30px' }}>
-                    <Typography variant='subtitle2' color={theme.palette.statusStore.open}>
+                    <Typography variant='subtitle2' color='#00BC6D'>
                       Đang mở cửa
                     </Typography>
                   </CardActions>
@@ -204,11 +204,11 @@ const Store = () => {
                           alignItems='flex-start'
                           spacing={0}
                         >
-                          <Typography variant='h3' color={theme.palette.text.secondary}>
+                          <Typography variant='h3' color='#00BC6D'>
                             Excellence Spa Đỗ Quang
                           </Typography>
                           <Rating name='size-small' readOnly defaultValue={5}></Rating>
-                          <Typography variant='subtitle3' noWrap>
+                          <Typography variant='subtitle2' sx={{ fontSize: '14px' }} noWrap>
                             Địa chỉ: 138 Trần Bình, Mỹ Đình 2, Nam Từ Liêm, Hà Nội
                           </Typography>
                         </Stack>
@@ -222,7 +222,7 @@ const Store = () => {
                     </Box>
                   </CardContent>
                   <CardActions sx={{ padding: '0 30px 30px 30px' }}>
-                    <Typography variant='subtitle2' color={theme.palette.statusStore.close}>
+                    <Typography variant='subtitle2' color='#FF4848'>
                       Đang đóng cửa
                     </Typography>
                   </CardActions>

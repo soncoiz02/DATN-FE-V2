@@ -32,11 +32,6 @@ const TEXT_COLOR = {
   primaryChannel: '#6A6A6A',
 }
 
-const TEXT_STATUS_STORE = {
-  open: '#00BC6D',
-  close: '#FF4848',
-}
-
 const palette = {
   primary: PRIMARY,
   secondary: SECONDARY,
@@ -44,7 +39,6 @@ const palette = {
   success: SUCCESS,
   danger: DANGER,
   text: TEXT_COLOR,
-  statusStore: TEXT_STATUS_STORE,
 }
 
 export default palette
