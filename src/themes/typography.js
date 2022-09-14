@@ -63,6 +63,10 @@ const typography = {
     fontWeight: FONT_REGULAR,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
   },
+  subtitle3: {
+    fontWeight: FONT_REGULAR,
+    ...responsiveFontSizes({ sm: 12, md: 12, lg: 14 }),
+  },
 }
 
 export default typography
