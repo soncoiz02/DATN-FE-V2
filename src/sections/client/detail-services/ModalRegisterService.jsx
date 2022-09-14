@@ -89,11 +89,7 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
   }
 
   return (
-    <Modal
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      open={openModal}
-      onClose={onCloseModal}
-    >
+    <Modal open={openModal} onClose={onCloseModal}>
       <Container
         maxWidth='lg'
         sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}

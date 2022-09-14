@@ -14,10 +14,12 @@ import {
   Typography,
 } from '@mui/material'
 import { yellow } from '@mui/material/colors'
-import React from 'react'
+import React, { useState } from 'react'
 import ListStar from '../../../components/ListStar'
+import ModalRated from '../../../components/ModalRated'
 
 const RatedTab = ({ index, value, ...other }) => {
+  const [openModal, setOpenModal] = useState(false)
   return (
     <div
       role='tabpanel'
@@ -114,7 +116,11 @@ const RatedTab = ({ index, value, ...other }) => {
               justifyContent='center'
               alignItems='center'
             >
-              <CustomOutlineButton startIcon={<Edit />} variant='outlined'>
+              <CustomOutlineButton
+                startIcon={<Edit />}
+                variant='outlined'
+                onClick={() => setOpenModal(true)}
+              >
                 Đánh giá của bạn
               </CustomOutlineButton>
             </Stack>
@@ -140,6 +146,7 @@ const RatedTab = ({ index, value, ...other }) => {
             </ListItem>
           </List>
         </Stack>
+        <ModalRated openModal={openModal} onCloseModal={() => setOpenModal(false)} />
       </Box>
     </div>
   )
