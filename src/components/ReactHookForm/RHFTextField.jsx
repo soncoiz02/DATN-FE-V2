@@ -2,7 +2,7 @@ import { TextField } from '@mui/material'
 import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-const RHFTextFeild = ({ name, ...other }) => {
+const RHFTextField = ({ name, ...other }) => {
   const { control } = useFormContext()
   return (
     <Controller
@@ -15,4 +15,4 @@ const RHFTextFeild = ({ name, ...other }) => {
   )
 }
 
-export default RHFTextFeild
+export default RHFTextField

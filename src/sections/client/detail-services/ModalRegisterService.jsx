@@ -1,8 +1,7 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { AccessTime, CheckCircle, Close, FileDownloadDone, Person } from '@mui/icons-material'
 import {
-  Backdrop,
   Box,
-  Button,
   Checkbox,
   Container,
   FormControlLabel,
@@ -16,15 +15,18 @@ import {
   StepLabel,
   Stepper,
   styled,
-  TextField,
   Typography,
 } from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import AdapterDateFns from '@date-io/date-fns'
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
-
+import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
+import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
+import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
+import dateFormat from '../../../utils/dateFormat'
+import phoneRegExp from '../../../utils/phoneRegExp'
 const registerStep = [
   {
     key: 1,
@@ -40,7 +42,7 @@ const registerStep = [
   },
 ]
 
-const timeRange = [
+const listTimeRange = [
   {
     key: 1,
     label: '08:00 - 09:00',
@@ -80,12 +82,43 @@ const timeRange = [
 ]
 
 const ModalRegisterService = ({ onCloseModal, openModal }) => {
-  const [value, setValue] = useState(new Date())
   const [activeStep, setActiveStep] = useState(1)
   const [checkedIndex, setCheckedIndex] = useState(-1)
+  const [timeRange, setTimeRange] = useState()
+  const [formValues, setFormValues] = useState()
+
+  // form schema
+  const formSchema = yup.object().shape({
+    name: yup.string().trim().required('Vui lòng nhập họ tên'),
+    phone: yup
+      .string()
+      .trim()
+      .required('Vui lòng nhập số điện thoại')
+      .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
+    date: yup.date().required('Vui lòng chọn ngày'),
+  })
+
+  // react hook form
+  const methods = useForm({
+    defaultValues: {
+      name: '',
+      phone: '',
+      date: new Date(),
+    },
+    resolver: yupResolver(formSchema),
+  })
+
+  const { handleSubmit, reset } = methods
+
+  // function
 
   const isChecked = (index) => {
     return index === checkedIndex
+  }
+
+  const onSubmit = (values) => {
+    setFormValues(values)
+    setActiveStep(activeStep + 1)
   }
 
   return (
@@ -121,45 +154,45 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
               </Stepper>
               <Box sx={{ mt: '30px' }}>
                 {activeStep === 1 && (
-                  <Stack gap={1}>
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={4}>
-                        <TextField fullWidth label='Họ tên' />
+                  <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                    <Stack gap={1}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={4}>
+                          <RHFTextField name='name' fullWidth label='Họ tên' />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <RHFTextField name='phone' fullWidth label='Số điện thoại' />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <RHFDatePicker name='date' label='Chọn ngày' disablePast />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12} md={4}>
-                        <TextField fullWidth label='Số điện thoại' />
-                      </Grid>
-                      <Grid item xs={12} md={4}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                          <DatePicker
-                            label='Chọn ngày'
-                            value={value}
-                            onChange={(newValue) => setValue(newValue)}
-                            renderInput={(params) => <TextField fullWidth {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </Grid>
-                    </Grid>
-                    <FormControlLabel
-                      value={false}
-                      control={<Checkbox />}
-                      label='Đăng ký cho người khác'
-                    />
-                    <MainButton
-                      sx={{ alignSelf: 'center', padding: '15px 85px', mt: 10 }}
-                      colorType='primary'
-                      onClick={() => {
-                        setActiveStep(activeStep + 1)
-                      }}
-                    >
-                      Tiếp theo
-                    </MainButton>
-                  </Stack>
+                      <FormControlLabel
+                        value={false}
+                        control={<Checkbox />}
+                        label='Đăng ký cho người khác'
+                      />
+                      <MainButton
+                        sx={{ alignSelf: 'center', padding: '15px 85px', mt: 10 }}
+                        colorType='primary'
+                        type='submit'
+                      >
+                        Tiếp theo
+                      </MainButton>
+                    </Stack>
+                  </RHFProvider>
                 )}
                 {activeStep === 2 && (
                   <Stack gap={4}>
                     <Grid container spacing={1} rowSpacing={2}>
-                      {timeRange.map((time, index) => (
+                      {timeRange?.error && (
+                        <Grid item xs={12}>
+                          <Typography variant='h3' color='primary' textAlign='center'>
+                            Vui lòng chọn khung giờ
+                          </Typography>
+                        </Grid>
+                      )}
+                      {listTimeRange.map((time, index) => (
                         <Grid key={time.key} item xs={6} sm={3} md={2}>
                           <input
                             hidden
@@ -167,7 +200,10 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                             name='time'
                             id={`time-range-${index}`}
                             value={index}
-                            onChange={() => setCheckedIndex(index)}
+                            onChange={() => {
+                              setCheckedIndex(index)
+                              setTimeRange({ error: false, value: time.label })
+                            }}
                           />
                           <MainButton
                             sx={{
@@ -199,7 +235,10 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                       <MainButton
                         sx={{ px: { xs: '25px', sm: '50px' } }}
                         colorType='primary'
-                        onClick={() => setActiveStep(activeStep + 1)}
+                        onClick={() => {
+                          if (!timeRange?.value) return setTimeRange({ error: true, value: null })
+                          setActiveStep(activeStep + 1)
+                        }}
                       >
                         Tiếp theo
                       </MainButton>
@@ -217,11 +256,11 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                     <Stack sx={{ width: { xs: '100%', sm: '500px' } }}>
                       <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         <Typography variant='body1'>Họ tên:</Typography>
-                        <Typography variant='body1'>Trần Bảo Sơn</Typography>
+                        <Typography variant='body1'>{formValues.name}</Typography>
                       </Stack>
                       <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         <Typography variant='body1'>Số điện thoại:</Typography>
-                        <Typography variant='body1'>0911998563</Typography>
+                        <Typography variant='body1'>{formValues.phone}</Typography>
                       </Stack>
                       <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         <Typography variant='body1'>Dịch vụ đăng ký: </Typography>
@@ -229,11 +268,11 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                       </Stack>
                       <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         <Typography variant='body1'>Ngày làm dịch vụ: </Typography>
-                        <Typography variant='body1'>05/10/2022</Typography>
+                        <Typography variant='body1'>{dateFormat(formValues.date)}</Typography>
                       </Stack>
                       <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         <Typography variant='body1'>Giờ làm: </Typography>
-                        <Typography variant='body1'>08:00</Typography>
+                        <Typography variant='body1'>{timeRange.value}</Typography>
                       </Stack>
                     </Stack>
                     <MainButton
