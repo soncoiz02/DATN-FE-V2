@@ -60,7 +60,7 @@ const DetailService = () => {
                 <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
               </CustomTab>
               <DescriptionTab value={tabValue} index={0} serviceDesc={serviceInfo.desc} />
-              <RatedTab value={tabValue} index={1} />
+              <RatedTab serviceId={serviceInfo._id} value={tabValue} index={1} />
             </Stack>
           </GlassBox>
           <ModalRegisterService openModal={openModal} onCloseModal={() => setOpenModal(false)} />

@@ -16,6 +16,9 @@ const serviceApi = {
   delete(id) {
     return axiosClient.delete('/service')
   },
+  getRated(id) {
+    return axiosClient.get(`/service-rated?serviceId=${id}`)
+  },
 }
 
 export default serviceApi
