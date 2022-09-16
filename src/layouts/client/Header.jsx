@@ -2,14 +2,30 @@ import { Menu } from '@mui/icons-material'
 import { Container, IconButton, Link, Stack, styled, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import React from 'react'
+import { useRef } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
 import MainButton from '../../components/MainButton'
 
 const Header = ({ openMenu }) => {
+  const headerRef = useRef(null)
+
+  window.onscroll = () => {
+    if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
+      headerRef.current.classList.add('active')
+    } else {
+      headerRef.current.classList.remove('active')
+    }
+  }
+
   return (
-    <HeaderWrapper>
+    <HeaderWrapper ref={headerRef}>
       <Container maxWidth='xl' sx={{ height: '100%', pt: 1, pb: 1 }}>
-        <Stack direction='row' justifyContent='space-between' alignItems='center'>
+        <Stack
+          direction='row'
+          sx={{ height: '100%' }}
+          justifyContent='space-between'
+          alignItems='center'
+        >
           <Typography variant='h2'>Logo</Typography>
           <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/'>
@@ -49,6 +65,15 @@ const HeaderWrapper = styled('div')`
   width: 100%;
   height: 60px;
   background: transparent;
+  z-index: 50;
+  transition: 0.3s;
+
+  &.active {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 70px;
+  }
 `
 
 export const StyledLink = styled(Link)(

@@ -30,6 +30,7 @@ const manualStyle = {
   textTransform: 'none',
   boxShadow: 'none',
   transistion: '0.2s',
+  borderRadius: '10px',
 }
 
 const NeutralButton = styled(Button)(({ theme }) => ({
