@@ -1,7 +1,7 @@
 import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import React from 'react'
 
-const DescriptionTab = ({ index, value, ...other }) => {
+const DescriptionTab = ({ index, value, serviceDesc, ...other }) => {
   return (
     <div
       role='tabpanel'
@@ -14,11 +14,7 @@ const DescriptionTab = ({ index, value, ...other }) => {
         <Stack gap={3}>
           <Stack gap={2}>
             <TitleText variant='h3'>Giới thiệu</TitleText>
-            <Typography variant='h5'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate suscipit
-              consectetur amet asperiores, modi quisquam quia nam sapiente, maiores et, impedit rem
-              exercitationem. Eos distinctio debitis placeat repellendus magni dicta?
-            </Typography>
+            <Typography variant='h5'>{serviceDesc}</Typography>
           </Stack>
           <Stack gap={2}>
             <TitleText variant='h3'>Quy trình</TitleText>
