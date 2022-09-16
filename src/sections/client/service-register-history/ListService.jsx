@@ -7,7 +7,7 @@ const ListService = () => {
   return (
     <Box sx={{ p: '0px 24px' }}>
       <Grid container spacing={5}>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
               <Avatar
@@ -41,7 +41,7 @@ const ListService = () => {
             </Stack>
           </GlassBox>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
               <Avatar
@@ -75,7 +75,7 @@ const ListService = () => {
             </Stack>
           </GlassBox>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
               <Avatar
@@ -109,7 +109,7 @@ const ListService = () => {
             </Stack>
           </GlassBox>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
               <Avatar
@@ -143,7 +143,7 @@ const ListService = () => {
             </Stack>
           </GlassBox>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
               <Avatar
