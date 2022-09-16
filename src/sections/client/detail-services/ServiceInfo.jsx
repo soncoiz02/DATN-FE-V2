@@ -1,42 +1,34 @@
-import { Avatar, Box, Grid, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Avatar, Box, Grid, Rating, Stack, styled, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import GlassBox from '../../../components/GlassBox'
 import { Star } from '@mui/icons-material'
 import { yellow } from '@mui/material/colors'
 import MainButton from '../../../components/MainButton'
-const ServiceInfo = ({ onOpenModal }) => {
+import formatPrice from '../../../utils/formatPrice'
+const ServiceInfo = ({ onOpenModal, serviceInfo }) => {
   const theme = useTheme()
   return (
     <GlassBox>
       <Grid container spacing={5}>
         <Grid item xs={12} sm={4}>
           <ServiceImage sx={{ width: { md: '80%' } }}>
-            <img
-              src='https://vimed.org/wp-content/uploads/2020/06/spa-cham-soc-da-mat-uy-tin-o-ha-noi-1.jpg'
-              alt=''
-            />
+            <img src={serviceInfo.image} alt='' />
           </ServiceImage>
         </Grid>
         <Grid item xs={12} sm={8}>
           <Stack gap={1} height='100%'>
             <Typography variant='h2' color={theme.palette.text.secondary}>
-              Massage Chân
+              {serviceInfo.name}
             </Typography>
             <Stack direction='row' gap={1}>
-              <Stack direction='row' gap={0.5}>
-                <Star sx={{ color: yellow[600] }} />
-                <Star sx={{ color: yellow[600] }} />
-                <Star sx={{ color: yellow[600] }} />
-                <Star sx={{ color: yellow[600] }} />
-                <Star sx={{ color: yellow[600] }} />
-              </Stack>
+              <Rating value={5} readOnly />
               <Typography variant='subtitle2'>(100 đánh giá)</Typography>
             </Stack>
             <Typography variant='h3' color='primary'>
-              500,000 đ
+              {formatPrice(serviceInfo.price)}
             </Typography>
             <Stack>
-              <Typography variant='body1'>Thời gian: 60 phút</Typography>
+              <Typography variant='body1'>Thời gian: {serviceInfo.duration} phút</Typography>
               <Typography variant='body1'>Tổng số bước: 03</Typography>
             </Stack>
             <MainButton
