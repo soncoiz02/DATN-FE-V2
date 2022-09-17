@@ -19,6 +19,9 @@ const serviceApi = {
   getRated(id) {
     return axiosClient.get(`/service-rated?serviceId=${id}`)
   },
+  addRated(data) {
+    return axiosClient.post('/service-rating', data)
+  },
 }
 
 export default serviceApi
