@@ -6,7 +6,6 @@ const calculateDayLeft = (day) => {
   const oneDay = 24 * 60 * 60 * 1000
 
   const dayLeft = (currentDay - lastDay) / oneDay
-  console.log(dayLeft)
 
   if (dayLeft < 1) {
     const currentHour = currentDay.getHours()
