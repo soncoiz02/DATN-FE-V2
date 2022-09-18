@@ -105,7 +105,7 @@ const ModalRated = ({ openModal, onCloseModal }) => {
         maxWidth='lg'
         sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}
       >
-        <GlassBox opacity={1} sx={{ width: '100%', padding: '30px' }}>
+        <GlassBox opacity={1} sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }}>
           <Stack direction='row' justifyContent='flex-end'>
             <IconButton onClick={handleCloseModal}>
               <Close />
@@ -121,7 +121,7 @@ const ModalRated = ({ openModal, onCloseModal }) => {
             <Typography variant='h2' color='primary' textAlign='center'>
               Bạn cảm thấy chất lượng dịch vụ của chúng tôi như nào ?
             </Typography>
-            <Stack direction='row' gap={2} justifyContent='center'>
+            <Stack direction='row' gap={{ xs: 1, sm: 2 }} justifyContent='center'>
               {ratedValues.map((value) => (
                 <Box key={value.key}>
                   <input
