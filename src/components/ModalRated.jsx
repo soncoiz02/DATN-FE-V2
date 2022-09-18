@@ -19,6 +19,8 @@ import Emoji5 from '../assets/img/emoji/emoji-5.gif'
 import { useState } from 'react'
 import MainButton from './MainButton'
 import { Close, Send } from '@mui/icons-material'
+import serviceApi from '../api/service'
+import { useParams } from 'react-router-dom'
 
 const ratedValues = [
   {
@@ -50,28 +52,76 @@ const ratedValues = [
 
 const ModalRated = ({ openModal, onCloseModal }) => {
   const [isCheckedIndex, setIsCheckedIndex] = useState(-1)
+  const [ratedNumber, setRatedNumber] = useState(0)
+  const [ratedComment, setRatedComment] = useState('')
+
+  const serviceId = useParams().id
+
+  const isFormDirty = () => {
+    if (!ratedComment || !ratedNumber) return true
+    return false
+  }
 
   const isChecked = (index) => {
     return isCheckedIndex === index
   }
 
+  const handleAddRated = async (data) => {
+    try {
+      await serviceApi.addRated(data)
+      onCloseModal()
+      alert('Success')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const ratedData = {
+      serviceId,
+      content: ratedComment,
+      rate: ratedNumber,
+      userId: '6322bbb9ef9027cb23921688',
+    }
+
+    handleAddRated(ratedData)
+  }
+
+  const resetForm = () => {
+    setRatedComment('')
+    setRatedNumber(0)
+    setIsCheckedIndex(-1)
+  }
+
+  const handleCloseModal = () => {
+    resetForm()
+    onCloseModal()
+  }
+
   return (
-    <Modal open={openModal} onClose={onCloseModal}>
+    <Modal open={openModal} onClose={handleCloseModal}>
       <Container
         maxWidth='lg'
         sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}
       >
-        <GlassBox opacity={1} sx={{ width: '100%', padding: '30px' }}>
+        <GlassBox opacity={1} sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }}>
           <Stack direction='row' justifyContent='flex-end'>
-            <IconButton onClick={onCloseModal}>
+            <IconButton onClick={handleCloseModal}>
               <Close />
             </IconButton>
           </Stack>
-          <Stack gap={3} justifyConten='center' alignItems='center'>
+          <Stack
+            gap={3}
+            justifyContent='center'
+            alignItems='center'
+            component='form'
+            onSubmit={(e) => onSubmit(e)}
+          >
             <Typography variant='h2' color='primary' textAlign='center'>
               Bạn cảm thấy chất lượng dịch vụ của chúng tôi như nào ?
             </Typography>
-            <Stack direction='row' gap={2} justifyContent='center'>
+            <Stack direction='row' gap={{ xs: 1, sm: 2 }} justifyContent='center'>
               {ratedValues.map((value) => (
                 <Box key={value.key}>
                   <input
@@ -80,7 +130,10 @@ const ModalRated = ({ openModal, onCloseModal }) => {
                     name='rated'
                     value={value.value}
                     id={`rated-input-${value.key}`}
-                    onChange={() => setIsCheckedIndex(value.value)}
+                    onChange={() => {
+                      setRatedNumber(value.value)
+                      setIsCheckedIndex(value.value)
+                    }}
                   />
                   <label htmlFor={`rated-input-${value.key}`}>
                     <CustomEmoji
@@ -91,11 +144,17 @@ const ModalRated = ({ openModal, onCloseModal }) => {
                 </Box>
               ))}
             </Stack>
-            <RatedCommentInput placeholder='Viết đánh giá của bạn'></RatedCommentInput>
+            <RatedCommentInput
+              placeholder='Viết đánh giá của bạn'
+              value={ratedComment}
+              onChange={(e) => setRatedComment(e.target.value)}
+            ></RatedCommentInput>
             <MainButton
               colorType='primary'
               sx={{ borderRadius: '50px', alignSelf: 'center' }}
               endIcon={<Send />}
+              type='submit'
+              disabled={isFormDirty()}
             >
               Gửi
             </MainButton>
