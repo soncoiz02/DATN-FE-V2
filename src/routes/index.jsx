@@ -2,6 +2,7 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import AdminLayout from '../layouts/admin/AdminLayout'
 import ClientLayout from '../layouts/client/ClientLayout'
+import CalendarManagement from '../pages/admin/calendar'
 import Dashboard from '../pages/admin/dashboard'
 import DetailService from '../pages/client/detail-service'
 import HomePage from '../pages/client/home'
@@ -16,6 +17,7 @@ const Router = () => {
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='calendar' element={<CalendarManagement />} />
       </Route>
     </Routes>
   )
