@@ -1,77 +1,93 @@
-import React from 'react'
-import GlassBox from '../../../components/GlassBox'
-import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler'
+import { EditingState, IntegratedEditing, ViewState } from '@devexpress/dx-react-scheduler'
 import {
-  Scheduler,
-  DayView,
   Appointments,
-  WeekView,
-  ViewSwitcher,
-  Toolbar,
-  MonthView,
-  DateNavigator,
-  TodayButton,
   AppointmentTooltip,
-  DragDropProvider,
+  DateNavigator,
+  DayView,
+  MonthView,
+  Scheduler,
+  TodayButton,
+  Toolbar,
+  ViewSwitcher,
+  WeekView,
+  ConfirmationDialog,
+  AppointmentForm,
 } from '@devexpress/dx-react-scheduler-material-ui'
-import { useState } from 'react'
-import { useCallback } from 'react'
+import { styled } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import calendarApi from '../../../api/calendar'
+import GlassBox from '../../../components/GlassBox'
 
-const appointments = [
-  {
-    startDate: '2022-09-16T13:35:30.271Z',
-    endDate: '2022-09-16T16:29:47.817Z',
-    title: 'Meeting',
-    id: 1,
-  },
-  {
-    startDate: '2022-09-16T16:29:47.817Z',
-    endDate: '2022-09-16T20:29:47.817Z',
-    title: 'Go to a gym',
-    id: 2,
-  },
-]
+// const appointments = [
+//   {
+//     startDate: '2022-09-16T13:35:30.271Z',
+//     endDate: '2022-09-16T16:29:47.817Z',
+//     title: 'Meeting',
+//     id: 1,
+//   },
+//   {
+//     startDate: '2022-09-16T16:29:47.817Z',
+//     endDate: '2022-09-16T20:29:47.817Z',
+//     title: 'Go to a gym',
+//     id: 2,
+//   },
+// ]
 
-const Calendar = ({ onOpenModal }) => {
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [visible, setVisible] = useState(false)
-  const [appointmentMeta, setAppointmentMeta] = useState({
-    target: null,
-    data: {},
-  })
-  const [data, setData] = useState(appointments)
+const Calendar = () => {
+  const [appointments, setAppointments] = useState()
 
   const currentDateChange = (dateChange) => setCurrentDate(dateChange)
 
-  const onCommitChange = useCallback(
-    ({ added, changed, deleted }) => {
-      if (added) {
-        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0
-        setData([...data, { id: startingAddedId, ...added }])
-      }
-      if (changed) {
-        setData(
-          data.map((appointment) =>
-            changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment,
-          ),
-        )
-      }
-      if (deleted !== undefined) {
-        setData(data.filter((appointment) => appointment.id !== deleted))
-      }
-    },
-    [setData, data],
-  )
+  const onCommitChange = ({ added, changed, deleted }) => {
+    console.log(added, changed, deleted)
+    // setAppointments((data) => {
+    //   if (added) {
+    //     const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
+    //     data = [...data, { id: startingAddedId, ...added }];
+    //   }
+    //   if (changed) {
+    //     data = data.map(appointment => (
+    //       changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+    //   }
+    //   if (deleted !== undefined) {
+    //     data = data.filter(appointment => appointment.id !== deleted);
+    //   }
+    //   return { data }
+    // })
+  }
+
+  const handleGetListOrderConfirmed = async () => {
+    try {
+      const data = await calendarApi.getListOrderConfirmed()
+      console.log(data)
+      const appointments = data.map((item) => {
+        return {
+          startDate: new Date(item.dateStart),
+          endDate: new Date(item.dateEnd),
+          title: item.infoUser.name + ' đăng ký dịch vụ ' + item.service_id.name,
+          id: item._id,
+        }
+      })
+      setAppointments(appointments)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleGetListOrderConfirmed()
+  }, [])
 
   return (
     <GlassBox>
-      <Scheduler data={appointments} locale='vi-VN'>
+      <Scheduler data={appointments} locale='vi-VN' height={800}>
         <ViewState
-          currentDate={currentDate}
+          currentDate={new Date()}
           onCurrentDateChange={currentDateChange}
           defaultCurrentViewName='Tuần'
         />
         <EditingState onCommitChanges={onCommitChange} />
+        <IntegratedEditing />
         <DayView startDayHour={8} endDayHour={21} name='Ngày' />
         <WeekView startDayHour={8} endDayHour={21} name='Tuần' />
         <MonthView startDayHour={8} endDayHour={21} name='Tháng' />
@@ -83,18 +99,17 @@ const Calendar = ({ onOpenModal }) => {
           }}
         />
 
-        <IntegratedEditing />
-
         <ViewSwitcher />
-        <Appointments />
-        <AppointmentTooltip
-          showCLoseButton
-          visible={visible}
-          onVisibilityChange={() => setVisible(!visible)}
-          appointmentMeta={appointmentMeta}
-          onAppointmentMetaChange={({ data, target }) => setAppointmentMeta({ data, target })}
+        <ConfirmationDialog
+          messages={{
+            confirmDeleteMessage: 'Bạn có chắc muốn hủy lịch này',
+            deleteButton: 'Hủy lịch',
+            cancelButton: 'Quay lại',
+          }}
         />
-        <DragDropProvider />
+        <Appointments />
+        <AppointmentTooltip showOpenButton showDeleteButton />
+        <AppointmentForm />
       </Scheduler>
     </GlassBox>
   )
