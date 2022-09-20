@@ -5,8 +5,8 @@ import GlassBox from '../../../components/GlassBox'
 const ListService = () => {
   const theme = useTheme()
   return (
-    <Box sx={{ p: '0px 24px' }}>
-      <Grid container spacing={5}>
+    <Box sx={{ padding: '0px 24px' }}>
+      <Grid container spacing={{ xs: 2, lg: 4 }}>
         <Grid item xs={12} sm={6} md={4}>
           <GlassBox>
             <Stack direction='row' justifyContent='space-start'>
