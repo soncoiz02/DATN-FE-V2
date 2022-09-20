@@ -34,8 +34,6 @@ import {
 import React from 'react'
 import styled from 'styled-components'
 import GlassBox from '../../../components/GlassBox'
-import PropTypes from 'prop-types'
-import { grey } from '@mui/material/colors'
 
 const Store = (props) => {
   const [open, setOpen] = React.useState(true)
@@ -593,14 +591,6 @@ const Store = (props) => {
       </Grid>
     </Box>
   )
-}
-
-Store.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window: PropTypes.func,
 }
 
 const ResponsiveTitleCard = {
