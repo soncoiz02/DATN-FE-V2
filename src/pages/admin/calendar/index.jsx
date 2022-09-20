@@ -29,7 +29,7 @@ const CalendarManagement = () => {
           <Typography variant='h6'>Thêm +</Typography>
         </MainButton>
       </Stack>
-      <Calendar />
+      <Calendar onOpenModal={() => setOpenModal(true)} />
       <ModalRegisterForm openModal={openModal} onCloseModal={() => setOpenModal(false)} />
     </Stack>
   )
