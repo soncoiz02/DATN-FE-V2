@@ -22,6 +22,9 @@ const serviceApi = {
   addRated(data) {
     return axiosClient.post('/service-rating', data)
   },
+  registerService(data) {
+    return axiosClient.post('/order', data)
+  },
 }
 
 export default serviceApi
