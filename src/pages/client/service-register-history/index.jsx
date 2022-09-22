@@ -1,12 +1,12 @@
 import React from 'react'
-import { useState } from 'react'
 import ListService from '../../../sections/client/service-register-history/ListService'
-// import StatusTabSection from '../../../sections/client/service-register-history/StatusTab'
 import StatusTab from '../../../sections/client/service-register-history/StatusTab'
+import TextHead from '../../../sections/client/service-register-history/TextHead'
 
 const ServiceRegister = () => {
   return (
     <div>
+      <TextHead />
       <StatusTab />
       <ListService />
     </div>
