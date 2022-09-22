@@ -1,4 +1,4 @@
-import dateFormat from './dateFormat'
+import { dateFormat } from './dateFormat'
 
 const calculateDayLeft = (day) => {
   const currentDay = new Date()

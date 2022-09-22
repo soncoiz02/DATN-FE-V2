@@ -10,7 +10,7 @@ const RHFAutoComplete = ({ name, options, ...other }) => {
       name={name}
       render={({ field: { ref, onChange, ...field }, fieldState: { error } }) => (
         <Autocomplete
-          onChange={(_, data) => onChange(data.label)}
+          onChange={(_, data) => onChange(data.id)}
           options={options}
           getOptionLabel={(option) => option.label}
           disablePortal
