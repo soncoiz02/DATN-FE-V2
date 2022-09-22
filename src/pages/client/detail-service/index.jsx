@@ -10,24 +10,6 @@ import ModalRegisterService from '../../../sections/client/detail-services/Modal
 import RatedTab from '../../../sections/client/detail-services/RatedTab'
 import ServiceInfo from '../../../sections/client/detail-services/ServiceInfo'
 
-const TabPanel = ({ children, value, index, ...other }) => {
-  return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`tab-panel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  )
-}
-
 const DetailService = () => {
   const { id } = useParams()
 
@@ -59,11 +41,15 @@ const DetailService = () => {
                 <Tab label='Tổng quan' id='tab-0' aria-controls='tab-panel-0' />
                 <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
               </CustomTab>
-              <DescriptionTab value={tabValue} index={0} serviceDesc={serviceInfo.desc} />
+              <DescriptionTab value={tabValue} index={0} serviceInfo={serviceInfo} />
               <RatedTab serviceId={serviceInfo._id} value={tabValue} index={1} />
             </Stack>
           </GlassBox>
-          <ModalRegisterService openModal={openModal} onCloseModal={() => setOpenModal(false)} />
+          <ModalRegisterService
+            serviceDuration={serviceInfo.duration}
+            openModal={openModal}
+            onCloseModal={() => setOpenModal(false)}
+          />
         </>
       )}
     </Stack>

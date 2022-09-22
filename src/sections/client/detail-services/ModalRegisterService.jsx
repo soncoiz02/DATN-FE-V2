@@ -4,6 +4,7 @@ import {
   Box,
   Checkbox,
   Container,
+  duration,
   FormControlLabel,
   Grid,
   IconButton,
@@ -27,6 +28,11 @@ import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import dateFormat from '../../../utils/dateFormat'
 import phoneRegExp from '../../../utils/phoneRegExp'
+
+import addDate from 'date-fns/add'
+import { useParams } from 'react-router-dom'
+import serviceApi from '../../../api/service'
+
 const registerStep = [
   {
     key: 1,
@@ -45,47 +51,65 @@ const registerStep = [
 const listTimeRange = [
   {
     key: 1,
-    label: '08:00 - 09:00',
+    label: '08:00',
+    value: 8,
   },
   {
     key: 2,
-    label: '08:00 - 09:00',
+    label: '09:00',
+    value: 9,
   },
   {
     key: 3,
-    label: '08:00 - 09:00',
+    label: '10:00',
+    value: 10,
   },
   {
     key: 4,
-    label: '08:00 - 09:00',
+    label: '11:00',
+    value: 11,
   },
   {
     key: 5,
-    label: '08:00 - 09:00',
+    label: '12:00',
+    value: 12,
   },
   {
     key: 6,
-    label: '08:00 - 09:00',
+    label: '13:00 ',
+    value: 13,
   },
   {
     key: 7,
-    label: '08:00 - 09:00',
+    label: '14:00',
+    value: 14,
   },
   {
     key: 8,
-    label: '08:00 - 09:00',
+    label: '15:00',
+    value: 15,
   },
   {
     key: 9,
-    label: '08:00 - 09:00',
+    label: '16:00',
+    value: 16,
   },
 ]
 
-const ModalRegisterService = ({ onCloseModal, openModal }) => {
+const defaultFormValues = {
+  name: '',
+  phone: '',
+  date: new Date(),
+}
+
+const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
+  // state
   const [activeStep, setActiveStep] = useState(1)
   const [checkedIndex, setCheckedIndex] = useState(-1)
   const [timeRange, setTimeRange] = useState()
   const [formValues, setFormValues] = useState()
+  const [registerDetail, setRegisterDetail] = useState()
+  const serviceId = useParams().id
 
   // form schema
   const formSchema = yup.object().shape({
@@ -100,11 +124,7 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
 
   // react hook form
   const methods = useForm({
-    defaultValues: {
-      name: '',
-      phone: '',
-      date: new Date(),
-    },
+    defaultValues: defaultFormValues,
     resolver: yupResolver(formSchema),
   })
 
@@ -119,6 +139,57 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
   const onSubmit = (values) => {
     setFormValues(values)
     setActiveStep(activeStep + 1)
+  }
+
+  const minuteToHours = (minute) => {
+    if (minute > 60) {
+      const hours = Math.floor(minute / 60)
+      const minuteLeft = minute - hours * 60
+      return {
+        hours,
+        minutes: minuteLeft,
+      }
+    }
+
+    return {
+      hours: minute / 60,
+    }
+  }
+
+  const handleFinalStep = () => {
+    if (!timeRange?.value) return setTimeRange({ error: true, value: null })
+    const combineDate = new Date(formValues.date.setHours(timeRange.value, 0, 0))
+
+    const registerData = {
+      infoUser: {
+        name: formValues.name,
+        phone: formValues.phone,
+      },
+      serviceId,
+      startDate: combineDate,
+      endDate: addDate(combineDate, minuteToHours(130)),
+      userId: '632adebc2a74cae2c7625902',
+      status: '632341742fea9804a8e4f756',
+    }
+    handleRegisterService(registerData)
+  }
+
+  const handleRegisterService = async (registerData) => {
+    try {
+      const data = await serviceApi.registerService(registerData)
+      setRegisterDetail(data)
+      setActiveStep(activeStep + 1)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setActiveStep(1)
+    setFormValues(null)
+    setTimeRange(null)
+    reset(defaultFormValues)
+    onCloseModal()
   }
 
   return (
@@ -193,7 +264,7 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                         </Grid>
                       )}
                       {listTimeRange.map((time, index) => (
-                        <Grid key={time.key} item xs={6} sm={3} md={2}>
+                        <Grid key={time.key} item xs={4} sm={2} md={2}>
                           <input
                             hidden
                             type='radio'
@@ -202,13 +273,13 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                             value={index}
                             onChange={() => {
                               setCheckedIndex(index)
-                              setTimeRange({ error: false, value: time.label })
+                              setTimeRange({ error: false, value: time.value })
                             }}
                           />
                           <MainButton
                             sx={{
                               border: isChecked(index) ? 'none' : '1px solid #e3e3e3',
-                              padding: '10px',
+                              padding: '10px 25px',
                             }}
                             colorType={isChecked(index) ? 'primary' : 'neutral'}
                             component='label'
@@ -235,10 +306,7 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                       <MainButton
                         sx={{ px: { xs: '25px', sm: '50px' } }}
                         colorType='primary'
-                        onClick={() => {
-                          if (!timeRange?.value) return setTimeRange({ error: true, value: null })
-                          setActiveStep(activeStep + 1)
-                        }}
+                        onClick={handleFinalStep}
                       >
                         Tiếp theo
                       </MainButton>
@@ -253,32 +321,36 @@ const ModalRegisterService = ({ onCloseModal, openModal }) => {
                         Đăng ký thành công
                       </Typography>
                     </Stack>
-                    <Stack sx={{ width: { xs: '100%', sm: '500px' } }}>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant='body1'>Họ tên:</Typography>
-                        <Typography variant='body1'>{formValues.name}</Typography>
+                    {registerDetail && (
+                      <Stack sx={{ width: { xs: '100%', sm: '500px' } }}>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Họ tên:</Typography>
+                          <Typography variant='body1'>{registerDetail.infoUser.name}</Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Số điện thoại:</Typography>
+                          <Typography variant='body1'>{registerDetail.infoUser.phone}</Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Dịch vụ đăng ký: </Typography>
+                          <Typography variant='body1'>{registerDetail.serviceId.name}</Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Ngày làm dịch vụ: </Typography>
+                          <Typography variant='body1'>
+                            {dateFormat(new Date(registerDetail.startDate))}
+                          </Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Giờ làm: </Typography>
+                          <Typography variant='body1'>{timeRange.value}</Typography>
+                        </Stack>
                       </Stack>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant='body1'>Số điện thoại:</Typography>
-                        <Typography variant='body1'>{formValues.phone}</Typography>
-                      </Stack>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant='body1'>Dịch vụ đăng ký: </Typography>
-                        <Typography variant='body1'>Massage chân</Typography>
-                      </Stack>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant='body1'>Ngày làm dịch vụ: </Typography>
-                        <Typography variant='body1'>{dateFormat(formValues.date)}</Typography>
-                      </Stack>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant='body1'>Giờ làm: </Typography>
-                        <Typography variant='body1'>{timeRange.value}</Typography>
-                      </Stack>
-                    </Stack>
+                    )}
                     <MainButton
                       sx={{ padding: '15px 85px', mt: 3 }}
                       colorType='primary'
-                      onClick={onCloseModal}
+                      onClick={handleCloseModal}
                     >
                       Hoàn thành
                     </MainButton>
