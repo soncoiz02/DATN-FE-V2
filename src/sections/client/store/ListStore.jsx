@@ -20,7 +20,7 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import storeApi from '../../../api/store'
 import GlassBox from '../../../components/GlassBox'
@@ -29,14 +29,12 @@ const ListStore = () => {
   const theme = useTheme()
   const [storeSpa, setStoreSpa] = useState([])
   const [searchParams, setSearchParams] = useSearchParams({})
-  const navigate = useNavigate()
 
   const { register, handleSubmit } = useForm()
 
   const keyword = searchParams.get('keyword')
 
   const onSubmit = (data) => {
-    console.log(data)
     setSearchParams({ keyword: data.keyword })
   }
 
@@ -155,12 +153,48 @@ const ListStore = () => {
                   alt='green iguana'
                   height='140'
                   image={item.coverImg}
-                  sx={{ display: { xs: 'block', md: 'block' } }}
+                  sx={{ display: { xs: 'none', sm: 'block' } }}
                 />
                 <CardContent
-                  sx={{ padding: { xs: '2px 15px 10px 15px', md: '4px 30px 30px 30px' } }}
+                  sx={{ padding: { xs: '10px 10px 5px 10px', md: '4px 30px 30px 30px' } }}
                 >
-                  <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }}>
+                  {/* sm< */}
+                  <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                    <Stack
+                      alignItems='center'
+                      justifyContent='flex-start'
+                      direction='row'
+                      spacing={1}
+                    >
+                      {/* Avatar */}
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                        }}
+                        src={item.avt}
+                      />
+                      <Box>
+                        <Stack direction='column'>
+                          {/* Name */}
+                          <StyleTypoNameSpaMobile variant='h4' color={theme.palette.text.secondary}>
+                            {item.name}
+                          </StyleTypoNameSpaMobile>
+                          {/* Rating */}
+                          <Rating name='size-small' readOnly size='small' defaultValue={5}></Rating>
+                        </Stack>
+                      </Box>
+                    </Stack>
+                    <StyleTypoAddressMobile sx={{ fontSize: '10px' }} variant=''>
+                      Địa chỉ: {item.address}
+                    </StyleTypoAddressMobile>
+                  </Box>
+
+                  {/* >sm */}
+                  <Stack
+                    direction={{ xs: 'column', sm: 'column', md: 'row' }}
+                    sx={{ display: { xs: 'none', sm: 'block' } }}
+                  >
                     {/* Avatar */}
                     <Box>
                       <Avatar
@@ -184,8 +218,8 @@ const ListStore = () => {
                       sx={{
                         marginLeft: '132px',
                         overflow: 'hidden',
-                        margin: { xs: '50px auto 0 auto', sm: '80px auto 0 auto', md: '0' },
-                        textAlign: { xs: 'center', sm: 'center', md: 'left' },
+                        margin: { sm: '50px auto 0 auto', md: '0' },
+                        textAlign: { sm: 'center', md: 'left' },
                       }}
                     >
                       <Stack
@@ -196,20 +230,24 @@ const ListStore = () => {
                       >
                         <StyleTypoNameSpa
                           variant='h3'
-                          sx={{ margin: { xs: '0 auto', sm: '0 auto', md: '0 0 0 132px' } }}
+                          sx={{ margin: { sm: '0 auto', md: '0 0 0 132px' } }}
                           color={theme.palette.text.secondary}
                         >
                           {item.name}
                         </StyleTypoNameSpa>
-                        <Stack direction={{ xs: 'column-reverse', md: 'column' }}>
+                        <Stack
+                          direction={{ sm: 'column-reverse', md: 'column' }}
+                          justifyContent='center'
+                          sx={{ width: 1 }}
+                        >
                           <Rating
                             name='size-small'
-                            sx={{ margin: { xs: '0 auto', md: '0 0 0 132px' } }}
+                            sx={{ margin: { sm: '0 auto', md: '0 0 0 132px' } }}
                             readOnly
                             defaultValue={5}
                           ></Rating>
                           <StyleTypoAddress
-                            sx={{ margin: { xs: '0 auto', md: '0 0 0 132px' } }}
+                            sx={{ margin: { sm: '0 auto', md: '0 0 0 132px' } }}
                             variant='subtitle2'
                           >
                             Địa chỉ: {item.address}
@@ -218,11 +256,12 @@ const ListStore = () => {
                       </Stack>
                     </Box>
                   </Stack>
-                  <Box sx={{ marginTop: { xs: '10px', md: '20px' } }}>
+                  {/* DESC */}
+                  <Box sx={{ marginTop: { xs: '0', md: '20px' } }}>
                     <StyleTypoDesc variant='subtitle2'>{item.desc}</StyleTypoDesc>
                   </Box>
                 </CardContent>
-                <CardActions sx={{ padding: { xs: '0 15px 15px 15px', md: '0 30px 30px 30px' } }}>
+                <CardActions sx={{ padding: { xs: '0 10px 10px 10px', md: '0 30px 30px 30px' } }}>
                   <Typography variant='subtitle2' color='#00BC6D'>
                     Đang mở cửa
                   </Typography>
@@ -251,11 +290,28 @@ const StyleTypoAddress = styled(Typography)`
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 `
+
+const StyleTypoAddressMobile = styled(Typography)`
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+`
+
+const StyleTypoNameSpaMobile = styled(Typography)`
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+`
+
 const StyleTypoNameSpa = styled(Typography)`
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 `
 
