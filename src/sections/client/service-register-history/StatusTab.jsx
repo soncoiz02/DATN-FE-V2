@@ -46,7 +46,7 @@ const StatusTab = () => {
 
   return (
     <BoxStatus>
-      <GlassBox sx={{ p: '5px 15px', borderRadius: '10px' }}>
+      <GlassBox sx={{ padding: '5px 0px', borderRadius: '10px' }}>
         <Stack direction='row' justifyContent='space-between'>
           <Stack direction='row' gap={2} alignItems='center'>
             <MenuItem component={Link} to='service-register-history?filter=no-complete-service'>
@@ -126,7 +126,7 @@ const StatusTab = () => {
 }
 
 const BoxStatus = styled(Box)`
-  padding: 24px;
+  margin: 24px;
 `
 
 export default StatusTab
