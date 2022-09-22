@@ -120,14 +120,14 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
       {openMenu && (
         <Backdrop
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', md: 'none' },
             zIndex: 99,
           }}
           open={true}
           onClick={onCloseMenu}
         ></Backdrop>
       )}
-      <GradientBackground sx={{ left: { xs: openMenu ? 0 : '-100%', sx: 0 } }}>
+      <GradientBackground sx={{ left: { xs: openMenu ? 0 : '-100%', md: 0 } }}>
         <Stack gap={{ xs: 2, sm: 3 }}>
           <Box sx={{ padding: { xs: '15px', sm: '30px 15px' } }}>
             <GlassBox opacity={0.8} sx={{ padding: '15px' }}>
@@ -210,6 +210,12 @@ const GradientBackground = styled(Box)`
     width: 70%;
     left: -100%;
   }
+
+  @media screen and (max-width: 1024px) and (min-width: 768px) {
+    position: fixed;
+    width: 40%;
+    left: -100%;
+  }
 `
 
 const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
@@ -220,8 +226,8 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   '.MuiTypography-body2': {
     color: '#939393',
   },
-  '&.Mui-selected': {
-    background: 'none',
+  '&.active': {
+    background: '#ffe8e8',
     '&:before': {
       content: '""',
       position: 'absolute',
@@ -235,7 +241,7 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
     '.MuiListItemIcon-root': {
       color: theme.palette.primary.main,
     },
-    '.MuiTypography-body1': {
+    '.MuiTypography-body2': {
       color: theme.palette.primary.main,
     },
   },
