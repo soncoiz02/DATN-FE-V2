@@ -14,7 +14,10 @@ const storeApi = {
     return axiosClient.put(`/store/${id}`, data)
   },
   remove(id) {
-    return axiosClient.delete(`store/${id}`)
+    return axiosClient.delete(`/store/${id}`)
+  },
+  search(keyword) {
+    return axiosClient.get(`/store/search?name=${keyword}`)
   },
 }
 
