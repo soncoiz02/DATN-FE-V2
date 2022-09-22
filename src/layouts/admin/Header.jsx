@@ -33,12 +33,12 @@ const Header = ({ onOpenMenu }) => {
       <Stack
         direction='row'
         alignItems='center'
-        justifyContent={{ xs: 'space-between', sm: 'flex-end' }}
+        justifyContent={{ xs: 'space-between', md: 'flex-end' }}
       >
         <IconButton
           onClick={onOpenMenu}
           color='primary'
-          sx={{ display: { xs: 'block', sm: 'none' } }}
+          sx={{ display: { xs: 'block', md: 'none' } }}
         >
           <MenuIcon />
         </IconButton>
