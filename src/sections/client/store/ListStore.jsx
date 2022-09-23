@@ -20,7 +20,7 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import storeApi from '../../../api/store'
 import GlassBox from '../../../components/GlassBox'
@@ -167,25 +167,32 @@ const ListStore = () => {
                       spacing={1}
                     >
                       {/* Avatar */}
-                      <Avatar
-                        sx={{
-                          width: 40,
-                          height: 40,
-                        }}
-                        src={item.avt}
-                      />
+                      <StyleLink to={`/store/${item._id}`}>
+                        <Avatar
+                          sx={{
+                            width: 40,
+                            height: 40,
+                          }}
+                          src={item.avt}
+                        />
+                      </StyleLink>
                       <Box>
                         <Stack direction='column'>
                           {/* Name */}
-                          <StyleTypoNameSpaMobile variant='h4' color={theme.palette.text.secondary}>
-                            {item.name}
-                          </StyleTypoNameSpaMobile>
+                          <StyleLink to={`/store/${item._id}`}>
+                            <StyleTypoNameSpaMobile
+                              variant='h4'
+                              color={theme.palette.text.secondary}
+                            >
+                              {item.name}
+                            </StyleTypoNameSpaMobile>
+                          </StyleLink>
                           {/* Rating */}
                           <Rating name='size-small' readOnly size='small' defaultValue={5}></Rating>
                         </Stack>
                       </Box>
                     </Stack>
-                    <StyleTypoAddressMobile sx={{ fontSize: '10px' }} variant=''>
+                    <StyleTypoAddressMobile sx={{ fontSize: { xs: '10px' } }}>
                       Địa chỉ: {item.address}
                     </StyleTypoAddressMobile>
                   </Box>
@@ -197,21 +204,23 @@ const ListStore = () => {
                   >
                     {/* Avatar */}
                     <Box>
-                      <Avatar
-                        sx={{
-                          width: 100,
-                          height: 100,
-                          position: 'absolute',
-                          top: { xs: 90, md: 110 },
-                          left: { xs: '50%', sm: '50%', md: 30 },
-                          transform: {
-                            xs: 'translateX(-50%)',
-                            sm: 'translateX(-50%)',
-                            md: 'none',
-                          },
-                        }}
-                        src={item.avt}
-                      />
+                      <StyleLink to={`/store/${item._id}`}>
+                        <Avatar
+                          sx={{
+                            width: 100,
+                            height: 100,
+                            position: 'absolute',
+                            top: { xs: 90, md: 110 },
+                            left: { xs: '50%', sm: '50%', md: 30 },
+                            transform: {
+                              xs: 'translateX(-50%)',
+                              sm: 'translateX(-50%)',
+                              md: 'none',
+                            },
+                          }}
+                          src={item.avt}
+                        />
+                      </StyleLink>
                     </Box>
                     {/* Infor SPA */}
                     <Box
@@ -230,10 +239,12 @@ const ListStore = () => {
                       >
                         <StyleTypoNameSpa
                           variant='h3'
-                          sx={{ margin: { sm: '0 auto', md: '0 0 0 132px' } }}
+                          sx={{ margin: { sm: '0 auto', md: '0 0 0 132px' }, textDecoration: '' }}
                           color={theme.palette.text.secondary}
                         >
-                          {item.name}
+                          <StyleLink to={`/store/${item._id}`} color={theme.palette.text.secondary}>
+                            {item.name}
+                          </StyleLink>
                         </StyleTypoNameSpa>
                         <Stack
                           direction={{ sm: 'column-reverse', md: 'column' }}
@@ -313,6 +324,10 @@ const StyleTypoNameSpa = styled(Typography)`
   text-overflow: ellipsis;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+`
+
+const StyleLink = styled(Link)`
+  text-decoration: none;
 `
 
 export default ListStore
