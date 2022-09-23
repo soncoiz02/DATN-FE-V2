@@ -1,46 +1,68 @@
 import { EditingState, IntegratedEditing, ViewState } from '@devexpress/dx-react-scheduler'
 import {
+  AppointmentForm,
   Appointments,
   AppointmentTooltip,
+  ConfirmationDialog,
   DateNavigator,
   DayView,
   MonthView,
+  Resources,
   Scheduler,
   TodayButton,
   Toolbar,
   ViewSwitcher,
   WeekView,
-  ConfirmationDialog,
-  AppointmentForm,
-  Resources,
 } from '@devexpress/dx-react-scheduler-material-ui'
-import { styled, useTheme } from '@mui/material'
+import {
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { purple } from '@mui/material/colors'
 import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import calendarApi from '../../../api/calendar'
 import serviceApi from '../../../api/service'
 import GlassBox from '../../../components/GlassBox'
+import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
+import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
+import MainButton from '../../../components/MainButton'
 
-// const appointments = [
-//   {
-//     startDate: '2022-09-16T13:35:30.271Z',
-//     endDate: '2022-09-16T16:29:47.817Z',
-//     title: 'Meeting',
-//     id: 1,
-//   },
-//   {
-//     startDate: '2022-09-16T16:29:47.817Z',
-//     endDate: '2022-09-16T20:29:47.817Z',
-//     title: 'Go to a gym',
-//     id: 2,
-//   },
-// ]
+const defaultFormValues = {
+  status: '',
+  service: '',
+}
 
 const Calendar = () => {
   const [appointments, setAppointments] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [viewType, setViewType] = useState('status')
+  const [listStatus, setListStatus] = useState([])
+  const [services, setListServices] = useState([])
   const [resources, setResources] = useState()
   const theme = useTheme()
+
+  // hook form
+
+  const methods = useForm({
+    defaultValues: defaultFormValues,
+  })
+
+  const { handleSubmit, reset } = methods
+
+  const onSubmit = (values) => {
+    console.log(values)
+  }
+
+  // functions
 
   const currentDateChange = (dateChange) => setCurrentDate(dateChange)
 
@@ -98,7 +120,6 @@ const Calendar = () => {
       const services = serviceData.map((item) => ({
         id: item._id,
         text: item.name,
-        color: purple[500],
       }))
       const serviceResources = {
         fieldName: 'service',
@@ -110,8 +131,9 @@ const Calendar = () => {
         title: 'Trạng thái',
         instances: status,
       }
-
       setResources([serviceResources, statusResources])
+      setListStatus(statusData)
+      setListServices(serviceData)
     } catch (error) {
       console.log(error)
     }
@@ -133,59 +155,118 @@ const Calendar = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>
-      <Scheduler data={appointments} locale='vi-VN' height={800}>
-        <ViewState
-          currentDate={currentDate}
-          onCurrentDateChange={currentDateChange}
-          defaultCurrentViewName='Tuần'
-        />
-        <EditingState onCommitChanges={onCommitChange} />
-        <IntegratedEditing />
-        <DayView startDayHour={8} endDayHour={21} name='Ngày' />
-        <WeekView startDayHour={8} endDayHour={21} name='Tuần' />
-        <MonthView startDayHour={8} endDayHour={21} name='Tháng' />
-        <Toolbar />
-        <DateNavigator />
-        <TodayButton
-          messages={{
-            today: 'Hôm nay',
-          }}
-        />
+      <Stack gap={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={2}>
+            <Stack gap={2}>
+              <Typography variant='h3'>Hiển thị theo</Typography>
+              <Select onChange={(e) => setViewType(e.target.value)} value={viewType}>
+                <MenuItem value='status'>Trạng thái</MenuItem>
+                <MenuItem value='service'>Dịch vụ</MenuItem>
+              </Select>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} sm={10}>
+            <Stack gap={2}>
+              <Typography variant='h3'>Lọc theo</Typography>
+              <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                <Grid container spacing={{ xs: 2, md: 3 }}>
+                  <Grid item xs={6} sm={4} md={4}>
+                    <RHFSelect name='status' label='Trạng thái'>
+                      {listStatus?.map((status) => (
+                        <MenuItem value={status._id} key={status._id}>
+                          {status.name}
+                        </MenuItem>
+                      ))}
+                    </RHFSelect>
+                  </Grid>
+                  <Grid item xs={6} sm={4} md={4}>
+                    <RHFSelect name='service' label='Dịch vụ'>
+                      {services?.map((service) => (
+                        <MenuItem value={service._id} key={service._id}>
+                          {service.name}
+                        </MenuItem>
+                      ))}
+                    </RHFSelect>
+                  </Grid>
+                  <Grid item xs={6} sm={2} md={2}>
+                    <MainButton
+                      type='submit'
+                      colorType='primary'
+                      sx={{ height: '100%', width: '100%' }}
+                    >
+                      Lọc
+                    </MainButton>
+                  </Grid>
+                  <Grid item xs={6} sm={2} md={2}>
+                    <Button
+                      variant='outlined'
+                      sx={{ height: '100%', width: '100%', borderRadius: '10px' }}
+                      onClick={() => reset(defaultFormValues)}
+                    >
+                      Hủy
+                    </Button>
+                  </Grid>
+                </Grid>
+              </RHFProvider>
+            </Stack>
+          </Grid>
+        </Grid>
+        <Divider />
+        <Scheduler data={appointments} locale='vi-VN' height={800}>
+          <ViewState
+            currentDate={currentDate}
+            onCurrentDateChange={currentDateChange}
+            defaultCurrentViewName='Tuần'
+          />
+          <EditingState onCommitChanges={onCommitChange} />
+          <IntegratedEditing />
+          <DayView startDayHour={8} endDayHour={21} name='Ngày' />
+          <WeekView startDayHour={8} endDayHour={21} name='Tuần' />
+          <MonthView startDayHour={8} endDayHour={21} name='Tháng' />
+          <Toolbar />
+          <DateNavigator />
+          <TodayButton
+            messages={{
+              today: 'Hôm nay',
+            }}
+          />
 
-        <ViewSwitcher />
-        <ConfirmationDialog
-          messages={{
-            confirmDeleteMessage: 'Bạn có chắc muốn hủy lịch này',
-            deleteButton: 'Có',
-            cancelButton: 'Không',
-            discardButton: 'Bỏ',
-            confirmCancelMessage: 'Bạn có muốn bỏ những thay đổi',
-          }}
-        />
-        <Appointments />
-        <AppointmentTooltip showOpenButton showDeleteButton />
-        <AppointmentForm
-          messages={{
-            detailsLabel: 'Chi tiết',
-            moreInformationLabel: 'Thông tin thêm',
-            allDayLabel: 'Cả ngày',
-            repeatLabel: 'Lặp lại',
-            repeatEveryLabel: 'Lặp lại mỗi',
-            daysLabel: 'ngày',
-            daily: 'Hàng ngày',
-            weekly: 'Hàng tuần',
-            monthly: 'Hàng tháng',
-            yearly: 'Hàng năm',
-            endRepeatLabel: 'Kết thúc lặp',
-            never: 'Không bao giờ',
-            onLabel: 'Trong',
-            occurrencesLabel: 'lần xuất hiện',
-            afterLabel: 'Sau',
-            commitCommand: 'Lưu',
-          }}
-        />
-        <Resources data={resources} mainResourceName='status' />
-      </Scheduler>
+          <ViewSwitcher />
+          <Appointments />
+          <AppointmentTooltip showOpenButton showDeleteButton showCloseButton />
+          <AppointmentForm
+            messages={{
+              detailsLabel: 'Chi tiết',
+              moreInformationLabel: 'Thông tin thêm',
+              allDayLabel: 'Cả ngày',
+              repeatLabel: 'Lặp lại',
+              repeatEveryLabel: 'Lặp lại mỗi',
+              daysLabel: 'ngày',
+              daily: 'Hàng ngày',
+              weekly: 'Hàng tuần',
+              monthly: 'Hàng tháng',
+              yearly: 'Hàng năm',
+              endRepeatLabel: 'Kết thúc lặp',
+              never: 'Không bao giờ',
+              onLabel: 'Trong',
+              occurrencesLabel: 'lần xuất hiện',
+              afterLabel: 'Sau',
+              commitCommand: 'Lưu',
+            }}
+          />
+          <Resources data={resources} mainResourceName={viewType} />
+          <ConfirmationDialog
+            messages={{
+              confirmDeleteMessage: 'Bạn có chắc muốn hủy lịch này',
+              deleteButton: 'Có',
+              cancelButton: 'Không',
+              discardButton: 'Bỏ',
+              confirmCancelMessage: 'Bạn có muốn bỏ những thay đổi',
+            }}
+          />
+        </Scheduler>
+      </Stack>
     </GlassBox>
   )
 }

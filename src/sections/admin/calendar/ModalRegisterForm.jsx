@@ -1,4 +1,4 @@
-import { Container, Grid, Modal, Stack, Typography } from '@mui/material'
+import { Container, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import GlassBox from '../../../components/GlassBox'
@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 
 import addDate from 'date-fns/add'
 import { minuteToHours } from '../../../utils/dateFormat'
+import { Close } from '@mui/icons-material'
 
 const defaultFormValues = {
   name: '',
@@ -99,6 +100,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
   const onSubmit = (values) => {
     const serviceDuration = services.find((service) => service._id === values.service).duration
     const combineDate = new Date(values.dateStart.setHours(values.timeRange, 0, 0))
+    console.log(combineDate)
     const registerData = {
       infoUser: {
         name: values.name,
@@ -150,6 +152,9 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
             <Typography variant='h2' color='text.secondary'>
               Đặt lịch
             </Typography>
+            <IconButton sx={{ position: 'absolute', top: 20, right: 20 }} onClick={onCloseModal}>
+              <Close />
+            </IconButton>
             <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
