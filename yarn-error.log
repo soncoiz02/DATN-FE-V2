@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\ADMIN\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
+  C:\Program Files\nodejs\node.exe C:\Users\ADMIN\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @reduxjs/toolkit
 
 PATH: 
   C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Azure Data Studio\bin;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\ProgramData\chocolatey\bin;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Users\ADMIN\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\ADMIN\AppData\Local\Microsoft\WindowsApps;C:\Users\ADMIN\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ADMIN\AppData\Local\GitHubDesktop\bin;C:\Program Files\Azure Data Studio\bin;C:\Program Files\heroku\bin;C:\Users\ADMIN\AppData\Local\Programs\mongosh\;C:\Users\ADMIN\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\ADMIN\AppData\Roaming\npm
@@ -687,55 +687,6 @@ Lockfile:
       "js-yaml" "^4.1.0"
       "minimatch" "^3.1.2"
       "strip-json-comments" "^3.1.1"
-  
-  "@fullcalendar/common@~5.11.2", "@fullcalendar/common@~5.11.3":
-    "integrity" "sha512-welVwyfQOXQQGfDwBMSfYEPbiO1cPfUD+C7jd3ZoweJR+dSO11ddFugxIQ7dGfABAGZ63oq/+LW9FsmAJezVNg=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/common/-/common-5.11.3.tgz"
-    "version" "5.11.3"
-    dependencies:
-      "tslib" "^2.1.0"
-  
-  "@fullcalendar/core@^5.11.3":
-    "integrity" "sha512-YUFxCvVJytUwFeXCx4J17kFMM7Ixwn9zBjVRw5NM2bMwgR6VAhSnlZc6yNQSOIy7Hj2TF0vDkO/4JNlTvxyAXw=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/core/-/core-5.11.3.tgz"
-    "version" "5.11.3"
-    dependencies:
-      "@fullcalendar/common" "~5.11.3"
-      "preact" "^10.0.5"
-      "tslib" "^2.1.0"
-  
-  "@fullcalendar/daygrid@^5.11.3", "@fullcalendar/daygrid@~5.11.3":
-    "integrity" "sha512-PCK0y80DRNCzWuC5lGpIWqCgKDvql1ah7rXql5lu+Gn2EeFj15ZQ8diMFjtNIQucEmFaNOXnR05Pgcry1n6Shg=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/daygrid/-/daygrid-5.11.3.tgz"
-    "version" "5.11.3"
-    dependencies:
-      "@fullcalendar/common" "~5.11.3"
-      "tslib" "^2.1.0"
-  
-  "@fullcalendar/list@^5.11.3":
-    "integrity" "sha512-6m9rJPzB5XfJZg+MlgVpha1cI3NUDeyV3GOmojJWZuti05NfDP4f0lzFUul8W7m1DQcjGS2UPRNE8HouA3guEA=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/list/-/list-5.11.3.tgz"
-    "version" "5.11.3"
-    dependencies:
-      "@fullcalendar/common" "~5.11.3"
-      "tslib" "^2.1.0"
-  
-  "@fullcalendar/react@^5.11.2":
-    "integrity" "sha512-OnLvfV406VEQcK4QGN8xR4ro6Manp9dKE7/n9dhs19J1kKpqS1w1sIEYg1dT11njbk0Ob+TdF3cXLDFq73jUlA=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/react/-/react-5.11.2.tgz"
-    "version" "5.11.2"
-    dependencies:
-      "@fullcalendar/common" "~5.11.2"
-      "tslib" "^2.1.0"
-  
-  "@fullcalendar/timegrid@^5.11.3":
-    "integrity" "sha512-SjIj2ZQ7nTyL1RxZkCPvNbuUQ0xHT+gfYJdUL3FT4bPjPJCxWtQ2CL8hxaeNmVozYYuy0yrGTW5Oup2+9IplbA=="
-    "resolved" "https://registry.npmjs.org/@fullcalendar/timegrid/-/timegrid-5.11.3.tgz"
-    "version" "5.11.3"
-    dependencies:
-      "@fullcalendar/common" "~5.11.3"
-      "@fullcalendar/daygrid" "~5.11.3"
-      "tslib" "^2.1.0"
   
   "@hookform/resolvers@^2.9.7":
     "integrity" "sha512-BloehX3MOLwuFEwT4yZnmolPjVmqyn8VsSuodLfazbCIqxBHsQ4qUZsi+bvNNCduRli1AGWFrkDLGD5QoNzsoA=="
@@ -4120,11 +4071,6 @@ Lockfile:
       "picocolors" "^1.0.0"
       "source-map-js" "^1.0.2"
   
-  "preact@^10.0.5":
-    "integrity" "sha512-Fk6+vB2kb6mSJfDgODq0YDhMfl0HNtK5+Uc9QqECO4nlyPAQwCI+BKyWO//idA7ikV7o+0Fm6LQmNuQi1wXI1w=="
-    "resolved" "https://registry.npmjs.org/preact/-/preact-10.11.0.tgz"
-    "version" "10.11.0"
-  
   "prelude-ls@^1.2.1":
     "integrity" "sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g=="
     "resolved" "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -4201,7 +4147,7 @@ Lockfile:
     dependencies:
       "safe-buffer" "^5.1.0"
   
-  "react-dom@^16.7.0 || ^17 || ^18", "react-dom@^17.0.0", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18.0.0", "react-dom@>= 16.8.0", "react-dom@>=16.6.0", "react-dom@>=16.8", "react-dom@>=17.0.2":
+  "react-dom@^17.0.0", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18.0.0", "react-dom@>= 16.8.0", "react-dom@>=16.6.0", "react-dom@>=16.8", "react-dom@>=17.0.2":
     "integrity" "sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA=="
     "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
     "version" "17.0.2"
@@ -4265,7 +4211,7 @@ Lockfile:
       "loose-envify" "^1.4.0"
       "prop-types" "^15.6.2"
   
-  "react@*", "react@^16.7.0 || ^17 || ^18", "react@^16.8.0 || ^17 || ^18", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0", "react@>= 16.8.0", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@>=17.0.2", "react@17.0.2":
+  "react@*", "react@^16.8.0 || ^17 || ^18", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0", "react@>= 16.8.0", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0", "react@>=17.0.2", "react@17.0.2":
     "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
     "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
     "version" "17.0.2"
