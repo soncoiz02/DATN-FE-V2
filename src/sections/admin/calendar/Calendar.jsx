@@ -35,6 +35,8 @@ import GlassBox from '../../../components/GlassBox'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
 import MainButton from '../../../components/MainButton'
+import { useDispatch, useSelector } from 'react-redux'
+import { filterByStatusAndService, getFullList } from '../../../redux/slice/serviceRegisterSlice'
 
 const defaultFormValues = {
   status: '',
@@ -42,13 +44,14 @@ const defaultFormValues = {
 }
 
 const Calendar = () => {
-  const [appointments, setAppointments] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewType, setViewType] = useState('status')
   const [listStatus, setListStatus] = useState([])
   const [services, setListServices] = useState([])
   const [resources, setResources] = useState()
   const theme = useTheme()
+  const appointments = useSelector((state) => state.serviceRegister.listFiltered)
+  const dispatch = useDispatch()
 
   // hook form
 
@@ -59,7 +62,7 @@ const Calendar = () => {
   const { handleSubmit, reset } = methods
 
   const onSubmit = (values) => {
-    console.log(values)
+    dispatch(filterByStatusAndService(values))
   }
 
   // functions
@@ -102,7 +105,7 @@ const Calendar = () => {
         }
       })
 
-      setAppointments(appointments)
+      dispatch(getFullList(appointments))
     } catch (error) {
       console.log(error)
     }
@@ -157,7 +160,7 @@ const Calendar = () => {
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>
       <Stack gap={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <Stack gap={2}>
               <Typography variant='h3'>Hiển thị theo</Typography>
               <Select onChange={(e) => setViewType(e.target.value)} value={viewType}>
@@ -166,7 +169,7 @@ const Calendar = () => {
               </Select>
             </Stack>
           </Grid>
-          <Grid item xs={12} sm={10}>
+          <Grid item xs={12} sm={9}>
             <Stack gap={2}>
               <Typography variant='h3'>Lọc theo</Typography>
               <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -202,7 +205,10 @@ const Calendar = () => {
                     <Button
                       variant='outlined'
                       sx={{ height: '100%', width: '100%', borderRadius: '10px' }}
-                      onClick={() => reset(defaultFormValues)}
+                      onClick={() => {
+                        reset(defaultFormValues)
+                        dispatch(filterByStatusAndService({ status: '', service: '' }))
+                      }}
                     >
                       Hủy
                     </Button>
