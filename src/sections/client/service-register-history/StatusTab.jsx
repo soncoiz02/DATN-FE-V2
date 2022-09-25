@@ -1,5 +1,11 @@
 import React from 'react'
-import { Menu as MenuIcon, CheckCircle, NotInterested, FilterAlt } from '@mui/icons-material'
+import {
+  AccessTimeFilled,
+  CheckCircle,
+  NotInterested,
+  FilterAlt,
+  Pending,
+} from '@mui/icons-material'
 import GlassBox from '../../../components/GlassBox'
 import {
   Grow,
@@ -13,10 +19,8 @@ import {
   Paper,
   ClickAwayListener,
   MenuList,
-  ListItemIcon,
 } from '@mui/material'
 import { green, pink, yellow } from '@mui/material/colors'
-import { Link } from 'react-router-dom'
 
 const StatusTab = () => {
   const [open, setOpen] = React.useState(false)
@@ -48,32 +52,42 @@ const StatusTab = () => {
     <BoxStatus>
       <GlassBox sx={{ padding: '5px 0px', borderRadius: '10px' }}>
         <Stack direction='row' justifyContent='space-between'>
-          <Stack direction='row' gap={2} alignItems='center'>
-            <MenuItem component={Link} to='service-register-history?filter=no-complete-service'>
-              <ListItemIcon>
-                <MenuIcon sx={{ color: yellow[600], fontSize: '20px' }} />
-              </ListItemIcon>
-              <Typography variant='body2'>5</Typography>
+          <Stack direction='row' alignItems='center'>
+            <MenuItem sx={{ padding: '6px 10px' }}>
+              <AccessTimeFilled sx={{ color: yellow[600], fontSize: '20px' }} />
+              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                2
+              </Typography>
               <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Chưa hoàn thành
+                Đang chờ xác nhận
               </Typography>
             </MenuItem>
 
-            <MenuItem component={Link} to='service-register-history?filter=done-complete-service'>
-              <ListItemIcon>
-                <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />
-              </ListItemIcon>
-              <Typography variant='body2'>2</Typography>
+            <MenuItem sx={{ padding: '6px 10px' }}>
+              <Pending sx={{ color: yellow[600], fontSize: '20px' }} />
+              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                5
+              </Typography>
+              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                Đã xác nhận
+              </Typography>
+            </MenuItem>
+
+            <MenuItem sx={{ padding: '6px 10px' }}>
+              <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />
+              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                2
+              </Typography>
               <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
                 Đã hoàn thành
               </Typography>
             </MenuItem>
 
-            <MenuItem component={Link} to='service-register-history?filter=cancel-service'>
-              <ListItemIcon>
-                <NotInterested sx={{ color: pink[600], fontSize: '20px' }} />
-              </ListItemIcon>
-              <Typography variant='body2'>0</Typography>
+            <MenuItem sx={{ padding: '6px 10px' }}>
+              <NotInterested sx={{ color: pink[600], fontSize: '20px' }} />
+              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                0
+              </Typography>
               <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
                 Đã hủy
               </Typography>
@@ -101,16 +115,16 @@ const StatusTab = () => {
                       id='menu-list-grow'
                       onKeyDown={handleListKeyDown}
                     >
-                      <MenuItem>
+                      <MenuItem onClick={handleClick}>
                         <Typography variant='body2'>Sắp xếp tên A-Z</Typography>
                       </MenuItem>
-                      <MenuItem>
+                      <MenuItem onClick={handleClick}>
                         <Typography variant='body2'>Sắp xếp tên Z-A</Typography>
                       </MenuItem>
-                      <MenuItem>
+                      <MenuItem onClick={handleClick}>
                         <Typography variant='body2'>Đánh giá Cao - Thấp</Typography>
                       </MenuItem>
-                      <MenuItem>
+                      <MenuItem onClick={handleClick}>
                         <Typography variant='body2'>Đánh giá Thấp - Cao</Typography>
                       </MenuItem>
                     </MenuList>
