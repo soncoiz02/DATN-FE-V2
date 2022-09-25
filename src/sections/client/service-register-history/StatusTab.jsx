@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  AccessTimeFilled,
   CheckCircle,
   NotInterested,
   FilterAlt,
   Pending,
+  AccessTimeFilled,
 } from '@mui/icons-material'
 import GlassBox from '../../../components/GlassBox'
 import {
@@ -20,7 +20,9 @@ import {
   ClickAwayListener,
   MenuList,
 } from '@mui/material'
-import { green, pink, yellow } from '@mui/material/colors'
+import { green, pink, yellow, red, blue } from '@mui/material/colors'
+import { Link } from 'react-router-dom'
+import orderStatusApi from '../../../api/orderStatus'
 
 const StatusTab = () => {
   const [open, setOpen] = React.useState(false)
@@ -48,50 +50,43 @@ const StatusTab = () => {
     setOpen(false)
   }
 
+  const [orderStatus, setOrderStatus] = useState([])
+
+  const getOrderStatus = async () => {
+    try {
+      const data = await orderStatusApi.getAll()
+      setOrderStatus(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getOrderStatus()
+  }, [])
+
+  const icon = [
+    <AccessTimeFilled sx={{ color: yellow[600], fontSize: '20px' }} />,
+    <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />,
+    <NotInterested sx={{ color: red[600], fontSize: '20px' }} />,
+    <Pending sx={{ color: blue[600], fontSize: '20px' }} />,
+  ]
+
   return (
     <BoxStatus>
       <GlassBox sx={{ padding: '5px 0px', borderRadius: '10px' }}>
         <Stack direction='row' justifyContent='space-between'>
           <Stack direction='row' alignItems='center'>
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <AccessTimeFilled sx={{ color: yellow[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Đang chờ xác nhận
-              </Typography>
-            </MenuItem>
-
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <Pending sx={{ color: yellow[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                5
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Đã xác nhận
-              </Typography>
-            </MenuItem>
-
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Đã hoàn thành
-              </Typography>
-            </MenuItem>
-
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <NotInterested sx={{ color: pink[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                0
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Đã hủy
-              </Typography>
-            </MenuItem>
+            {orderStatus.map((item, index) => (
+              <MenuItem key={index} sx={{ padding: '6px 10px' }} component={Link} to={item.type}>
+                {icon[index]}
+                <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                  2
+                </Typography>
+                <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                  {item.name}
+                </Typography>
+              </MenuItem>
+            ))}
           </Stack>
           <IconButton
             ref={anchorRef}
