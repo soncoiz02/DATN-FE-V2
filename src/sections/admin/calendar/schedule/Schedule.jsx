@@ -14,29 +14,17 @@ import {
   ViewSwitcher,
   WeekView,
 } from '@devexpress/dx-react-scheduler-material-ui'
-import {
-  Button,
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import { purple } from '@mui/material/colors'
+import { Button, Divider, Grid, MenuItem, Select, Stack, Typography, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import calendarApi from '../../../api/calendar'
-import serviceApi from '../../../api/service'
-import GlassBox from '../../../components/GlassBox'
-import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
-import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
-import MainButton from '../../../components/MainButton'
 import { useDispatch, useSelector } from 'react-redux'
-import { filterByStatusAndService, getFullList } from '../../../redux/slice/serviceRegisterSlice'
+import calendarApi from '../../../../api/calendar'
+import serviceApi from '../../../../api/service'
+import GlassBox from '../../../../components/GlassBox'
+import MainButton from '../../../../components/MainButton'
+import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
+import RHFSelect from '../../../../components/ReactHookForm/RHFSelect'
+import { filterByStatusAndService, getFullList } from '../../../../redux/slice/serviceRegisterSlice'
 
 const defaultFormValues = {
   status: '',
