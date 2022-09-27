@@ -1,6 +1,7 @@
 import { Box, Rating, Stack, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import styled from 'styled-components'
+import GlassBox from '../../../components/GlassBox'
 
 const StoreHero = () => {
   const theme = useTheme()
@@ -25,7 +26,7 @@ const StoreHero = () => {
         <Stack direction='row' justifyContent='space-between' alignItems='flex-start' spacing={3}>
           <Box>
             <Stack direction='row' justifyContent='flex-start' alignItems='flex-start' spacing={6}>
-              <Box
+              <GlassBox
                 sx={{
                   maxHeight: '210px',
                   maxWidth: '210px',
@@ -33,12 +34,11 @@ const StoreHero = () => {
                   top: '-105px',
                   border: '10px solid #fff',
                   borderRadius: '50%',
-                  boxShadow:
-                    '0px 12px 24px - 4px rgba(145, 158, 171, 0.12), 0px 0px 2px rgba(145, 158, 171, 0.2)',
+                  padding: 0,
                 }}
               >
                 <StyleAvatar src={imgAvatar} />
-              </Box>
+              </GlassBox>
               <Box>
                 <Typography variant='h2' color={theme.palette.text.secondary}>
                   {storeName}
