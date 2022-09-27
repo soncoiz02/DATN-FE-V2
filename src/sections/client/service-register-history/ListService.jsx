@@ -4,6 +4,7 @@ import GlassBox from '../../../components/GlassBox'
 import orderApi from '../../../api/order'
 import dateFormat from '../../../utils/dateFormat'
 import timeFormat from '../../../utils/timeFormat'
+import { useSearchParams } from 'react-router-dom'
 
 const ListService = () => {
   const theme = useTheme()
@@ -14,14 +15,31 @@ const ListService = () => {
     try {
       const data = await orderApi.getAll()
       setOrder(data)
-      console.log(data)
     } catch (error) {
       console.log(error)
     }
   }
+
+  const [searchParams] = useSearchParams({})
+
+  const status = searchParams.get('status')
+
+  const getServiceByStatus = async (type) => {
+    try {
+      const data = await orderApi.getByStatus(type)
+      setOrder(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    getOrder()
-  }, [])
+    if (status) {
+      getServiceByStatus(status)
+    } else {
+      getOrder()
+    }
+  }, [status])
 
   return (
     <Box sx={{ padding: '0px 24px' }}>

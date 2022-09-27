@@ -21,10 +21,11 @@ import {
   MenuList,
 } from '@mui/material'
 import { green, pink, yellow, red, blue } from '@mui/material/colors'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import orderStatusApi from '../../../api/orderStatus'
 
 const StatusTab = () => {
+  const navigate = useNavigate()
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef(null)
 
@@ -77,7 +78,16 @@ const StatusTab = () => {
         <Stack direction='row' justifyContent='space-between'>
           <Stack direction='row' alignItems='center'>
             {orderStatus.map((item, index) => (
-              <MenuItem key={index} sx={{ padding: '6px 10px' }} component={Link} to={item.type}>
+              <MenuItem
+                key={index}
+                sx={{ padding: '6px 10px' }}
+                onClick={() =>
+                  navigate({
+                    pathname: '/service-register-history',
+                    search: `?status=${item._id}`,
+                  })
+                }
+              >
                 {icon[index]}
                 <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
                   2
