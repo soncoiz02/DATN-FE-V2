@@ -7,8 +7,8 @@ import { StyledLink } from './Header'
 const MobileMenu = ({ closeMenu, openMenu }) => {
   return (
     <>
-      <Backdrop onClick={closeMenu} open={openMenu}></Backdrop>
-      <BoxMenu>
+      <Backdrop sx={{ zIndex: 50 }} onClick={closeMenu} open={openMenu}></Backdrop>
+      <BoxMenu sx={{ zIndex: 60 }}>
         <Stack sx={{ height: '100%' }} gap={3}>
           <Typography variant='h2'>Logo</Typography>
           <Stack sx={{ mt: 4 }} gap={1}>
