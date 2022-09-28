@@ -9,7 +9,7 @@ const AdminLayout = () => {
   return (
     <Stack direction='row'>
       <VerticalSideBar openMenu={openMenu} onCloseMenu={() => setOpenMenu(false)} />
-      <Stack sx={{ width: { xs: '100%', sm: 'calc(100% - 300px)' } }}>
+      <Stack sx={{ width: { xs: '100%', md: 'calc(100% - 300px)' } }}>
         <Header onOpenMenu={() => setOpenMenu(true)} />
         <Container maxWidth='xl'>
           <Outlet />

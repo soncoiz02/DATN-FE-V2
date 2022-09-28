@@ -21,7 +21,7 @@ const SUCCESS = {
   light: '#54D62C',
 }
 
-const DANGER = {
+const ERROR = {
   main: '#B72136',
   light: '#FF4842',
 }
@@ -37,7 +37,7 @@ const palette = {
   secondary: SECONDARY,
   warning: WARNING,
   success: SUCCESS,
-  danger: DANGER,
+  error: ERROR,
   text: TEXT_COLOR,
 }
 

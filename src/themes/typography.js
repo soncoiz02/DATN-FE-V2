@@ -53,7 +53,7 @@ const typography = {
   button: {
     fontWeight: FONT_BOLD,
     textTransform: 'normal',
-    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+    ...responsiveFontSizes({ sm: 16, md: 18, lg: 20 }),
   },
   subtitle1: {
     fontWeight: FONT_BOLD,
