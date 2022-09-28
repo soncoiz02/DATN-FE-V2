@@ -25,6 +25,9 @@ const serviceApi = {
   registerService(data) {
     return axiosClient.post('/order', data)
   },
+  getRegisteredService(id) {
+    return axiosClient.get(`/order/${id}`)
+  },
 }
 
 export default serviceApi

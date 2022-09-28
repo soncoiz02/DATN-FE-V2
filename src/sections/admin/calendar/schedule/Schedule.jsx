@@ -25,6 +25,7 @@ import MainButton from '../../../../components/MainButton'
 import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
 import RHFSelect from '../../../../components/ReactHookForm/RHFSelect'
 import { filterByStatusAndService, getFullList } from '../../../../redux/slice/serviceRegisterSlice'
+import formatPrice from '../../../../utils/formatPrice'
 
 const defaultFormValues = {
   status: '',
@@ -110,7 +111,7 @@ const Calendar = () => {
       }))
       const services = serviceData.map((item) => ({
         id: item._id,
-        text: item.name,
+        text: `${item.name} - ${formatPrice(item.price)}`,
       }))
       const serviceResources = {
         fieldName: 'service',

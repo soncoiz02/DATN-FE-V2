@@ -17,12 +17,15 @@ import {
 import { dateFormat } from '../../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
 import { RemoveRedEye } from '@mui/icons-material'
+import { getStatusColor } from '../../../../utils/aboutColor'
+import DataGridCustom from '../../../../components/DataGridCustom'
 
 const CalendarTable = () => {
   const [rows, setRows] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [registerId, setRegisterId] = useState()
 
   const columns = [
     {
@@ -31,15 +34,17 @@ const CalendarTable = () => {
       width: isMobile ? 50 : 80,
     },
     {
-      field: 'userId',
+      field: 'infoUser',
       headerName: 'Người đặt',
       width: isMobile ? 130 : 180,
-      valueGetter: (params) => 'Trần Bảo Sơn',
+      valueGetter: (params) => {
+        return `${params.value.name} + ${params.value.phone}`
+      },
     },
     {
       field: 'serviceId',
       headerName: 'Dịch vụ',
-      width: 200,
+      flex: 1,
       renderCell: (params) => {
         const cellData = params.formattedValue
         return (
@@ -72,27 +77,24 @@ const CalendarTable = () => {
     },
     {
       field: 'action',
-      headerName: 'Hành động',
+      headerName: '',
       flex: isMobile ? 0 : 1,
       renderCell: (params) => {
         return (
           <Stack direction='row' gap={2}>
-            <IconButton onClick={() => setOpenModal(true)}>
-              <RemoveRedEye />
+            <IconButton
+              onClick={() => {
+                setRegisterId(params.id)
+                setOpenModal(true)
+              }}
+            >
+              <RemoveRedEye color='secondary' />
             </IconButton>
           </Stack>
         )
       },
     },
   ]
-
-  const getStatusColor = (type) => {
-    if (type === 'pending') return 'warning'
-    if (type === 'done') return 'secondary'
-    if (type === 'reject') return 'primary'
-    if (type === 'accepted') return 'info'
-    return 'default'
-  }
 
   const handleGetServicesRegister = async () => {
     try {
@@ -118,74 +120,16 @@ const CalendarTable = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
-      <CustomDataGird
-        rows={rows}
-        columns={columns}
-        pageSize={20}
-        localeText={{
-          errorOverlayDefaultLabel: 'Đã có lỗi xảy ra',
-          noResultsOverlayLabel: 'Không có dữ liệu',
-          columnMenuLabel: 'Danh sách',
-          columnMenuShowColumns: 'Hiển thị các cột',
-          columnMenuFilter: 'Lọc',
-          columnMenuHideColumn: 'Ẩn',
-          columnMenuUnsort: 'Hủy sắp xếp',
-          columnMenuSortAsc: 'Sắp xếp trước - sau',
-          columnMenuSortDesc: 'Sắp xếp sau - trước',
-          columnsPanelShowAllButton: 'Hiện tất cả',
-          columnsPanelHideAllButton: 'Ẩn tất cả',
-          footerTotalVisibleRows: (visibleCount, totalCount) =>
-            `${visibleCount.toLocaleString()} trên ${totalCount.toLocaleString()}`,
-          footerRowSelected: (count) =>
-            count !== 1
-              ? `${count.toLocaleString()} hàng đã chọn`
-              : `${count.toLocaleString()} hàng đã chọn`,
-        }}
-      />
-      <ModalInfo openModal={openModal} onCloseModal={() => setOpenModal(false)} />
+      <DataGridCustom rows={rows} columns={columns} />
+      {openModal && (
+        <ModalInfo
+          openModal={openModal}
+          onCloseModal={() => setOpenModal(false)}
+          registerId={registerId}
+        />
+      )}
     </GlassBox>
   )
 }
-
-const CustomDataGird = styled(DataGrid)`
-  border: none;
-
-  .MuiDataGrid-columnHeaders {
-    background: #ceedff;
-    border: none;
-    border-radius: 10px;
-  }
-
-  .MuiDataGrid-virtualScroller {
-    margin-top: 65px !important;
-  }
-
-  .MuiDataGrid-columnSeparator {
-    display: none;
-  }
-
-  .MuiDataGrid-columnHeader:focus,
-  .MuiDataGrid-cell:focus {
-    outline: none;
-  }
-
-  .MuiDataGrid-columnHeader:focus-within,
-  .MuiDataGrid-cell:focus-within {
-    outline: none;
-  }
-
-  .MuiDataGrid-columnHeaderTitle {
-    color: #494949;
-    font-weight: 700;
-  }
-
-  .MuiDataGrid-cell {
-    border: none;
-  }
-
-  .MuiDataGrid-row {
-    margin: 5px 0;
-  }
-`
 
 export default CalendarTable
