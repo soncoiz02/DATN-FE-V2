@@ -53,7 +53,7 @@ const StoreHero = ({ props }) => {
 
           <Box>
             <Stack direction='row' alignItems='center' spacing={2}>
-              <Typography variant='h2'>{valueRating}</Typography>
+              <Typography variant='h2'>{valueRating}.0</Typography>
               <Rating
                 readOnly
                 value={valueRating || 5}

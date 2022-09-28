@@ -1,14 +1,27 @@
 import { Box, Tab, Tabs, Typography, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useRef } from 'react'
+import { useEffect } from 'react'
+import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import GlassBox from '../../../components/GlassBox'
 import TabInfo from './TabsItem/TabInfo'
 import TabPost from './TabsItem/TabPost'
 import TabRate from './TabsItem/TabRate'
 import ListServicesByStore from './TabsItem/TabServices'
 
-const StoreTabs = () => {
+const StoreTabs = ({ props }) => {
   const theme = useTheme()
-
+  const navigate = useNavigate()
+  const storeDesc = props?.desc
+  const location = useLocation()
+  const { id } = useParams()
+  //Tablist
+  const tabList = [
+    { name: 'Thông tin', element: <TabInfo storeDesc={storeDesc} />, link: 'info' },
+    { name: 'Dịch vụ', element: <ListServicesByStore />, link: 'services' },
+    { name: 'Bài viết', element: <TabPost />, link: 'post' },
+    { name: 'Đánh giá', element: <TabRate />, link: 'rate' },
+  ]
+  //TabPanel
   function TabPanel(props) {
     const { children, value, index, ...other } = props
     return (
@@ -30,11 +43,37 @@ const StoreTabs = () => {
       'aria-controls': `simple-tabpanel-${index}`,
     }
   }
+
   const [value, setValue] = React.useState(0)
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+  let linkItemSelected = ''
+  let paramItemSelected = ''
+  const tabChange = (linkItem) => {
+    linkItemSelected = linkItem
+    // console.log(linkItem);
+    // console.log(number);
+    paramItemSelected = `/store/${id}/${linkItem}`
+    console.log(paramItemSelected)
+    navigate(linkItem)
+  }
+
+  useEffect(() => {
+    if (location.pathname == `/store/${id}/info`) {
+      setValue(0)
+    }
+    if (location.pathname == `/store/${id}/services`) {
+      setValue(1)
+    }
+    if (location.pathname == `/store/${id}/post`) {
+      setValue(2)
+    }
+    if (location.pathname == `/store/${id}/rate`) {
+      setValue(3)
+    }
+  }, [linkItemSelected])
 
   return (
     <Box sx={{ width: '100%', padding: '0', marginTop: '-66px' }}>
@@ -58,25 +97,22 @@ const StoreTabs = () => {
             '& button.Mui-selected': { backgroundColor: theme.palette.primary.main, color: '#fff' },
           }}
         >
-          <Tab label='Thông tin' {...a11yProps(0)} />
-          <Tab label='Dịch vụ' {...a11yProps(1)} />
-          <Tab label='Bài viết' {...a11yProps(2)} />
-          <Tab label='Đánh giá' {...a11yProps(3)} />
+          {tabList.map((item, index) => (
+            <Tab
+              label={item.name}
+              {...a11yProps(index)}
+              key={index}
+              onClick={() => tabChange(item.link)}
+            />
+          ))}
         </Tabs>
       </Box>
       <Box sx={{ padding: '0 20px' }}>
-        <TabPanel value={value} index={0} sx={{ padding: '0' }}>
-          <TabInfo />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <ListServicesByStore />
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <TabPost />
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          <TabRate />
-        </TabPanel>
+        {tabList.map((item, index) => (
+          <TabPanel key={index} value={value} index={index} sx={{ padding: '0' }}>
+            {item.element}
+          </TabPanel>
+        ))}
       </Box>
     </Box>
   )

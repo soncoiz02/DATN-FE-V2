@@ -22,18 +22,15 @@ const DetailStore = () => {
   }, [id])
 
   return (
-    <StyleBox>
-      <Container>
+    <Container>
+      <StyleBox>
         <StoreHero props={detailStore} />
         <StoreTabs props={detailStore} />
-      </Container>
-    </StyleBox>
+      </StyleBox>
+    </Container>
   )
 }
 
-const StyleBox = styled(Box)`
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(75px);
-`
+const StyleBox = styled(Box)``
 
 export default DetailStore
