@@ -2,6 +2,8 @@ import { Box, Tab, Tabs, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import GlassBox from '../../../components/GlassBox'
 import TabInfo from './TabsItem/TabInfo'
+import TabPost from './TabsItem/TabPost'
+import TabRate from './TabsItem/TabRate'
 import ListServicesByStore from './TabsItem/TabServices'
 
 const StoreTabs = () => {
@@ -35,13 +37,16 @@ const StoreTabs = () => {
   }
 
   return (
-    <Box sx={{ width: '100%', padding: '0 20px', marginTop: '-66px' }}>
+    <Box sx={{ width: '100%', padding: '0', marginTop: '-66px' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
           onChange={handleChange}
           aria-label='basic tabs example'
           sx={{
+            w: 1,
+            borderBottom: `1px solid ${theme.palette.primary.main}`,
+            padding: '0 20px',
             '& button': {
               borderTopLeftRadius: '10px',
               borderTopRightRadius: '10px',
@@ -59,18 +64,20 @@ const StoreTabs = () => {
           <Tab label='Đánh giá' {...a11yProps(3)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0} sx={{ padding: '0' }}>
-        <TabInfo />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <ListServicesByStore />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Bài viết
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Đánh giá
-      </TabPanel>
+      <Box sx={{ padding: '0 20px' }}>
+        <TabPanel value={value} index={0} sx={{ padding: '0' }}>
+          <TabInfo />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <ListServicesByStore />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <TabPost />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <TabRate />
+        </TabPanel>
+      </Box>
     </Box>
   )
 }

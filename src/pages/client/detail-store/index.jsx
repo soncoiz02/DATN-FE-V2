@@ -1,36 +1,39 @@
-import { Box } from '@mui/material'
-import React, { useState } from 'react'
-import { useEffect } from 'react'
+import { Box, Container } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import storeApi from '../../../api/store'
 import StoreHero from '../../../sections/client/detail-store/StoreHero'
 import StoreTabs from '../../../sections/client/detail-store/StoreTabs'
+import storeApi from '../../../api/store'
+import styled from 'styled-components'
 
 const DetailStore = () => {
-  // const { id } = useParams();
-  // console.log(id);
-  // const [storeDetail, setStoreDetail] = useState();
-
-  // const getOneStore = async (id) => {
-  //   try {
-  //     const data = await storeApi.getOne(id);
-  //     setStoreDetail(data);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getOneStore(id)
-  //   console.log(storeDetail)
-  // }, [id])
+  const { id } = useParams()
+  const [detailStore, setDetailStore] = useState()
+  const getDetailStore = async () => {
+    try {
+      const data = await storeApi.getOne(id)
+      setDetailStore(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getDetailStore()
+  }, [id])
 
   return (
-    <Box>
-      <StoreHero />
-      <StoreTabs />
-    </Box>
+    <StyleBox>
+      <Container>
+        <StoreHero props={detailStore} />
+        <StoreTabs props={detailStore} />
+      </Container>
+    </StyleBox>
   )
 }
+
+const StyleBox = styled(Box)`
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(75px);
+`
 
 export default DetailStore

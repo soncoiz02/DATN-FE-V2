@@ -1,20 +1,18 @@
 import { Box, Rating, Stack, Typography, useTheme } from '@mui/material'
 import React from 'react'
+import { useState } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import GlassBox from '../../../components/GlassBox'
 
-const StoreHero = () => {
+const StoreHero = ({ props }) => {
   const theme = useTheme()
-  const imgBackground =
-    'https://img.freepik.com/free-photo/abstract-grunge-decorative-relief-navy-blue-stucco-wall-texture-wide-angle-rough-colored-background_1258-28311.jpg?w=2000'
-  const imgAvatar =
-    'https://sgp1.digitaloceanspaces.com/teky-prod/teky-edu-vn/media/avatars/user-41673-1651390292.jpg'
-  const storeName = 'Excellence Spa Đỗ Quang'
-  const storeAddress = '12 Ngõ 67 Đỗ Quang, Trung Hoà, Cầu Giấy, Hà Nội, Việt Nam.'
-  const storeHotline = '+8438 9569 138'
+  const imgBackground = props?.coverImg
+  const imgAvatar = props?.avt
+  const storeName = props?.name
+  const storeAddress = props?.address
+  const storeHotline = props?.hotline
   const valueRating = 5
-
-  //Rating style
   return (
     <Box>
       {/* BG STORE */}
@@ -55,10 +53,10 @@ const StoreHero = () => {
 
           <Box>
             <Stack direction='row' alignItems='center' spacing={2}>
-              <Typography variant='h2'>{valueRating}.0</Typography>
+              <Typography variant='h2'>{valueRating}</Typography>
               <Rating
                 readOnly
-                defaultValue={valueRating}
+                value={valueRating || 5}
                 size='large'
                 name='size-large'
                 color={theme.palette.text.secondary}
@@ -85,6 +83,7 @@ const StyleAvatar = styled('img')`
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  backdrop-filter: blur(10px);
 `
 
 export default StoreHero

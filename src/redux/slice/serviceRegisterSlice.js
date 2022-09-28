@@ -14,5 +14,5 @@ export const serviceRegisterSlice = createSlice({
   },
 })
 
-export const { getFullList } = counterSlice.actions
+// export const { getFullList } = counterSlice.actions
 export default serviceRegisterSlice.reducer
