@@ -26,7 +26,7 @@ import MainButton from '../../../components/MainButton'
 import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
-import dateFormat from '../../../utils/dateFormat'
+import { minuteToHours, dateFormat } from '../../../utils/dateFormat'
 import phoneRegExp from '../../../utils/phoneRegExp'
 
 import addDate from 'date-fns/add'
@@ -141,21 +141,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
     setActiveStep(activeStep + 1)
   }
 
-  const minuteToHours = (minute) => {
-    if (minute > 60) {
-      const hours = Math.floor(minute / 60)
-      const minuteLeft = minute - hours * 60
-      return {
-        hours,
-        minutes: minuteLeft,
-      }
-    }
-
-    return {
-      hours: minute / 60,
-    }
-  }
-
   const handleFinalStep = () => {
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
     const combineDate = new Date(formValues.date.setHours(timeRange.value, 0, 0))
@@ -167,9 +152,9 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
       },
       serviceId,
       startDate: combineDate,
-      endDate: addDate(combineDate, minuteToHours(130)),
+      endDate: addDate(combineDate, minuteToHours(serviceDuration)),
       userId: '632adebc2a74cae2c7625902',
-      status: '632341742fea9804a8e4f756',
+      status: '632bc736dc2a7f68a3f383e7',
     }
     handleRegisterService(registerData)
   }

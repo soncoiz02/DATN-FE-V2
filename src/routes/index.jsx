@@ -2,7 +2,8 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import AdminLayout from '../layouts/admin/AdminLayout'
 import ClientLayout from '../layouts/client/ClientLayout'
-import CalendarManagement from '../pages/admin/calendar'
+import CalendarList from '../pages/admin/calendar/CalendarList'
+import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
 import Dashboard from '../pages/admin/dashboard'
 import DetailService from '../pages/client/detail-service'
 import DetailStore from '../pages/client/detail-store'
@@ -19,7 +20,8 @@ const Router = () => {
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
-        <Route path='calendar' element={<CalendarManagement />} />
+        <Route path='calendar-schedule' element={<CalendarManagement />} />
+        <Route path='calendar-list' element={<CalendarList />} />
       </Route>
     </Routes>
   )
