@@ -2,6 +2,8 @@ import {
   CalendarMonth,
   Category,
   Chat,
+  ExpandLess,
+  ExpandMore,
   Home,
   Paid,
   PeopleAlt,
@@ -13,16 +15,18 @@ import {
   Avatar,
   Backdrop,
   Box,
+  Collapse,
   List,
   ListItemButton,
   ListItemIcon,
+  ListItemText,
   Stack,
   styled,
   Typography,
   useTheme,
 } from '@mui/material'
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
 
 const VERTICAL_ITEMS = [
@@ -40,7 +44,18 @@ const VERTICAL_ITEMS = [
         key: 'calendar',
         title: 'Lịch đặt',
         icon: <CalendarMonth />,
-        path: '/admin/calendar',
+        children: [
+          {
+            key: 'schedule',
+            title: 'Bảng lịch',
+            path: '/admin/calendar-schedule',
+          },
+          {
+            key: 'list',
+            title: 'Danh sách',
+            path: '/admin/calendar-list',
+          },
+        ],
       },
       {
         key: 'chat',
@@ -114,7 +129,9 @@ const VERTICAL_ITEMS = [
 
 const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   const theme = useTheme()
-
+  const [childOpenedIndex, setChildOpenedIndex] = useState()
+  const [activeMainTitle, setActiveMainTitle] = useState()
+  const { pathname } = useLocation()
   return (
     <>
       {openMenu && (
@@ -168,10 +185,62 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 }
               >
                 {item.items.map((subItem) => (
-                  <CustomListItemButton key={subItem.key} to={subItem.path} component={NavLink}>
-                    <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                    <Typography variant='body2'>{subItem.title}</Typography>
-                  </CustomListItemButton>
+                  <>
+                    {subItem.children ? (
+                      <>
+                        <CustomListItemButton
+                          className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
+                          key={subItem.key}
+                          onClick={() => setChildOpenedIndex(childOpenedIndex ? null : subItem.key)}
+                        >
+                          <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                          <Typography variant='body1'>{subItem.title}</Typography>
+                          {childOpenedIndex === subItem.key ? (
+                            <ExpandLess sx={{ ml: 'auto' }} />
+                          ) : (
+                            <ExpandMore sx={{ ml: 'auto' }} />
+                          )}
+                        </CustomListItemButton>
+                        <Collapse
+                          in={childOpenedIndex === subItem.key}
+                          timeout='auto'
+                          unmountOnExit
+                        >
+                          <List component='div' disablePadding>
+                            {subItem.children.map((child) => (
+                              <ListItemButton
+                                sx={{ pl: 4 }}
+                                component={Link}
+                                to={child.path}
+                                onClick={() => setActiveMainTitle(subItem.key)}
+                                key={child.key}
+                              >
+                                <Typography
+                                  variant='body1'
+                                  color={pathname.includes(child.path) ? 'primary' : ''}
+                                >
+                                  {child.title}
+                                </Typography>
+                              </ListItemButton>
+                            ))}
+                          </List>
+                        </Collapse>
+                      </>
+                    ) : (
+                      <CustomListItemButton
+                        key={subItem.key}
+                        to={subItem.path}
+                        component={NavLink}
+                        onClick={() => {
+                          setChildOpenedIndex(null)
+                          setActiveMainTitle(null)
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                        <Typography variant='body1'>{subItem.title}</Typography>
+                      </CustomListItemButton>
+                    )}
+                  </>
                 ))}
               </List>
             ))}
@@ -221,13 +290,13 @@ const GradientBackground = styled(Box)`
 const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   margin: '5px 0',
   '.MuiListItemIcon-root': {
-    color: '#939393',
+    color: '#636363',
   },
-  '.MuiTypography-body2': {
-    color: '#939393',
+  '.MuiTypography-body1': {
+    color: '#636363',
   },
   '&.active': {
-    background: '#ffe8e8',
+    background: '',
     '&:before': {
       content: '""',
       position: 'absolute',
@@ -241,7 +310,7 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
     '.MuiListItemIcon-root': {
       color: theme.palette.primary.main,
     },
-    '.MuiTypography-body2': {
+    '.MuiTypography-body1': {
       color: theme.palette.primary.main,
     },
   },
