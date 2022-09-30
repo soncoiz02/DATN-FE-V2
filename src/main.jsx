@@ -6,16 +6,19 @@ import { BrowserRouter } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
+import { CookiesProvider } from 'react-cookie'
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <MuiThemeProvider>
-          <ScrollToTop />
-          <App />
-        </MuiThemeProvider>
-      </BrowserRouter>
+      <CookiesProvider>
+        <BrowserRouter>
+          <MuiThemeProvider>
+            <ScrollToTop />
+            <App />
+          </MuiThemeProvider>
+        </BrowserRouter>
+      </CookiesProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root'),

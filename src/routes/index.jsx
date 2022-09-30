@@ -8,9 +8,9 @@ import Dashboard from '../pages/admin/dashboard'
 import DetailService from '../pages/client/detail-service'
 import DetailStore from '../pages/client/detail-store'
 import HomePage from '../pages/client/home'
-import Login from '../pages/client/login'
-// import SignInSide from '../pages/client/login/test'
+import Login from '../pages/auth/Login'
 import Store from '../pages/client/store'
+import AuthLayout from '../layouts/auth/AuthLayout'
 const Router = () => {
   return (
     <Routes>
@@ -20,9 +20,8 @@ const Router = () => {
         <Route path='store/:id' element={<DetailStore />} />
         <Route path='service/:id' element={<DetailService />} />
       </Route>
-      <Route>
+      <Route path='auth' element={<AuthLayout />}>
         <Route path='login' element={<Login />} />
-        {/* <Route path='test' element={<SignInSide />} /> */}
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
