@@ -4,7 +4,6 @@ import {
   Box,
   Checkbox,
   Container,
-  duration,
   FormControlLabel,
   Grid,
   IconButton,
@@ -26,7 +25,7 @@ import MainButton from '../../../components/MainButton'
 import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
-import { minuteToHours, dateFormat } from '../../../utils/dateFormat'
+import { convertNumberToHour, dateFormat, minuteToHours } from '../../../utils/dateFormat'
 import phoneRegExp from '../../../utils/phoneRegExp'
 
 import addDate from 'date-fns/add'
@@ -48,61 +47,13 @@ const registerStep = [
   },
 ]
 
-const listTimeRange = [
-  {
-    key: 1,
-    label: '08:00',
-    value: 8,
-  },
-  {
-    key: 2,
-    label: '09:00',
-    value: 9,
-  },
-  {
-    key: 3,
-    label: '10:00',
-    value: 10,
-  },
-  {
-    key: 4,
-    label: '11:00',
-    value: 11,
-  },
-  {
-    key: 5,
-    label: '12:00',
-    value: 12,
-  },
-  {
-    key: 6,
-    label: '13:00 ',
-    value: 13,
-  },
-  {
-    key: 7,
-    label: '14:00',
-    value: 14,
-  },
-  {
-    key: 8,
-    label: '15:00',
-    value: 15,
-  },
-  {
-    key: 9,
-    label: '16:00',
-    value: 16,
-  },
-]
-
 const defaultFormValues = {
   name: '',
   phone: '',
   date: new Date(),
 }
 
-const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
+const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   // state
   const [activeStep, setActiveStep] = useState(1)
   const [checkedIndex, setCheckedIndex] = useState(-1)
@@ -110,6 +61,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
   const [formValues, setFormValues] = useState()
   const [registerDetail, setRegisterDetail] = useState()
   const serviceId = useParams().id
+  const [totalSlot, setTotalSlot] = useState([])
 
   // form schema
   const formSchema = yup.object().shape({
@@ -138,12 +90,25 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
 
   const onSubmit = (values) => {
     setFormValues(values)
+    handleGetTotalRegisteredService(serviceId, values.date)
     setActiveStep(activeStep + 1)
+  }
+
+  const handleGetTotalRegisteredService = async (id, date) => {
+    try {
+      const data = await serviceApi.getTotalRegisterInADay(id, date.toISOString())
+      console.log(data)
+      setTotalSlot(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleFinalStep = () => {
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
-    const combineDate = new Date(formValues.date.setHours(timeRange.value, 0, 0))
+    const { hour, minute } = convertNumberToHour(timeRange.value, 'getTime')
+    const startDate = new Date(formValues.date.setHours(hour, minute, 0))
+    const endDate = addDate(startDate, minuteToHours(serviceInfo.duration + 15))
 
     const registerData = {
       infoUser: {
@@ -151,9 +116,9 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
         phone: formValues.phone,
       },
       serviceId,
-      startDate: combineDate,
-      endDate: addDate(combineDate, minuteToHours(serviceDuration)),
-      userId: '632adebc2a74cae2c7625902',
+      startDate,
+      endDate,
+      userId: '632c2a631c83d43cae12d886',
       status: '632bc736dc2a7f68a3f383e7',
     }
     handleRegisterService(registerData)
@@ -175,6 +140,15 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
     setTimeRange(null)
     reset(defaultFormValues)
     onCloseModal()
+  }
+
+  const handleDisableByTime = (time) => {
+    const today = new Date()
+    if (new Date(formValues.date).getDate() === today.getDate()) {
+      if (today.getHours() > time) return true
+      return false
+    }
+    return false
   }
 
   return (
@@ -240,25 +214,23 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
                 )}
                 {activeStep === 2 && (
                   <Stack gap={4}>
-                    <Grid container spacing={1} rowSpacing={2}>
-                      {timeRange?.error && (
-                        <Grid item xs={12}>
-                          <Typography variant='h3' color='primary' textAlign='center'>
-                            Vui lòng chọn khung giờ
-                          </Typography>
-                        </Grid>
-                      )}
-                      {listTimeRange.map((time, index) => (
-                        <Grid key={time.key} item xs={4} sm={2} md={2}>
+                    {timeRange?.error && (
+                      <Typography variant='h3' color='primary' textAlign='center'>
+                        Vui lòng chọn khung giờ
+                      </Typography>
+                    )}
+                    <Stack direction='row' gap={5} flexWrap='wrap'>
+                      {serviceInfo.timeSlot.map((time, index) => (
+                        <Box key={index}>
                           <input
                             hidden
                             type='radio'
                             name='time'
                             id={`time-range-${index}`}
-                            value={index}
+                            value={time}
                             onChange={() => {
                               setCheckedIndex(index)
-                              setTimeRange({ error: false, value: time.value })
+                              setTimeRange({ error: false, value: time })
                             }}
                           />
                           <MainButton
@@ -269,12 +241,18 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
                             colorType={isChecked(index) ? 'primary' : 'neutral'}
                             component='label'
                             htmlFor={`time-range-${index}`}
+                            disabled={
+                              totalSlot[index] === serviceInfo.totalStaff ||
+                              handleDisableByTime(time)
+                            }
                           >
-                            <Typography variant='body1'>{time.label}</Typography>
+                            <Typography variant='body1'>
+                              {convertNumberToHour(time, 'formatTime')}
+                            </Typography>
                           </MainButton>
-                        </Grid>
+                        </Box>
                       ))}
-                    </Grid>
+                    </Stack>
                     <Stack
                       direction='row'
                       alignItems='center'
@@ -328,7 +306,9 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceDuration }) => {
                         </Stack>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
                           <Typography variant='body1'>Giờ làm: </Typography>
-                          <Typography variant='body1'>{timeRange.value}</Typography>
+                          <Typography variant='body1'>
+                            {convertNumberToHour(timeRange.value, 'formatTime')}
+                          </Typography>
                         </Stack>
                       </Stack>
                     )}

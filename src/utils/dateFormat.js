@@ -19,3 +19,15 @@ export const minuteToHours = (minute) => {
     hours: minute / 60,
   }
 }
+
+export const convertNumberToHour = (num, option) => {
+  const hour = Math.floor(num)
+  const minute = (num - hour) * 60
+  if (option === 'formatTime')
+    return `${hour < 10 ? '0' + hour : hour}:${minute < 10 ? '0' + minute : minute}`
+  if (option === 'getTime')
+    return {
+      hour,
+      minute,
+    }
+}
