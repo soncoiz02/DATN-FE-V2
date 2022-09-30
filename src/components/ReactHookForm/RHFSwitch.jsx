@@ -5,15 +5,15 @@ import { Controller, useFormContext } from 'react-hook-form'
 const RHFSwitch = ({ name, ...other }) => {
   const { control } = useFormContext()
   return (
-    <FormControlLabel
-      control={
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => <Switch {...field} checked={field.value} />}
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, value, ...field } }) => (
+        <FormControlLabel
+          {...other}
+          control={<Switch onChange={onChange} value={value} {...field} />}
         />
-      }
-      {...other}
+      )}
     />
   )
 }

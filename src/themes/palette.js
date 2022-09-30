@@ -23,8 +23,8 @@ const SUCCESS = {
 }
 
 const ERROR = {
-  main: '#B72136',
-  light: '#FF4842',
+  main: '#FF6073',
+  light: '#FF7E95',
   contrastText: '#fff',
 }
 
@@ -35,7 +35,7 @@ const INFO = {
 }
 
 const TEXT_COLOR = {
-  primary: '#646464',
+  primary: '#4B5563',
   secondary: '#363B64',
   primaryChannel: '#6A6A6A',
 }
