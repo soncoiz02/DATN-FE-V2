@@ -19,7 +19,7 @@ import useAuth from '../../hook/useAuth'
 
 const Header = ({ openMenu }) => {
   const headerRef = useRef(null)
-  const { isLogin, logout } = useAuth()
+  const { isLogin, logout, userInfo } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -76,7 +76,7 @@ const Header = ({ openMenu }) => {
               <UserInfo onClick={handleOpenPopper}>
                 <Avatar />
                 <Typography variant='h4' color='white'>
-                  dsadsa
+                  {userInfo.name}
                 </Typography>
               </UserInfo>
               <Popper open={open} anchorEl={anchorEl}>
