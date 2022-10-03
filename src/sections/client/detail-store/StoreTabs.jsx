@@ -74,14 +74,18 @@ const StoreTabs = ({ props, services }) => {
 
   return (
     <Box sx={{ width: '100%', padding: '0' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box
+        sx={{
+          borderBottom: `1px solid ${theme.palette.primary.main}`,
+        }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
           aria-label='basic tabs example'
           sx={{
+            marginTop: '-1px',
             w: 1,
-            borderBottom: `1px solid ${theme.palette.primary.main}`,
             padding: '0 20px',
             '& button': {
               width: '200px',

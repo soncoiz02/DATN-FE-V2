@@ -11,7 +11,6 @@ const DetailStore = () => {
   const { id } = useParams()
   const [detailStore, setDetailStore] = useState()
   const [services, setServices] = useState()
-  console.log(id)
 
   const getDetailStore = async () => {
     try {
@@ -25,7 +24,6 @@ const DetailStore = () => {
   const getServiceStore = async (id) => {
     try {
       const data = await serviceApi.getByStore(id)
-      console.log(data)
       setServices(data)
     } catch (error) {
       console.log(error)
