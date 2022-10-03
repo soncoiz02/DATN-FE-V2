@@ -6,9 +6,9 @@ import GlassBox from '../../../components/GlassBox'
 import TabInfo from './TabsItem/TabInfo'
 import TabPost from './TabsItem/TabPost'
 import TabRate from './TabsItem/TabRate'
-import ListServicesByStore from './TabsItem/TabServices'
+import TabServices from './TabsItem/TabServices'
 
-const StoreTabs = ({ props }) => {
+const StoreTabs = ({ props, services }) => {
   const theme = useTheme()
   const navigate = useNavigate()
   const storeDesc = props?.desc
@@ -17,7 +17,7 @@ const StoreTabs = ({ props }) => {
   //Tablist
   const tabList = [
     { name: 'Thông tin', element: <TabInfo storeDesc={storeDesc} />, link: 'info' },
-    { name: 'Dịch vụ', element: <ListServicesByStore />, link: 'services' },
+    { name: 'Dịch vụ', element: <TabServices services={services} />, link: 'services' },
     { name: 'Bài viết', element: <TabPost />, link: 'post' },
     { name: 'Đánh giá', element: <TabRate />, link: 'rate' },
   ]
@@ -53,10 +53,7 @@ const StoreTabs = ({ props }) => {
   let paramItemSelected = ''
   const tabChange = (linkItem) => {
     linkItemSelected = linkItem
-    // console.log(linkItem);
-    // console.log(number);
     paramItemSelected = `/store/${id}/${linkItem}`
-    console.log(paramItemSelected)
     navigate(linkItem)
   }
 
@@ -76,7 +73,7 @@ const StoreTabs = ({ props }) => {
   }, [linkItemSelected])
 
   return (
-    <Box sx={{ width: '100%', padding: '0', marginTop: '-66px' }}>
+    <Box sx={{ width: '100%', padding: '0' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
@@ -87,11 +84,14 @@ const StoreTabs = ({ props }) => {
             borderBottom: `1px solid ${theme.palette.primary.main}`,
             padding: '0 20px',
             '& button': {
+              width: '200px',
+              height: '60px',
               borderTopLeftRadius: '10px',
               borderTopRightRadius: '10px',
               textTransform: 'uppercase',
               fontSize: '18px',
               transition: '0.3s',
+              fontWeight: '700',
             },
             '& button:hover': { background: '#0000001a' },
             '& button.Mui-selected': { backgroundColor: theme.palette.primary.main, color: '#fff' },

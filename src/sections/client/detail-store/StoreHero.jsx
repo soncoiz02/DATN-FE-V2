@@ -20,51 +20,59 @@ const StoreHero = ({ props }) => {
         <StyleBackground src={imgBackground} />
       </Box>
       {/* INFO STORE */}
-      <Box sx={{ padding: '0 20px' }}>
-        <Stack direction='row' justifyContent='space-between' alignItems='flex-start' spacing={3}>
-          <Box>
-            <Stack direction='row' justifyContent='flex-start' alignItems='flex-start' spacing={6}>
-              <GlassBox
-                sx={{
-                  maxHeight: '210px',
-                  maxWidth: '210px',
-                  position: 'relative',
-                  top: '-105px',
-                  border: '10px solid #fff',
-                  borderRadius: '50%',
-                  padding: 0,
-                }}
-              >
-                <StyleAvatar src={imgAvatar} />
-              </GlassBox>
-              <Box>
-                <Typography variant='h2' color={theme.palette.text.secondary}>
-                  {storeName}
-                </Typography>
-                <Typography variant='subtitle1' color={theme.palette.text.primary}>
-                  Địa chỉ: {storeAddress}
-                </Typography>
-                <Typography variant='subtitle1' color={theme.palette.text.primary}>
-                  Hotline: {storeHotline}
-                </Typography>
-              </Box>
-            </Stack>
-          </Box>
-
-          <Box>
-            <Stack direction='row' alignItems='center' spacing={2}>
-              <Typography variant='h2'>{valueRating}.0</Typography>
-              <Rating
-                readOnly
-                value={valueRating || 5}
-                size='large'
-                name='size-large'
-                color={theme.palette.text.secondary}
-                sx={{ margin: '0 5px' }}
-              ></Rating>
-            </Stack>
-          </Box>
-        </Stack>
+      <Box>
+        <Box sx={{}}>
+          <Stack direction={'row'} spacing={2}>
+            <GlassBox
+              component='div'
+              sx={{
+                maxHeight: '210px',
+                maxWidth: '210px',
+                border: '10px solid #fff',
+                borderRadius: '50%',
+                padding: 0,
+                position: 'relative',
+                top: -61,
+              }}
+            >
+              <StyleAvatar src={imgAvatar} />
+            </GlassBox>
+            <Box sx={{ flex: 1 }}>
+              <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                {/* Name  */}
+                <Box>
+                  <StyleTypoName
+                    sx={{ fontSize: '30px', fontWeight: '700' }}
+                    color={theme.palette.text.secondary}
+                  >
+                    {storeName}
+                  </StyleTypoName>
+                </Box>
+                <Box></Box>
+                {/* Rate  */}
+                <Box>
+                  <Stack direction='row' alignItems='center' spacing={1}>
+                    <Typography variant='h2'>{valueRating}.0</Typography>
+                    <Rating
+                      readOnly
+                      value={valueRating || 5}
+                      size='large'
+                      name='size-large'
+                      color={theme.palette.text.secondary}
+                      sx={{ margin: '0 5px' }}
+                    ></Rating>
+                  </Stack>
+                </Box>
+              </Stack>
+              <Typography variant='subtitle1' color={theme.palette.text.primary}>
+                Địa chỉ: {storeAddress}
+              </Typography>
+              <Typography variant='subtitle1' color={theme.palette.text.primary}>
+                Hotline: {storeHotline}
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
       </Box>
     </Box>
   )
@@ -76,6 +84,7 @@ const StyleBackground = styled('img')`
   height: 300px;
   max-height: 100%;
   object-fit: cover;
+  border-radius: 0 0 50px 50px;
 `
 
 const StyleAvatar = styled('img')`
@@ -84,6 +93,16 @@ const StyleAvatar = styled('img')`
   object-fit: cover;
   border-radius: 50%;
   backdrop-filter: blur(10px);
+`
+
+const StyleTypoName = styled(Typography)`
+  font-weight: 700;
+  font-size: 30px;
+`
+
+const StyleBoxFlex = styled(Box)`
+  display: flex;
+  justify-content: space-between;
 `
 
 export default StoreHero

@@ -18,11 +18,13 @@ import styled from 'styled-components'
 import MainButton from '../../../../components/MainButton'
 import formatPrice from '../../../../utils/formatPrice'
 
-const ListServicesByStore = () => {
+const TabServices = ({ services }) => {
   const theme = useTheme()
-  const arrayServiceTest = [1, 2, 3, 4, 12, 12, 41, 24, 1, 24]
-  const arrayCateTest = [1, 2, 3, 5, 4]
-
+  console.log(services)
+  let servicesStore = []
+  if (services) {
+    servicesStore = services
+  }
   const ButtonCate = styled(Button)`
     background-color: ${theme.palette.primary.main};
     color: #fff;
@@ -80,7 +82,7 @@ const ListServicesByStore = () => {
       </Box>
       <Box sx={{ marginTop: '40px' }}>
         <Grid container spacing={5}>
-          {arrayServiceTest.map((item, index) => (
+          {servicesStore?.map((item, index) => (
             <Grid item xs={4} key={index}>
               <Card
                 sx={{
@@ -91,33 +93,28 @@ const ListServicesByStore = () => {
                 }}
               >
                 <CardActionArea sx={{}}>
-                  <CardMedia
-                    component='img'
-                    height='200'
-                    image='https://31massage.vn/uploads/editer/images/massage-ha-noi.jpg'
-                    alt='green iguana'
-                  />
+                  <CardMedia component='img' height='200' image={item.image} alt='green iguana' />
                   <CardContent>
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                      <Typography variant='h3'>Mát xa toàn thân</Typography>
+                      <Typography variant='h3'>{item.name}</Typography>
                       <Stack direction='row' alignItems='center'>
-                        <Typography variant='h3'>4.5</Typography>
+                        <Typography variant='h3'>{item.rated.avg}</Typography>
                         <Star sx={{ color: '#FFAC30' }} />
                       </Stack>
                     </Stack>
                     <Box>
                       <Typography variant='body2' color='text.secondary'>
-                        Thời gian: 60 phút
+                        Thời gian: {item.duration} phút
                       </Typography>
                       <Typography variant='body2' color='text.secondary'>
-                        Tổng số bước: 03
+                        Tổng số bước: {item.steps.length}
                       </Typography>
                     </Box>
                   </CardContent>
                 </CardActionArea>
                 <CardActions sx={{ padding: '0 21px 21px 21px' }}>
                   <MainButton sx={{ marginLeft: 'auto' }} colorType='primary'>
-                    {formatPrice(500000)}
+                    {formatPrice(item.price)}
                   </MainButton>
                 </CardActions>
               </Card>
@@ -129,4 +126,4 @@ const ListServicesByStore = () => {
   )
 }
 
-export default ListServicesByStore
+export default TabServices

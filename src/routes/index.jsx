@@ -24,7 +24,6 @@ const Router = () => {
           <Route path='services' element={<TabServices />} />
           <Route path='post' element={<TabPost />} />
           <Route path='rate' element={<TabRate />} />
-          {/* <Route path=':link' element={<StoreTabs />} /> */}
         </Route>
         <Route path='service/:id' element={<DetailService />} />
       </Route>
