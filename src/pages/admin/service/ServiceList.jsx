@@ -22,11 +22,7 @@ const ServiceList = () => {
         <Typography variant='h2' color='text.secondary'>
           Danh sách dịch vụ
         </Typography>
-        <MainButton
-          colorType='primary'
-          sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}
-          onClick={() => setOpenModal(true)}
-        >
+        <MainButton colorType='primary' sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}>
           <Typography variant='h6'>Thêm +</Typography>
         </MainButton>
       </Stack>

@@ -2,19 +2,17 @@ import React, { useEffect, useState } from 'react'
 import {
   Avatar,
   Chip,
-  ClickAwayListener,
-  Grow,
+  Grid,
   IconButton,
+  InputBase,
   MenuItem,
-  MenuList,
-  Paper,
   Popper,
   Stack,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { MoreVert, Send } from '@mui/icons-material'
+import { MoreVert, Edit, Delete, Search, FilterAlt } from '@mui/icons-material'
 import DataGridCustom from '../../../../components/DataGridCustom'
 import GlassBox from '../../../../components/GlassBox'
 import serviceApi from '../../../../api/service'
@@ -24,32 +22,19 @@ const ServiceTable = () => {
   const [rows, setRows] = useState([])
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef(null)
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen)
-  }
-
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return
-    }
-
-    setOpen(false)
-  }
-
-  function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
-      event.preventDefault()
-      setOpen(false)
+  window.onscroll = () => {
+    if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
+      headerRef.current.classList.add('active')
+    } else {
+      headerRef.current.classList.remove('active')
     }
   }
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
 
-  const handleClick = () => {
-    // handle menu click here
-
-    setOpen(false)
+  const handleOpenPopper = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const columns = [
@@ -64,7 +49,6 @@ const ServiceTable = () => {
       width: isMobile ? 130 : 180,
       renderCell: (params) => {
         const cellData = params.row
-        console.log('1', params)
         return (
           <Stack gap={1} direction='row' alignItems='center'>
             <Avatar variant='rounded' src={cellData.image} />
@@ -120,42 +104,28 @@ const ServiceTable = () => {
     {
       field: 'action',
       headerName: '',
-      flex: isMobile ? 0 : 1,
+      width: isMobile ? 50 : 80,
       renderCell: () => {
         return (
           <>
-            <IconButton
-              ref={anchorRef}
-              aria-controls={open ? 'menu-list-grow' : undefined}
-              aria-haspopup='true'
-              onClick={handleToggle}
-              size='small'
-            >
+            <IconButton onClick={handleOpenPopper}>
               <MoreVert fontSize='small' />
             </IconButton>
-            <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
-              {({ TransitionProps, placement }) => (
-                <Grow {...TransitionProps} style={{ transformOrigin: placement === 'left-start' }}>
-                  <Paper>
-                    <ClickAwayListener onClickAway={handleClose}>
-                      <MenuList
-                        autoFocusItem={open}
-                        id='menu-list-grow'
-                        onKeyDown={handleListKeyDown}
-                      >
-                        <MenuItem onClick={handleClick}>
-                          <Send fontSize='small' />
-                          <Typography>Chỉnh sửa</Typography>
-                        </MenuItem>
-                        <MenuItem onClick={handleClick}>
-                          <Send fontSize='small' />
-                          <Typography>Xóa</Typography>
-                        </MenuItem>
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
+            <Popper open={open} anchorEl={anchorEl} placement='left-start'>
+              <GlassBox sx={{ padding: '3px', borderRadius: '10px', bgcolor: 'white' }}>
+                <MenuItem anchorEl={anchorEl}>
+                  <Edit fontSize='small' />
+                  <Typography variant='body1' sx={{ padding: '0 5px' }}>
+                    Chỉnh sửa
+                  </Typography>
+                </MenuItem>
+                <MenuItem anchorEl={anchorEl}>
+                  <Delete fontSize='small' color='primary' />
+                  <Typography variant='body1' color='primary' sx={{ padding: '0 5px' }}>
+                    Xóa
+                  </Typography>
+                </MenuItem>
+              </GlassBox>
             </Popper>
           </>
         )
@@ -172,7 +142,6 @@ const ServiceTable = () => {
         id: item._id,
       }))
       setRows(rowData)
-      console.log(rowData)
     } catch (error) {
       console.log(error)
     }
@@ -184,6 +153,38 @@ const ServiceTable = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
+      <Grid container sx={{ marginBottom: '50px' }}>
+        <Grid item xs={6}>
+          <form action=''>
+            <GlassBox
+              sx={{
+                p: '5px 5px 5px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                width: 1,
+                height: '50px',
+                borderRadius: '10px',
+              }}
+            >
+              <Search />
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder='Tìm kiếm dịch vụ ...'
+                inputProps={{ 'aria-label': 'Tìm kiếm dịch vụ' }}
+              />
+            </GlassBox>
+          </form>
+        </Grid>
+        <Grid
+          item
+          xs={6}
+          sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
+        >
+          <IconButton>
+            <FilterAlt fontSize='large' />
+          </IconButton>
+        </Grid>
+      </Grid>
       <DataGridCustom rows={rows} columns={columns} />
     </GlassBox>
   )
