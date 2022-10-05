@@ -11,6 +11,7 @@ import HomePage from '../pages/client/home'
 import Login from '../pages/auth/Login'
 import Store from '../pages/client/store'
 import AuthLayout from '../layouts/auth/AuthLayout'
+import Register from '../pages/auth/Register'
 const Router = () => {
   return (
     <Routes>
@@ -22,6 +23,7 @@ const Router = () => {
       </Route>
       <Route path='auth' element={<AuthLayout />}>
         <Route path='login' element={<Login />} />
+        <Route path='register' element={<Register />} />
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
