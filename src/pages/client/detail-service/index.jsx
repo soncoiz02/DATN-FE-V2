@@ -20,6 +20,7 @@ const DetailService = () => {
   const handleGetDetailService = async () => {
     try {
       const data = await serviceApi.getOne(id)
+      console.log(data)
       setServiceInfo(data)
     } catch (error) {
       console.log(error)
@@ -46,7 +47,7 @@ const DetailService = () => {
             </Stack>
           </GlassBox>
           <ModalRegisterService
-            serviceDuration={serviceInfo.duration}
+            serviceInfo={serviceInfo}
             openModal={openModal}
             onCloseModal={() => setOpenModal(false)}
           />

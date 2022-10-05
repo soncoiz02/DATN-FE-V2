@@ -28,6 +28,9 @@ const serviceApi = {
   getRegisteredService(id) {
     return axiosClient.get(`/order/${id}`)
   },
+  getTotalRegisterInADay(serviceId, date) {
+    return axiosClient.get(`/getToDayOrder?service=${serviceId}&date=${date}`)
+  },
 }
 
 export default serviceApi

@@ -5,15 +5,15 @@ import { Controller, useFormContext } from 'react-hook-form'
 const RHFCheckBox = ({ name, ...other }) => {
   const { control } = useFormContext()
   return (
-    <FormControlLabel
-      control={
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => <Checkbox {...field} checked={field.value} />}
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, value, ...field } }) => (
+        <FormControlLabel
+          {...other}
+          control={<Checkbox onChange={onChange} value={value} {...field} />}
         />
-      }
-      {...other}
+      )}
     />
   )
 }
