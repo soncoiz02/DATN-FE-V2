@@ -27,10 +27,12 @@ import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import { convertNumberToHour, dateFormat, minuteToHours } from '../../../utils/dateFormat'
 import phoneRegExp from '../../../utils/phoneRegExp'
+import useAuth from '../../../hook/useAuth'
 
 import addDate from 'date-fns/add'
 import { useParams } from 'react-router-dom'
 import serviceApi from '../../../api/service'
+import { useEffect } from 'react'
 
 const registerStep = [
   {
@@ -60,8 +62,11 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const [timeRange, setTimeRange] = useState()
   const [formValues, setFormValues] = useState()
   const [registerDetail, setRegisterDetail] = useState()
-  const serviceId = useParams().id
   const [totalSlot, setTotalSlot] = useState([])
+  const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
+
+  const serviceId = useParams().id
+  const { userInfo, isLogin } = useAuth()
 
   // form schema
   const formSchema = yup.object().shape({
@@ -90,7 +95,8 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   const onSubmit = (values) => {
     setFormValues(values)
-    handleGetTotalRegisteredService(serviceId, values.date)
+    handleGetTotalRegisteredService(values.date)
+    handleGetRegisteredServiceByUser(values.phone, values.date)
     setActiveStep(activeStep + 1)
   }
 
@@ -105,6 +111,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }
 
   const handleFinalStep = () => {
+    if (isLogin === false) return alert('You need to login')
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
     const { hour, minute } = convertNumberToHour(timeRange.value, 'getTime')
     const startDate = new Date(formValues.date.setHours(hour, minute, 0))
@@ -118,10 +125,46 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       serviceId,
       startDate,
       endDate,
-      userId: '632c2a631c83d43cae12d886',
+      userId: userInfo._id,
       status: '632bc736dc2a7f68a3f383e7',
     }
     handleRegisterService(registerData)
+  }
+
+  const handleDisableByTime = (time) => {
+    const today = new Date()
+    if (new Date(formValues.date).getDate() === today.getDate()) {
+      if (today.getHours() > time) return true
+      return false
+    }
+    return false
+  }
+
+  const fillUserData = () => {
+    reset({
+      name: userInfo?.name,
+      phone: userInfo?.phone,
+      date: new Date(),
+    })
+  }
+
+  const handleDisableByUser = (time) => {
+    if (userServiceRegisteredTime.length === 0) return false
+    let isDisable = false
+    userServiceRegisteredTime.forEach((item) => {
+      if (time < item.end && time >= item.start) isDisable = true
+    })
+    return isDisable
+  }
+
+  // async function
+  const handleGetTotalRegisteredService = async (date) => {
+    try {
+      const data = await serviceApi.getTotalRegisterInADay(serviceId, date.toISOString())
+      setTotalSlot(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleRegisterService = async (registerData) => {
@@ -134,22 +177,39 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     }
   }
 
-  const handleCloseModal = () => {
+  const handleGetRegisteredServiceByUser = async (userPhone, date) => {
+    try {
+      const data = await serviceApi.getRegisteredServiceByUserAndDate(
+        userPhone,
+        serviceId,
+        date.toISOString(),
+      )
+      setUserServiceRegisteredTime(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // function close modal
+
+  const handleResetAllData = () => {
+    reset(defaultFormValues)
     setActiveStep(1)
+    setCheckedIndex(-1)
     setFormValues(null)
     setTimeRange(null)
-    reset(defaultFormValues)
+    setRegisterDetail(null)
+    setTotalSlot([])
+  }
+
+  const handleCloseModal = () => {
+    handleResetAllData()
     onCloseModal()
   }
 
-  const handleDisableByTime = (time) => {
-    const today = new Date()
-    if (new Date(formValues.date).getDate() === today.getDate()) {
-      if (today.getHours() > time) return true
-      return false
-    }
-    return false
-  }
+  useEffect(() => {
+    fillUserData()
+  }, [])
 
   return (
     <Modal open={openModal} onClose={onCloseModal}>
@@ -197,11 +257,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                           <RHFDatePicker name='date' label='Chọn ngày' disablePast />
                         </Grid>
                       </Grid>
-                      <FormControlLabel
-                        value={false}
-                        control={<Checkbox />}
-                        label='Đăng ký cho người khác'
-                      />
                       <MainButton
                         sx={{ alignSelf: 'center', padding: '15px 85px', mt: 10 }}
                         colorType='primary'
@@ -243,7 +298,8 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                             htmlFor={`time-range-${index}`}
                             disabled={
                               totalSlot[index] === serviceInfo.totalStaff ||
-                              handleDisableByTime(time)
+                              handleDisableByTime(time) ||
+                              handleDisableByUser(time)
                             }
                           >
                             <Typography variant='body1'>
@@ -253,11 +309,27 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                         </Box>
                       ))}
                     </Stack>
+                    <Box>
+                      <Typography variant='h3' color='primary' mb={1}>
+                        Khung giờ sẽ khóa nếu:
+                      </Typography>
+                      <Stack>
+                        <Typography variant='title2'>
+                          - Khung giờ đó đã qua so với thời gian hiện tại
+                        </Typography>
+                        <Typography variant='title2'>
+                          - Khung giờ đó đã đạt giới hạn lịch đặt tối thiểu
+                        </Typography>
+                        <Typography variant='title2'>
+                          - Số điện thoại bạn đặt đã có lịch đặt trong khoảng khung giờ đó
+                        </Typography>
+                      </Stack>
+                    </Box>
                     <Stack
                       direction='row'
                       alignItems='center'
                       justifyContent='space-between'
-                      sx={{ mt: { xs: 3, sm: 10 } }}
+                      sx={{ mt: 3 }}
                     >
                       <MainButton
                         sx={{ border: '1px solid #e3e3e3', px: { xs: '25px', sm: '50px' } }}

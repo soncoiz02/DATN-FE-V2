@@ -14,10 +14,11 @@ import MainButton from '../../components/MainButton'
 import Logo from '../../assets/img/logo.png'
 import authApi from '../../api/auth'
 import { useCookies } from 'react-cookie'
+import useAuth from '../../hook/useAuth'
 
 function Login() {
-  const [cookies, setCookie] = useCookies(['user'])
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const loginSchema = yup.object().shape({
     username: yup.string().trim().required('Vui lòng nhập tên đăng nhập'),
@@ -46,9 +47,8 @@ function Login() {
   const handleLogin = async (loginData) => {
     try {
       const data = await authApi.login(loginData)
-      console.log(data)
-      setCookie('token', data.token, { path: '/' })
-      setCookie('user', data.user, { path: '/' })
+      login(data.token, data.user)
+      if (data.user.roleId.name === 'Admin') return navigate('/admin/dashboard')
       navigate('/')
     } catch (error) {
       const errorMessage = error.response?.data.message
