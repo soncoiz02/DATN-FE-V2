@@ -25,6 +25,9 @@ const serviceApi = {
   registerService(data) {
     return axiosClient.post('/order', data)
   },
+  getByStore(id) {
+    return axiosClient.get(`/service/findByStoreId/${id}`)
+    },
   getRegisteredService(id) {
     return axiosClient.get(`/order/${id}`)
   },
