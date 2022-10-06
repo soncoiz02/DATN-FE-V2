@@ -20,6 +20,7 @@ const DetailService = () => {
   const handleGetDetailService = async () => {
     try {
       const data = await serviceApi.getOne(id)
+      console.log(data)
       setServiceInfo(data)
     } catch (error) {
       console.log(error)

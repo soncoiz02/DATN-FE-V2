@@ -100,6 +100,16 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     setActiveStep(activeStep + 1)
   }
 
+  const handleGetTotalRegisteredService = async (id, date) => {
+    try {
+      const data = await serviceApi.getTotalRegisterInADay(id, date.toISOString())
+      console.log(data)
+      setTotalSlot(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleFinalStep = () => {
     if (isLogin === false) return alert('You need to login')
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
