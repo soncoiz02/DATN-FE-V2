@@ -27,7 +27,7 @@ const serviceApi = {
   },
   getByStore(id) {
     return axiosClient.get(`/service/findByStoreId/${id}`)
-    },
+  },
   getRegisteredService(id) {
     return axiosClient.get(`/order/${id}`)
   },
