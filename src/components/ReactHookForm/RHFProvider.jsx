@@ -4,7 +4,9 @@ import { FormProvider } from 'react-hook-form'
 const RHFProvider = ({ methods, onSubmit, children }) => {
   return (
     <FormProvider {...methods}>
-      <form onSubmit={onSubmit}>{children}</form>
+      <form style={{ width: '100%' }} onSubmit={onSubmit}>
+        {children}
+      </form>
     </FormProvider>
   )
 }
