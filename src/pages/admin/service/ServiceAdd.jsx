@@ -1,10 +1,9 @@
-import { Breadcrumbs, Stack, Link, Typography } from '@mui/material'
+import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
-import MainButton from '../../../components/MainButton'
-import ServiceTable from '../../../sections/admin/service/list/ServiceTable'
+import ServiceForm from '../../../sections/admin/service/ServiceForm'
 
-const ServiceList = () => {
+const ServiceAdd = () => {
   return (
     <Stack gap={2}>
       <Breadcrumbs separator='/'>
@@ -15,25 +14,19 @@ const ServiceList = () => {
           Dịch vụ
         </Typography>
         <Typography variant='body1' color='primary'>
-          Danh sách
+          Tạo mới
         </Typography>
       </Breadcrumbs>
       <Stack direction='row' justifyContent='space-between'>
         <Typography variant='h2' color='text.secondary'>
-          Danh sách dịch vụ
+          Thêm mới dịch vụ
         </Typography>
-        <MainButton
-          colorType='primary'
-          component={RouterLink}
-          to='add'
-          sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}
-        >
-          <Typography variant='h6'>Thêm +</Typography>
-        </MainButton>
       </Stack>
-      <ServiceTable />
+
+      {/*  */}
+      <ServiceForm />
     </Stack>
   )
 }
 
-export default ServiceList
+export default ServiceAdd

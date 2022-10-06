@@ -5,6 +5,7 @@ import ClientLayout from '../layouts/client/ClientLayout'
 import CalendarList from '../pages/admin/calendar/CalendarList'
 import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
 import Dashboard from '../pages/admin/dashboard'
+import ServiceAdd from '../pages/admin/service/ServiceAdd'
 import ServiceList from '../pages/admin/service/ServiceList'
 import DetailService from '../pages/client/detail-service'
 import DetailStore from '../pages/client/detail-store'
@@ -24,6 +25,7 @@ const Router = () => {
         <Route path='calendar-schedule' element={<CalendarManagement />} />
         <Route path='calendar-list' element={<CalendarList />} />
         <Route path='services-management' element={<ServiceList />} />
+        <Route path='services-management/add' element={<ServiceAdd />} />
       </Route>
     </Routes>
   )
