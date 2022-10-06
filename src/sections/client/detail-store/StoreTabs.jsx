@@ -1,8 +1,7 @@
-import { Box, Tab, Tabs, Typography, useTheme } from '@mui/material'
-import React, { useRef } from 'react'
-import { useEffect } from 'react'
-import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import GlassBox from '../../../components/GlassBox'
+import { Article, Info, List, Poll } from '@mui/icons-material'
+import { Box, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material'
+import React, { useEffect, useRef } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import TabInfo from './TabsItem/TabInfo'
 import TabPost from './TabsItem/TabPost'
 import TabRate from './TabsItem/TabRate'
@@ -11,15 +10,20 @@ import TabServices from './TabsItem/TabServices'
 const StoreTabs = ({ props, services }) => {
   const theme = useTheme()
   const navigate = useNavigate()
-  const storeDesc = props?.desc
+  const storeInfo = props
   const location = useLocation()
   const { id } = useParams()
   //Tablist
   const tabList = [
-    { name: 'Thông tin', element: <TabInfo storeDesc={storeDesc} />, link: 'info' },
-    { name: 'Dịch vụ', element: <TabServices services={services} />, link: 'services' },
-    { name: 'Bài viết', element: <TabPost />, link: 'post' },
-    { name: 'Đánh giá', element: <TabRate />, link: 'rate' },
+    { name: 'Thông tin', icon: <Info />, element: <TabInfo storeInfo={storeInfo} />, link: 'info' },
+    {
+      name: 'Dịch vụ',
+      icon: <List />,
+      element: <TabServices services={services} />,
+      link: 'services',
+    },
+    { name: 'Bài viết', icon: <Article />, element: <TabPost />, link: 'post' },
+    { name: 'Đánh giá', icon: <Poll />, element: <TabRate />, link: 'rate' },
   ]
   //TabPanel
   function TabPanel(props) {
@@ -51,11 +55,14 @@ const StoreTabs = ({ props, services }) => {
   }
   let linkItemSelected = ''
   let paramItemSelected = ''
+
   const tabChange = (linkItem) => {
     linkItemSelected = linkItem
     paramItemSelected = `/store/${id}/${linkItem}`
     navigate(linkItem)
   }
+
+  // const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'))
 
   useEffect(() => {
     if (location.pathname == `/store/${id}/info`) {
@@ -73,7 +80,7 @@ const StoreTabs = ({ props, services }) => {
   }, [linkItemSelected])
 
   return (
-    <Box sx={{ width: '100%', padding: '0' }}>
+    <Box sx={{ marginTop: { xs: '24px', sm: '0' }, width: '100%', padding: '0' }}>
       <Box
         sx={{
           borderBottom: `1px solid ${theme.palette.primary.main}`,
@@ -83,19 +90,22 @@ const StoreTabs = ({ props, services }) => {
           value={value}
           onChange={handleChange}
           aria-label='basic tabs example'
+          variant='scrollable'
+          scrollButtons={false}
           sx={{
-            marginTop: '-1px',
-            w: 1,
-            padding: '0 20px',
+            marginTop: '-2px',
+            padding: { xs: '0', sm: '0 20px' },
+            justifyContent: { xs: 'center', sm: 'start' },
             '& button': {
-              width: '200px',
-              height: '60px',
+              width: { xs: '120px', sm: '150px', md: '200px' },
+              height: { xs: '30px', sm: '60px' },
               borderTopLeftRadius: '10px',
               borderTopRightRadius: '10px',
               textTransform: 'uppercase',
-              fontSize: '18px',
+              fontSize: { xs: '12px', sm: '18px' },
               transition: '0.3s',
               fontWeight: '700',
+              background: '#fff',
             },
             '& button:hover': { background: '#0000001a' },
             '& button.Mui-selected': { backgroundColor: theme.palette.primary.main, color: '#fff' },
@@ -103,6 +113,7 @@ const StoreTabs = ({ props, services }) => {
         >
           {tabList.map((item, index) => (
             <Tab
+              sx={{}}
               label={item.name}
               {...a11yProps(index)}
               key={index}
