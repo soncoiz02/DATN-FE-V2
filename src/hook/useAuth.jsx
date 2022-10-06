@@ -4,9 +4,6 @@ import { useCookies } from 'react-cookie'
 
 const useAuth = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
-  const [isLogin, setIsLogin] = useState(false)
-  const [userInfo, setUserInfo] = useState()
-
   const logout = () => {
     removeCookie('token', { path: '/' })
     removeCookie('user', { path: '/' })
@@ -19,11 +16,7 @@ const useAuth = () => {
     setCookie('user', user, { path: '/' })
   }
 
-  useEffect(() => {
-    if (cookies.token) setIsLogin(true)
-    if (cookies.user) setUserInfo(cookies.user)
-  }, [cookies])
-  return { isLogin, userInfo, logout, login }
+  return { isLogin: !!cookies.token, userInfo: cookies.user, logout, login }
 }
 
 export default useAuth
