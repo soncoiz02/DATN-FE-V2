@@ -27,16 +27,19 @@ const serviceApi = {
   },
   getByStore(id) {
     return axiosClient.get(`/service/findByStoreId/${id}`)
-    },
+  },
   getRegisteredService(id) {
     return axiosClient.get(`/order/${id}`)
   },
   getTotalRegisterInADay(serviceId, date) {
     return axiosClient.get(`/getOrderByDate?service=${serviceId}&date=${date}`)
   },
-  getRegisteredServiceByUserAndDate(userPhone, serviceId, date) {
+  getRegisteredServiceByUserAndDate(userPhone, date) {
+    return axiosClient.get(`/getOrderByUserAndDate?date=${date}&userPhone=${userPhone}`)
+  },
+  getTimeSlotCheckByStaff(categoryId, serviceId, date) {
     return axiosClient.get(
-      `/getOrderByUserAndDate?date=${date}&service=${serviceId}&userPhone=${userPhone}`,
+      `/getOrderByStaffCategory?categoryId=${categoryId}&serviceId=${serviceId}&date=${date}`,
     )
   },
 }

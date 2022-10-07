@@ -2,9 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { AccessTime, CheckCircle, Close, FileDownloadDone, Person } from '@mui/icons-material'
 import {
   Box,
-  Checkbox,
   Container,
-  FormControlLabel,
   Grid,
   IconButton,
   Modal,
@@ -25,14 +23,14 @@ import MainButton from '../../../components/MainButton'
 import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
+import useAuth from '../../../hook/useAuth'
 import { convertNumberToHour, dateFormat, minuteToHours } from '../../../utils/dateFormat'
 import phoneRegExp from '../../../utils/phoneRegExp'
-import useAuth from '../../../hook/useAuth'
 
 import addDate from 'date-fns/add'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import serviceApi from '../../../api/service'
-import { useEffect } from 'react'
 
 const registerStep = [
   {
@@ -64,6 +62,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const [registerDetail, setRegisterDetail] = useState()
   const [totalSlot, setTotalSlot] = useState([])
   const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
+  const [timeSlotCheckByStaff, setTimeSlotCheckByStaff] = useState([])
 
   const serviceId = useParams().id
   const { userInfo, isLogin } = useAuth()
@@ -97,25 +96,27 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     setFormValues(values)
     handleGetTotalRegisteredService(values.date)
     handleGetRegisteredServiceByUser(values.phone, values.date)
+    handleGetTimeSlotCheckByStaff(values.date)
     setActiveStep(activeStep + 1)
-  }
-
-  const handleGetTotalRegisteredService = async (id, date) => {
-    try {
-      const data = await serviceApi.getTotalRegisterInADay(id, date.toISOString())
-      console.log(data)
-      setTotalSlot(data)
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   const handleFinalStep = () => {
     if (isLogin === false) return alert('You need to login')
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
-    const { hour, minute } = convertNumberToHour(timeRange.value, 'getTime')
-    const startDate = new Date(formValues.date.setHours(hour, minute, 0))
-    const endDate = addDate(startDate, minuteToHours(serviceInfo.duration + 15))
+
+    const startDateConverted = convertNumberToHour(timeRange.value, 'getTime')
+    // end time = start time + duration + 15
+    const endDateConverted = convertNumberToHour(
+      timeRange.value + (serviceInfo.duration + 15) / 60,
+      'getTime',
+    )
+
+    const startDate = new Date(
+      formValues.date.setHours(startDateConverted.hour, startDateConverted.minute, 0),
+    )
+    const endDate = new Date(
+      formValues.date.setHours(endDateConverted.hour, endDateConverted.minute, 0),
+    )
 
     const registerData = {
       infoUser: {
@@ -131,10 +132,18 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     handleRegisterService(registerData)
   }
 
-  const handleDisableByTime = (time) => {
+  const checkTimeSlotByStaff = (index) => {
+    return timeSlotCheckByStaff[index]
+  }
+
+  const handleDisableByCurrentTime = (time) => {
     const today = new Date()
     if (new Date(formValues.date).getDate() === today.getDate()) {
-      if (today.getHours() > time) return true
+      const hourNumber = today.getHours()
+      const minuteNumber = today.getMinutes() / 60
+      const currentTime = hourNumber + minuteNumber
+
+      if (currentTime > time) return true
       return false
     }
     return false
@@ -179,12 +188,21 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   const handleGetRegisteredServiceByUser = async (userPhone, date) => {
     try {
-      const data = await serviceApi.getRegisteredServiceByUserAndDate(
-        userPhone,
-        serviceId,
-        date.toISOString(),
-      )
+      const data = await serviceApi.getRegisteredServiceByUserAndDate(userPhone, date.toISOString())
       setUserServiceRegisteredTime(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleGetTimeSlotCheckByStaff = async (date) => {
+    try {
+      const data = await serviceApi.getTimeSlotCheckByStaff(
+        serviceInfo.categoryId,
+        serviceInfo._id,
+        date,
+      )
+      setTimeSlotCheckByStaff(data)
     } catch (error) {
       console.log(error)
     }
@@ -297,8 +315,8 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                             component='label'
                             htmlFor={`time-range-${index}`}
                             disabled={
-                              totalSlot[index] === serviceInfo.totalStaff ||
-                              handleDisableByTime(time) ||
+                              checkTimeSlotByStaff(index) ||
+                              handleDisableByCurrentTime(time) ||
                               handleDisableByUser(time)
                             }
                           >
@@ -318,7 +336,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                           - Khung giờ đó đã qua so với thời gian hiện tại
                         </Typography>
                         <Typography variant='title2'>
-                          - Khung giờ đó đã đạt giới hạn lịch đặt tối thiểu
+                          - Khung giờ đó không còn nhân viên làm dịch vụ
                         </Typography>
                         <Typography variant='title2'>
                           - Số điện thoại bạn đặt đã có lịch đặt trong khoảng khung giờ đó
