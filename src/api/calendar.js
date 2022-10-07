@@ -19,6 +19,9 @@ const calendarApi = {
   updateOrderStatusToDone(id) {
     return axiosClient.put(`/order/${id}`, { status: statusId.done })
   },
+  updateOrder(data, id) {
+    return axiosClient.put(`/order/${id}`, data)
+  },
 }
 
 export default calendarApi

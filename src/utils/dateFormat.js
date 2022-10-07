@@ -6,17 +6,11 @@ export const dateFormat = (date) => {
 }
 
 export const minuteToHours = (minute) => {
-  if (minute > 60) {
-    const hours = Math.floor(minute / 60)
-    const minuteLeft = minute - hours * 60
-    return {
-      hours,
-      minutes: minuteLeft,
-    }
-  }
-
+  const hours = Math.floor(minute / 60)
+  const minuteLeft = minute - hours * 60
   return {
-    hours: minute / 60,
+    hours,
+    minutes: minuteLeft,
   }
 }
 
