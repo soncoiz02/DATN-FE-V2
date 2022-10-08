@@ -8,11 +8,8 @@ const RHFSwitch = ({ name, ...other }) => {
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value, ...field } }) => (
-        <FormControlLabel
-          {...other}
-          control={<Switch onChange={onChange} value={value} {...field} />}
-        />
+      render={({ field }) => (
+        <FormControlLabel {...other} control={<Switch {...field} checked={field.value} />} />
       )}
     />
   )
