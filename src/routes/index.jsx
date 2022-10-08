@@ -4,6 +4,7 @@ import AdminLayout from '../layouts/admin/AdminLayout'
 import ClientLayout from '../layouts/client/ClientLayout'
 import CalendarList from '../pages/admin/calendar/CalendarList'
 import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
+import CategoryServices from '../pages/admin/category-services'
 import Dashboard from '../pages/admin/dashboard'
 import DetailService from '../pages/client/detail-service'
 import DetailStore from '../pages/client/detail-store'
@@ -39,6 +40,7 @@ const Router = () => {
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='calendar-schedule' element={<CalendarManagement />} />
         <Route path='calendar-list' element={<CalendarList />} />
+        <Route path='category-management' element={<CategoryServices />} />
       </Route>
     </Routes>
   )
