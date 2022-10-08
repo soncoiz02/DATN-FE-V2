@@ -58,7 +58,7 @@ const Header = ({ openMenu }) => {
           </Stack>
           {!isLogin ? (
             <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-              <MainButton colorType='neutral' component={RouterLink} to='/login'>
+              <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
                 Đăng ký
               </MainButton>
               <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
