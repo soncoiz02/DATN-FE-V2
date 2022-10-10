@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Avatar,
   Chip,
@@ -20,14 +21,16 @@ import formatPrice from '../../../../utils/formatPrice'
 
 const ServiceTable = () => {
   const [rows, setRows] = useState([])
+  const [idService, setIdService] = useState([])
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
-  const handleOpenPopper = (event) => {
+  const handleOpenPopper = (event, id) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
+    setIdService(id)
   }
 
   const columns = [
@@ -98,15 +101,15 @@ const ServiceTable = () => {
       field: 'action',
       headerName: '',
       width: isMobile ? 50 : 80,
-      renderCell: () => {
+      renderCell: (params) => {
         return (
           <>
-            <IconButton onClick={handleOpenPopper}>
+            <IconButton onClick={(e) => handleOpenPopper(e, params.id)}>
               <MoreVert fontSize='small' />
             </IconButton>
             <Popper open={open} anchorEl={anchorEl} placement='left-start'>
               <GlassBox sx={{ padding: '3px', borderRadius: '10px', bgcolor: 'white' }}>
-                <MenuItem anchorEl={anchorEl}>
+                <MenuItem component={Link} to={`edit/${idService}`}>
                   <Edit fontSize='small' />
                   <Typography variant='body1' sx={{ padding: '0 5px' }}>
                     Chỉnh sửa
