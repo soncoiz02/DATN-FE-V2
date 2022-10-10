@@ -94,28 +94,20 @@ const ServiceForm = () => {
   const { handleSubmit, reset } = methods
 
   const onSubmit = (values) => {
+    const serviceData = {
+      name: values.name,
+      categoryId: values.category,
+      price: values.price,
+      duration: values.duration,
+      totalStaff: values.totalStaff,
+      status: values.status,
+      image: 'https://picsum.photos/200/300',
+      desc: values.desc,
+    }
     if (id) {
-      handleUpdateService(id, {
-        name: values.name,
-        categoryId: values.category,
-        price: values.price,
-        duration: values.duration,
-        totalStaff: values.totalStaff,
-        status: values.status,
-        image: 'https://picsum.photos/200/300',
-        desc: values.desc,
-      })
+      handleUpdateService(id, serviceData)
     } else {
-      handleAddService({
-        name: values.name,
-        categoryId: values.category,
-        price: values.price,
-        duration: values.duration,
-        totalStaff: values.totalStaff,
-        status: values.status,
-        image: 'https://picsum.photos/200/300',
-        desc: values.desc,
-      })
+      handleAddService(serviceData)
     }
   }
 
@@ -145,7 +137,6 @@ const ServiceForm = () => {
   const handleGetOneService = async (id) => {
     try {
       const data = await serviceApi.getOne(id)
-      // console.log(data.categoryId._id);
       reset({
         ...data,
         category: data.categoryId._id,
@@ -160,7 +151,7 @@ const ServiceForm = () => {
       const data = await categoryApi.getAll()
       const options = data.map((category) => ({ id: category._id, label: category.name }))
       setOptions(options)
-      console.log(options)
+      // console.log(options)
     } catch (error) {
       console.log(error)
     }
@@ -220,12 +211,14 @@ const ServiceForm = () => {
                 <RHFTextField name='name' label='Tên dịch vụ' />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <RHFAutoComplete
-                  name='category'
-                  options={options}
-                  label='Danh mục'
-                  variant='body1'
-                />
+                <RHFSelect name='category' label='Danh mục'>
+                  {options.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {' '}
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <RHFTextField name='price' label='Giá tiền' />
