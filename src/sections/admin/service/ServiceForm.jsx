@@ -1,17 +1,51 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PhotoCamera } from '@mui/icons-material'
-import { Avatar, Box, Grid, IconButton, Stack, styled, Typography } from '@mui/material'
+import {
+  Avatar,
+  Box,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  SliderValueLabel,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
+
+import categoryApi from '../../../api/category'
 
 import { useForm } from 'react-hook-form'
 import RHFAutoComplete from '../../../components/ReactHookForm/RHFAutoComplete'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
+import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
-import MUIRichTextEditor from 'mui-rte'
+// import MUIRichTextEditor from 'mui-rte'
+
+const defaultFormValues = {
+  name: '',
+  category: '',
+  price: '',
+  duration: '',
+  totalStaff: '',
+  status: 0,
+  image: '',
+  desc: '',
+}
+const listStatus = [
+  { label: 'Đang hoạt động', value: 1 },
+  { value: 0, label: 'Chưa hoạt động' },
+]
 
 const ServiceForm = () => {
+  // PREVIEW IMAGE
   const [img, setImg] = useState()
 
   const handlePreviewImg = (e) => {
@@ -22,25 +56,53 @@ const ServiceForm = () => {
     console.log(file)
   }
 
-  const options = [
-    { label: 'Dịch vụ triệt lông vĩnh viễn' },
-    { label: 'Dịch vụ phun xăm thẩm mỹ' },
-    { label: 'Dịch vụ trị nám, tàn nhang' },
-    { label: 'Dịch vụ phun xăm thẩm mỹ' },
-    { label: 'Dịch vụ trị nám, tàn nhang' },
-    { label: 'Dịch vụ phun xăm thẩm mỹ' },
-    { label: 'Dịch vụ trị nám, tàn nhang' },
-    { label: 'Dịch vụ phun xăm thẩm mỹ' },
-    { label: 'Dịch vụ trị nám, tàn nhang' },
-  ]
+  // CATEGORY
+  const [options, setOptions] = useState([])
 
-  const status = [{ label: 'Đang hoạt động' }, { label: 'Chưa hoạt động' }]
+  const formSchema = yup.object().shape({
+    name: yup.string().trim().required('Vui lòng nhập tên dịch vụ'),
+    category: yup.string().trim().required('Vui lòng chọn danh mục'),
+    price: yup
+      .string()
+      .trim()
+      .required('Vui lòng nhập giá')
+      .matches(/^[1-9]+[0-9]*00000/, 'Bạn phải nhập giá trị là số và là bội của 100000'),
+    duration: yup
+      .string()
+      .trim()
+      .required('Vui lòng nhập thời gian')
+      .matches(/^[1-9]\d*$/, 'Bạn phải nhập giá trị là số'),
+    totalStaff: yup
+      .string()
+      .trim()
+      .required('Vui lòng nhập số nhân viên')
+      .matches(/^[1-9]\d*$/, 'Bạn phải nhập giá trị là số'),
+    status: yup.string().trim().required('Vui lòng chọn trạng thái'),
+    desc: yup.string().trim().required('Vui lòng nhập thêm mô tả'),
+  })
 
-  const methods = useForm()
+  const methods = useForm({
+    defaultValues: defaultFormValues,
+    resolver: yupResolver(formSchema),
+  })
 
   const { handleSubmit, reset } = methods
 
   const onSubmit = () => {}
+
+  const handleGetServices = async () => {
+    try {
+      const data = await categoryApi.getAll()
+      const options = data.map((category) => ({ id: category._id, label: category.name }))
+      setOptions(options)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleGetServices()
+  }, [])
 
   return (
     <Grid container spacing={3}>
@@ -72,7 +134,9 @@ const ServiceForm = () => {
                     <Typography variant='subtitle2'>Tải ảnh lên</Typography>
                   </Stack>
                 )}
-                <input hidden accept='image/*' type='file' />
+                <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                  <input hidden accept='image/*' type='file' name='picture' />
+                </RHFProvider>
               </IconButton>
             </CustomBox>
             <Typography variant='subtitle2' sx={{ textAlign: 'center' }}>
@@ -106,12 +170,18 @@ const ServiceForm = () => {
                 <RHFTextField name='totalStaff' label='Nhân viên' />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <RHFAutoComplete name='status' options={status} label='Trạng thái' />
+                <RHFSelect name='status' label='Trạng thái' variant='outlined'>
+                  {listStatus.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
               </Grid>
               <Grid item xs={12}>
-                <Typography fontSize={18}>Mô tả</Typography>
+                {/* <Typography fontSize={18}>Mô tả</Typography>
                 <Box sx={{ border: '1px solid #c9bebe', borderRadius: '4px', padding: '0 10px' }}>
-                  <MUIRichTextEditor
+                  <MUIRichTextEditor 
                     controls={[
                       'title',
                       'bold',
@@ -128,9 +198,13 @@ const ServiceForm = () => {
                       'code',
                       'clear',
                     ]}
+
+                    defaultValue={text}
+                    onChange={onEditorChange}
                     label='Viết ở đây ạ...'
                   />
-                </Box>
+                </Box> */}
+                <RHFTextField name='desc' label='Mô tả' />
               </Grid>
 
               <Grid item xs={12}>
