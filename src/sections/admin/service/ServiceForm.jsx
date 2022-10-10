@@ -27,9 +27,9 @@ import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigate } from 'react-router-dom'
 
 // import MUIRichTextEditor from 'mui-rte'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const defaultFormValues = {
   name: '',
@@ -48,6 +48,7 @@ const listStatus = [
 
 const ServiceForm = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
 
   // PREVIEW IMAGE
   const [img, setImg] = useState()
@@ -93,16 +94,29 @@ const ServiceForm = () => {
   const { handleSubmit, reset } = methods
 
   const onSubmit = (values) => {
-    handleAddService({
-      name: values.name,
-      categoryId: values.category,
-      price: values.price,
-      duration: values.duration,
-      totalStaff: values.totalStaff,
-      status: values.status,
-      image: 'https://picsum.photos/200/300',
-      desc: values.desc,
-    })
+    if (id) {
+      handleUpdateService(id, {
+        name: values.name,
+        categoryId: values.category,
+        price: values.price,
+        duration: values.duration,
+        totalStaff: values.totalStaff,
+        status: values.status,
+        image: 'https://picsum.photos/200/300',
+        desc: values.desc,
+      })
+    } else {
+      handleAddService({
+        name: values.name,
+        categoryId: values.category,
+        price: values.price,
+        duration: values.duration,
+        totalStaff: values.totalStaff,
+        status: values.status,
+        image: 'https://picsum.photos/200/300',
+        desc: values.desc,
+      })
+    }
   }
 
   const handleAddService = async (service) => {
@@ -117,11 +131,36 @@ const ServiceForm = () => {
     }
   }
 
+  const handleUpdateService = async (id, service) => {
+    try {
+      const data = await serviceApi.update(id, service)
+      console.log(data)
+      setTimeout(() => {
+        navigate('/admin/services-management')
+      }, 2000)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const handleGetOneService = async (id) => {
+    try {
+      const data = await serviceApi.getOne(id)
+      // console.log(data.categoryId._id);
+      reset({
+        ...data,
+        category: data.categoryId._id,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleGetServices = async () => {
     try {
       const data = await categoryApi.getAll()
       const options = data.map((category) => ({ id: category._id, label: category.name }))
       setOptions(options)
+      console.log(options)
     } catch (error) {
       console.log(error)
     }
@@ -129,7 +168,8 @@ const ServiceForm = () => {
 
   useEffect(() => {
     handleGetServices()
-  }, [])
+    if (id) handleGetOneService(id)
+  }, [id])
 
   return (
     <Grid container spacing={3}>
