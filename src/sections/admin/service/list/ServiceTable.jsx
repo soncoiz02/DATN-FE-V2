@@ -23,13 +23,6 @@ const ServiceTable = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  window.onscroll = () => {
-    if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
-      headerRef.current.classList.add('active')
-    } else {
-      headerRef.current.classList.remove('active')
-    }
-  }
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -93,7 +86,7 @@ const ServiceTable = () => {
     {
       field: 'status',
       headerName: 'Trạng thái',
-      flex: isMobile ? 0 : 1,
+      width: isMobile ? 120 : 160,
       renderCell: (params) => {
         const cellData = params.row.status
         if (cellData === 1) return <Chip label='Đang hoạt động' color='success' />
@@ -153,8 +146,8 @@ const ServiceTable = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
-      <Grid container sx={{ marginBottom: '50px' }}>
-        <Grid item xs={6}>
+      <Grid container paddingBottom={{ md: '50px', xs: '15px' }}>
+        <Grid item xs={10} md={6}>
           <form action=''>
             <GlassBox
               sx={{
@@ -177,7 +170,8 @@ const ServiceTable = () => {
         </Grid>
         <Grid
           item
-          xs={6}
+          xs={2}
+          md={6}
           sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
         >
           <IconButton>
