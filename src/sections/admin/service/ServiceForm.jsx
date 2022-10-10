@@ -18,6 +18,7 @@ import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
 
 import categoryApi from '../../../api/category'
+import serviceApi from '../../../api/service'
 
 import { useForm } from 'react-hook-form'
 import RHFAutoComplete from '../../../components/ReactHookForm/RHFAutoComplete'
@@ -26,6 +27,7 @@ import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useNavigate } from 'react-router-dom'
 
 // import MUIRichTextEditor from 'mui-rte'
 
@@ -45,6 +47,8 @@ const listStatus = [
 ]
 
 const ServiceForm = () => {
+  const navigate = useNavigate()
+
   // PREVIEW IMAGE
   const [img, setImg] = useState()
 
@@ -88,7 +92,30 @@ const ServiceForm = () => {
 
   const { handleSubmit, reset } = methods
 
-  const onSubmit = () => {}
+  const onSubmit = (values) => {
+    handleAddService({
+      name: values.name,
+      categoryId: values.category,
+      price: values.price,
+      duration: values.duration,
+      totalStaff: values.totalStaff,
+      status: values.status,
+      image: 'https://picsum.photos/200/300',
+      desc: values.desc,
+    })
+  }
+
+  const handleAddService = async (service) => {
+    try {
+      const data = await serviceApi.create(service)
+      // console.log(data);
+      setTimeout(() => {
+        navigate('/admin/services-management')
+      }, 2000)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleGetServices = async () => {
     try {
