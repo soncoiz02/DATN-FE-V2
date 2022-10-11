@@ -45,11 +45,13 @@ const DetailService = () => {
               <RatedTab serviceId={serviceInfo._id} value={tabValue} index={1} />
             </Stack>
           </GlassBox>
-          <ModalRegisterService
-            serviceDuration={serviceInfo.duration}
-            openModal={openModal}
-            onCloseModal={() => setOpenModal(false)}
-          />
+          {openModal && (
+            <ModalRegisterService
+              serviceInfo={serviceInfo}
+              openModal={openModal}
+              onCloseModal={() => setOpenModal(false)}
+            />
+          )}
         </>
       )}
     </Stack>

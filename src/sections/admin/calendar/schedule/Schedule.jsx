@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import calendarApi from '../../../../api/calendar'
 import serviceApi from '../../../../api/service'
+import userApis from '../../../../api/user'
 import GlassBox from '../../../../components/GlassBox'
 import MainButton from '../../../../components/MainButton'
 import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
@@ -64,7 +65,9 @@ const Calendar = () => {
     if (changed) {
       let dataChanged
       appointments.forEach((item) => {
-        if (changed[item.id]) dataChanged = changed[item.id]
+        if (changed[item.id]) {
+          handleUpdateOrder(changed[item.id], item.id)
+        }
       })
       console.log(dataChanged)
     }
@@ -80,6 +83,15 @@ const Calendar = () => {
     if (statusType === 'accepted') return theme.palette.info.main
   }
 
+  const handleUpdateOrder = async (data, id) => {
+    try {
+      await calendarApi.updateOrder(data, id)
+      handleGetListOrder()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleGetListOrder = async () => {
     try {
       const data = await calendarApi.getListOrder()
@@ -91,6 +103,7 @@ const Calendar = () => {
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
           service: item.serviceId._id,
+          staff: item.staff,
         }
       })
 
@@ -104,26 +117,43 @@ const Calendar = () => {
     try {
       const serviceData = await serviceApi.getAll()
       const statusData = await calendarApi.getListStatus()
+      const staffData = await userApis.getStoreStaff('633e759de2466f29efaab9fd')
+
       const status = statusData.map((item) => ({
         id: item._id,
-        text: item.name,
+        text: 'Trạng thái: ' + item.name,
         color: getStatusColor(item.type),
       }))
+
       const services = serviceData.map((item) => ({
         id: item._id,
         text: `${item.name} - ${formatPrice(item.price)}`,
       }))
+
+      const staff = staffData.map((item) => ({
+        id: item._id,
+        text: 'Nhân viên: ' + item.name,
+      }))
+
       const serviceResources = {
         fieldName: 'service',
         title: 'Dịch vụ',
         instances: services,
       }
+
       const statusResources = {
         fieldName: 'status',
         title: 'Trạng thái',
         instances: status,
       }
-      setResources([serviceResources, statusResources])
+
+      const staffResources = {
+        fieldName: 'staff',
+        title: 'Nhân viên',
+        instances: staff,
+      }
+
+      setResources([serviceResources, statusResources, staffResources])
       setListStatus(statusData)
       setListServices(serviceData)
     } catch (error) {

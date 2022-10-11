@@ -1,13 +1,27 @@
-import { Menu } from '@mui/icons-material'
-import { Container, IconButton, Link, Stack, styled, Typography } from '@mui/material'
+import { Assignment, Logout, Menu, Notifications, Person, Sms } from '@mui/icons-material'
+import {
+  Avatar,
+  Box,
+  Container,
+  IconButton,
+  Link,
+  Popper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React from 'react'
-import { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
+import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
+import useAuth from '../../hook/useAuth'
 
 const Header = ({ openMenu }) => {
   const headerRef = useRef(null)
+  const { isLogin, logout, userInfo } = useAuth()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
 
   window.onscroll = () => {
     if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
@@ -15,6 +29,10 @@ const Header = ({ openMenu }) => {
     } else {
       headerRef.current.classList.remove('active')
     }
+  }
+
+  const handleOpenPopper = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   return (
@@ -38,14 +56,47 @@ const Header = ({ openMenu }) => {
               Về chúng tôi
             </StyledLink>
           </Stack>
-          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            <MainButton colorType='neutral' component={RouterLink} to='/login'>
-              Đăng ký
-            </MainButton>
-            <MainButton colorType='primary' component={RouterLink} to='/login'>
-              Đăng nhập
-            </MainButton>
-          </Stack>
+          {!isLogin ? (
+            <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+              <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
+                Đăng ký
+              </MainButton>
+              <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
+                Đăng nhập
+              </MainButton>
+            </Stack>
+          ) : (
+            <Stack direction='row'>
+              <IconButton color='primary'>
+                <Sms />
+              </IconButton>
+              <IconButton color='primary'>
+                <Notifications />
+              </IconButton>
+              <UserInfo onClick={handleOpenPopper}>
+                <Avatar />
+                <Typography variant='h4' color='white'>
+                  {userInfo.name}
+                </Typography>
+              </UserInfo>
+              <Popper open={open} anchorEl={anchorEl}>
+                <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
+                  <CustomLink underline='none'>
+                    <Person />
+                    <Typography variant='body1'>Cài đặt tài khoản</Typography>
+                  </CustomLink>
+                  <CustomLink underline='none'>
+                    <Assignment />
+                    <Typography variant='body1'>Dịch vụ đăng ký</Typography>
+                  </CustomLink>
+                  <CustomLink underline='none' onClick={() => logout()}>
+                    <Logout />
+                    <Typography variant='body1'>Đăng xuất</Typography>
+                  </CustomLink>
+                </GlassBox>
+              </Popper>
+            </Stack>
+          )}
           <IconButton
             color='primary'
             sx={{ display: { xs: 'flex', sm: 'none' } }}
@@ -58,6 +109,35 @@ const Header = ({ openMenu }) => {
     </HeaderWrapper>
   )
 }
+
+const CustomLink = styled(Link)(
+  ({ theme }) => `
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+  padding: 5px 0;
+  color: ${theme.palette.text.primary};
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    color: ${theme.palette.primary.main};
+  }
+`,
+)
+
+const UserInfo = styled(Box)(
+  ({ theme }) => `
+  padding: 5px 20px 5px 5px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+  background: ${theme.palette.primary.main};
+  cursor: pointer;
+`,
+)
+
 const HeaderWrapper = styled('div')`
   position: fixed;
   top: 0;
