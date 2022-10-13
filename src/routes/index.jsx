@@ -20,6 +20,7 @@ import TabServices from '../sections/client/detail-store/TabsItem/TabServices'
 import TabRate from '../sections/client/detail-store/TabsItem/TabRate'
 import AuthLayout from '../layouts/auth/AuthLayout'
 import Register from '../pages/auth/Register'
+import ServiceRegister from '../pages/client/service-register-history'
 
 const Router = () => {
   return (
@@ -34,6 +35,7 @@ const Router = () => {
           <Route path='rate' element={<TabRate />} />
         </Route>
         <Route path='service/:id' element={<DetailService />} />
+        <Route path='service-register-history' element={<ServiceRegister />} />
       </Route>
       <Route path='auth' element={<AuthLayout />}>
         <Route path='login' element={<Login />} />
