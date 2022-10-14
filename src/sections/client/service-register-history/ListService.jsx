@@ -11,6 +11,7 @@ const ListService = () => {
   const [openModal, setOpenModal] = useState(false)
 
   const [order, setOrder] = useState([])
+  const [orderId, setOrderId] = useState()
 
   const getOrder = async () => {
     try {
@@ -66,6 +67,7 @@ const ListService = () => {
           <Grid item xs={12} sm={6} md={4}>
             <GlassBox
               onClick={() => {
+                setOrderId(item._id)
                 setOpenModal(true)
               }}
             >
@@ -107,7 +109,13 @@ const ListService = () => {
           </Grid>
         ))}
       </Grid>
-      {openModal && <ModalInfo openModal={openModal} onCloseModal={() => setOpenModal(false)} />}
+      {openModal && (
+        <ModalInfo
+          openModal={openModal}
+          orderId={orderId}
+          onCloseModal={() => setOpenModal(false)}
+        />
+      )}
     </>
   )
 }
