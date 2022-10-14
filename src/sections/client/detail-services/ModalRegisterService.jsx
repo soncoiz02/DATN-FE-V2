@@ -118,6 +118,8 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       formValues.date.setHours(endDateConverted.hour, endDateConverted.minute, 0),
     )
 
+    console.log(startDate, endDate)
+
     const registerData = {
       infoUser: {
         name: formValues.name,
@@ -160,8 +162,13 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const handleDisableByUser = (time) => {
     if (userServiceRegisteredTime.length === 0) return false
     let isDisable = false
+    const hourDuration = (serviceInfo.duration + 15) / 60
     userServiceRegisteredTime.forEach((item) => {
-      if (time < item.end && time >= item.start) isDisable = true
+      if (
+        (time < item.end && item.end - time < hourDuration) ||
+        (time >= item.start && time - item.start < hourDuration)
+      )
+        isDisable = true
     })
     return isDisable
   }
@@ -197,11 +204,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   const handleGetTimeSlotCheckByStaff = async (date) => {
     try {
-      const data = await serviceApi.getTimeSlotCheckByStaff(
-        serviceInfo.categoryId,
-        serviceInfo._id,
-        date,
-      )
+      const data = await serviceApi.getTimeSlotCheckByStaff(serviceInfo._id, date.toISOString())
       setTimeSlotCheckByStaff(data)
     } catch (error) {
       console.log(error)
@@ -249,10 +252,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                   return (
                     <Step key={step.key}>
                       <StepLabel StepIconComponent={QontoStepIcon}>
-                        <Typography
-                          variant='subtitle1'
-                          sx={{ color: (theme) => theme.palette.text.secondary }}
-                        >
+                        <Typography variant='subtitle1' color='text.secondary'>
                           {step.title}
                         </Typography>
                       </StepLabel>
