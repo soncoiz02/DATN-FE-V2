@@ -9,6 +9,7 @@ const DataGridCustom = ({ rows, columns }) => {
       columns={columns}
       pageSize={20}
       autoPageSize={false}
+      disableSelectionOnClick
       localeText={{
         errorOverlayDefaultLabel: 'Đã có lỗi xảy ra',
         noResultsOverlayLabel: 'Không có dữ liệu',
@@ -21,12 +22,11 @@ const DataGridCustom = ({ rows, columns }) => {
         columnMenuSortDesc: 'Sắp xếp sau - trước',
         columnsPanelShowAllButton: 'Hiện tất cả',
         columnsPanelHideAllButton: 'Ẩn tất cả',
-        footerTotalVisibleRows: (visibleCount, totalCount) =>
-          `${visibleCount.toLocaleString()} trên ${totalCount.toLocaleString()}`,
         footerRowSelected: (count) =>
           count !== 1
             ? `${count.toLocaleString()} hàng đã chọn`
             : `${count.toLocaleString()} hàng đã chọn`,
+        noRowsLabel: 'Không có dữ liệu',
       }}
     />
   )

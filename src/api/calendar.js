@@ -22,6 +22,12 @@ const calendarApi = {
   updateOrder(data, id) {
     return axiosClient.put(`/order/${id}`, data)
   },
+  getDetailOrder(id) {
+    return axiosClient.get(`/order/${id}`)
+  },
+  getFutureOrder(storeId) {
+    return axiosClient.get(`/getFutureOrderByStore/${storeId}`)
+  },
 }
 
 export default calendarApi

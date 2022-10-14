@@ -14,67 +14,53 @@ import {
   ViewSwitcher,
   WeekView,
 } from '@devexpress/dx-react-scheduler-material-ui'
-import { Button, Divider, Grid, MenuItem, Select, Stack, Typography, useTheme } from '@mui/material'
+import { Edit } from '@mui/icons-material'
+import { IconButton, Stack, useTheme } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import calendarApi from '../../../../api/calendar'
 import serviceApi from '../../../../api/service'
 import userApis from '../../../../api/user'
 import GlassBox from '../../../../components/GlassBox'
-import MainButton from '../../../../components/MainButton'
-import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
-import RHFSelect from '../../../../components/ReactHookForm/RHFSelect'
-import { filterByStatusAndService, getFullList } from '../../../../redux/slice/serviceRegisterSlice'
+import useAuth from '../../../../hook/useAuth'
+import { setServices, setStatus } from '../../../../redux/slice/orderSlice'
+import { getFullList } from '../../../../redux/slice/serviceRegisterSlice'
 import formatPrice from '../../../../utils/formatPrice'
-
-const defaultFormValues = {
-  status: '',
-  service: '',
-}
+import ModalEditOrder from './modal/ModalEditOrder'
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [viewType, setViewType] = useState('status')
-  const [listStatus, setListStatus] = useState([])
-  const [services, setListServices] = useState([])
+  const [listService, setListServices] = useState([])
   const [resources, setResources] = useState()
+  const [orderId, setOrderId] = useState(null)
+  const [openModal, setOpenModal] = useState(false)
+
   const theme = useTheme()
   const appointments = useSelector((state) => state.serviceRegister.listFiltered)
   const dispatch = useDispatch()
 
-  // hook form
+  const { userInfo } = useAuth()
 
-  const methods = useForm({
-    defaultValues: defaultFormValues,
-  })
+  // component
 
-  const { handleSubmit, reset } = methods
-
-  const onSubmit = (values) => {
-    dispatch(filterByStatusAndService(values))
-  }
+  const Header = ({ children, appointmentData, ...restProps }) => (
+    <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
+      <IconButton
+        /* eslint-disable-next-line no-alert */
+        onClick={() => {
+          setOrderId(appointmentData.id)
+          setOpenModal(true)
+        }}
+        size='large'
+      >
+        <Edit />
+      </IconButton>
+    </AppointmentTooltip.Header>
+  )
 
   // functions
 
   const currentDateChange = (dateChange) => setCurrentDate(dateChange)
-
-  const onCommitChange = ({ added, changed, deleted }) => {
-    if (added) {
-    }
-    if (changed) {
-      let dataChanged
-      appointments.forEach((item) => {
-        if (changed[item.id]) {
-          handleUpdateOrder(changed[item.id], item.id)
-        }
-      })
-      console.log(dataChanged)
-    }
-    if (deleted !== undefined) {
-      handleCancelRegister(deleted)
-    }
-  }
 
   const getStatusColor = (statusType) => {
     if (statusType === 'pending') return theme.palette.warning.main
@@ -83,18 +69,12 @@ const Calendar = () => {
     if (statusType === 'accepted') return theme.palette.info.main
   }
 
-  const handleUpdateOrder = async (data, id) => {
-    try {
-      await calendarApi.updateOrder(data, id)
-      handleGetListOrder()
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // async function
 
   const handleGetListOrder = async () => {
     try {
-      const data = await calendarApi.getListOrder()
+      console.log(userInfo)
+      const data = await calendarApi.getFutureOrder('633e5ddff1be5d928b97c813')
       const appointments = data.map((item) => {
         return {
           id: item._id,
@@ -102,7 +82,7 @@ const Calendar = () => {
           endDate: new Date(item.endDate),
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
-          service: item.serviceId._id,
+          service: item.service._id,
           staff: item.staff,
         }
       })
@@ -115,9 +95,14 @@ const Calendar = () => {
 
   const handleGetResources = async () => {
     try {
-      const serviceData = await serviceApi.getAll()
-      const statusData = await calendarApi.getListStatus()
-      const staffData = await userApis.getStoreStaff('633e759de2466f29efaab9fd')
+      const allData = await Promise.all([
+        serviceApi.getAll(),
+        calendarApi.getListStatus(),
+        userApis.getStoreStaff('633e759de2466f29efaab9fd'),
+      ])
+      const serviceData = allData[0]
+      const statusData = allData[1]
+      const staffData = allData[2]
 
       const status = statusData.map((item) => ({
         id: item._id,
@@ -154,17 +139,9 @@ const Calendar = () => {
       }
 
       setResources([serviceResources, statusResources, staffResources])
-      setListStatus(statusData)
       setListServices(serviceData)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleCancelRegister = async (id) => {
-    try {
-      await calendarApi.updateOrderStatusToCancel(id)
-      handleGetListOrder()
+      dispatch(setStatus(statusData))
+      dispatch(setServices(serviceData))
     } catch (error) {
       console.log(error)
     }
@@ -178,74 +155,12 @@ const Calendar = () => {
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>
       <Stack gap={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={3}>
-            <Stack gap={2}>
-              <Typography variant='h3'>Hiển thị theo</Typography>
-              <Select onChange={(e) => setViewType(e.target.value)} value={viewType}>
-                <MenuItem value='status'>Trạng thái</MenuItem>
-                <MenuItem value='service'>Dịch vụ</MenuItem>
-              </Select>
-            </Stack>
-          </Grid>
-          <Grid item xs={12} sm={9}>
-            <Stack gap={2}>
-              <Typography variant='h3'>Lọc theo</Typography>
-              <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <Grid container spacing={{ xs: 2, md: 3 }}>
-                  <Grid item xs={6} sm={4} md={4}>
-                    <RHFSelect name='status' label='Trạng thái'>
-                      {listStatus?.map((status) => (
-                        <MenuItem value={status._id} key={status._id}>
-                          {status.name}
-                        </MenuItem>
-                      ))}
-                    </RHFSelect>
-                  </Grid>
-                  <Grid item xs={6} sm={4} md={4}>
-                    <RHFSelect name='service' label='Dịch vụ'>
-                      {services?.map((service) => (
-                        <MenuItem value={service._id} key={service._id}>
-                          {service.name}
-                        </MenuItem>
-                      ))}
-                    </RHFSelect>
-                  </Grid>
-                  <Grid item xs={6} sm={2} md={2}>
-                    <MainButton
-                      type='submit'
-                      colorType='primary'
-                      sx={{ height: '100%', width: '100%' }}
-                    >
-                      Lọc
-                    </MainButton>
-                  </Grid>
-                  <Grid item xs={6} sm={2} md={2}>
-                    <Button
-                      variant='outlined'
-                      sx={{ height: '100%', width: '100%', borderRadius: '10px' }}
-                      onClick={() => {
-                        reset(defaultFormValues)
-                        dispatch(filterByStatusAndService({ status: '', service: '' }))
-                      }}
-                    >
-                      Hủy
-                    </Button>
-                  </Grid>
-                </Grid>
-              </RHFProvider>
-            </Stack>
-          </Grid>
-        </Grid>
-        <Divider />
         <Scheduler data={appointments} locale='vi-VN' height={800}>
           <ViewState
             currentDate={currentDate}
             onCurrentDateChange={currentDateChange}
-            defaultCurrentViewName='Tuần'
+            defaultCurrentViewName='Tháng'
           />
-          <EditingState onCommitChanges={onCommitChange} />
-          <IntegratedEditing />
           <DayView startDayHour={8} endDayHour={21} name='Ngày' />
           <WeekView startDayHour={8} endDayHour={21} name='Tuần' />
           <MonthView startDayHour={8} endDayHour={21} name='Tháng' />
@@ -259,7 +174,7 @@ const Calendar = () => {
 
           <ViewSwitcher />
           <Appointments />
-          <AppointmentTooltip showOpenButton showDeleteButton showCloseButton />
+          <AppointmentTooltip headerComponent={Header} showCloseButton />
           <AppointmentForm
             messages={{
               detailsLabel: 'Chi tiết',
@@ -280,8 +195,8 @@ const Calendar = () => {
               commitCommand: 'Lưu',
             }}
           />
-          <Resources data={resources} mainResourceName={viewType} />
-          <ConfirmationDialog
+          <Resources data={resources} mainResourceName='status' />
+          {/* <ConfirmationDialog
             messages={{
               confirmDeleteMessage: 'Bạn có chắc muốn hủy lịch này',
               deleteButton: 'Có',
@@ -289,9 +204,17 @@ const Calendar = () => {
               discardButton: 'Bỏ',
               confirmCancelMessage: 'Bạn có muốn bỏ những thay đổi',
             }}
-          />
+          /> */}
         </Scheduler>
       </Stack>
+      {orderId && (
+        <ModalEditOrder
+          openModal={openModal}
+          onCloseModal={() => setOpenModal(false)}
+          orderId={orderId}
+          removeOrderId={() => setOrderId(null)}
+        />
+      )}
     </GlassBox>
   )
 }
