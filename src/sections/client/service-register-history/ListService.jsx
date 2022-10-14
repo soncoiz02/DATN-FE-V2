@@ -4,9 +4,11 @@ import GlassBox from '../../../components/GlassBox'
 import { useSearchParams } from 'react-router-dom'
 import orderApi from '../../../api/order'
 import { dateFormat } from '../../../utils/dateFormat'
+import ModalInfo from './ModalInfo'
 
 const ListService = () => {
   const theme = useTheme()
+  const [openModal, setOpenModal] = useState(false)
 
   const [order, setOrder] = useState([])
 
@@ -58,48 +60,55 @@ const ListService = () => {
   }
 
   return (
-    <Grid container spacing={{ xs: 2, lg: 3 }}>
-      {order.map((item) => (
-        <Grid item xs={12} sm={6} md={4}>
-          <GlassBox>
-            <Stack direction='row' justifyContent='space-start'>
-              <Avatar
-                sx={{ height: '100', width: '100' }}
-                alt='Image-service'
-                src={item.serviceId.image}
-              />
-              <Stack
-                sx={{ ml: '10px' }}
-                direction='column'
-                justifyContent='center'
-                alignItems='flex-start'
-                spacing={0}
-              >
-                <Typography variant='h3' color={theme.palette.text.secondary}>
-                  {item.serviceId.name}
+    <>
+      <Grid container spacing={{ xs: 2, lg: 3 }}>
+        {order.map((item) => (
+          <Grid item xs={12} sm={6} md={4}>
+            <GlassBox
+              onClick={() => {
+                setOpenModal(true)
+              }}
+            >
+              <Stack direction='row' justifyContent='space-start'>
+                <Avatar
+                  sx={{ height: '100', width: '100' }}
+                  alt='Image-service'
+                  src={item.serviceId.image}
+                />
+                <Stack
+                  sx={{ ml: '10px' }}
+                  direction='column'
+                  justifyContent='center'
+                  alignItems='flex-start'
+                  spacing={0}
+                >
+                  <Typography variant='h3' color={theme.palette.text.secondary}>
+                    {item.serviceId.name}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Box>
+                <Typography variant='body1'>
+                  Nhân viên: <PrimaryText>Trần Bảo Sơn</PrimaryText>
+                </Typography>
+                <Typography variant='body1'>
+                  Cửa hàng: <PrimaryText>Spa Ánh Dương</PrimaryText>
+                </Typography>
+                <Typography variant='body1'>
+                  Thời gian: <PrimaryText>{renderDateFormated(item.startDate)}1</PrimaryText>
+                </Typography>
+              </Box>
+              <Stack direction='row' justifyContent='flex-end'>
+                <Typography variant='body1' color={theme.palette.secondary.main}>
+                  {item.status.name}
                 </Typography>
               </Stack>
-            </Stack>
-            <Box>
-              <Typography variant='body1'>
-                Nhân viên: <PrimaryText>Trần Bảo Sơn</PrimaryText>
-              </Typography>
-              <Typography variant='body1'>
-                Cửa hàng: <PrimaryText>Spa Ánh Dương</PrimaryText>
-              </Typography>
-              <Typography variant='body1'>
-                Thời gian: <PrimaryText>{renderDateFormated(item.startDate)}1</PrimaryText>
-              </Typography>
-            </Box>
-            <Stack direction='row' justifyContent='flex-end'>
-              <Typography variant='body1' color={theme.palette.secondary.main}>
-                {item.status.name}
-              </Typography>
-            </Stack>
-          </GlassBox>
-        </Grid>
-      ))}
-    </Grid>
+            </GlassBox>
+          </Grid>
+        ))}
+      </Grid>
+      {openModal && <ModalInfo openModal={openModal} onCloseModal={() => setOpenModal(false)} />}
+    </>
   )
 }
 
