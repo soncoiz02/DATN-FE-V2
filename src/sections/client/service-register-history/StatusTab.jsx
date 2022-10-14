@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CheckCircle,
   NotInterested,
@@ -20,8 +20,12 @@ import {
   MenuList,
 } from '@mui/material'
 import { green, pink, yellow, red, blue } from '@mui/material/colors'
+import { useNavigate } from 'react-router-dom'
+import orderStatusApi from '../../../api/orderStatus'
 
 const StatusTab = () => {
+  const navigate = useNavigate()
+
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef(null)
 
@@ -47,6 +51,20 @@ const StatusTab = () => {
     setOpen(false)
   }
 
+  const [orderStatus, setOrderStatus] = useState([])
+
+  const getOrderStatus = async () => {
+    try {
+      const data = await orderStatusApi.getAll()
+      setOrderStatus(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getOrderStatus()
+  }, [])
+
   const icon = [
     <AccessTimeFilled sx={{ color: yellow[600], fontSize: '20px' }} />,
     <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />,
@@ -59,42 +77,26 @@ const StatusTab = () => {
       <GlassBox sx={{ padding: '5px 0px', borderRadius: '10px' }}>
         <Stack direction='row' justifyContent='space-between'>
           <Stack direction='row' alignItems='center'>
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <Pending sx={{ color: blue[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Trạng Thái
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <AccessTimeFilled sx={{ color: yellow[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Trạng Thái
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <NotInterested sx={{ color: red[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Trạng Thái
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ padding: '6px 10px' }}>
-              <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />
-              <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
-                2
-              </Typography>
-              <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                Trạng Thái
-              </Typography>
-            </MenuItem>
+            {orderStatus.map((item, index) => (
+              <MenuItem
+                key={index}
+                sx={{ padding: '6px 10px' }}
+                onClick={() =>
+                  navigate({
+                    pathname: '/service-register-history',
+                    search: `?status=${item._id}`,
+                  })
+                }
+              >
+                {icon[index]}
+                <Typography variant='body2' sx={{ margin: { xs: '0px 2px', lg: '0px 5px' } }}>
+                  2
+                </Typography>
+                <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                  {item.name}
+                </Typography>
+              </MenuItem>
+            ))}
           </Stack>
           <IconButton
             ref={anchorRef}
