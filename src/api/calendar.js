@@ -28,6 +28,9 @@ const calendarApi = {
   getFutureOrder(storeId) {
     return axiosClient.get(`/getFutureOrderByStore/${storeId}`)
   },
+  addUpdateActivity(data) {
+    return axiosClient.post('/activityLog', data)
+  },
 }
 
 export default calendarApi

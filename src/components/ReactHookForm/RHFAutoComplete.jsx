@@ -41,8 +41,8 @@ export const RHFAutoCompleteRenderImg = ({ name, options, ...other }) => {
       name={name}
       render={({ field: { value, ref, onChange, ...field }, fieldState: { error } }) => (
         <Autocomplete
-          value={value}
-          onChange={(_, data) => onChange(data)}
+          value={value.id || ''}
+          onChange={(_, data) => onChange(data.id || '')}
           options={options}
           getOptionLabel={(option) => option.label || ''}
           disablePortal

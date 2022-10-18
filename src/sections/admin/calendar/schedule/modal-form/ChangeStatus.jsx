@@ -1,7 +1,6 @@
 import { Autocomplete, Box, Stack, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import calendarApi from '../../../../../api/calendar'
 import { getStatusColor } from '../../../../../utils/aboutColor'
 
 const ChangeStatus = ({ status, setStatus }) => {
@@ -18,6 +17,27 @@ const ChangeStatus = ({ status, setStatus }) => {
     setStatusOptions(statusOptions)
   }
 
+  const handleDisableOptions = (optionType) => {
+    if (status.type === 'pending') {
+      if (optionType === 'done') return true
+      return false
+    }
+    if (status.type === 'accepted') {
+      if (optionType === 'pending') return true
+      return false
+    }
+    if (status.type === 'done') {
+      if (optionType === 'pending' || optionType === 'accepted' || optionType === 'reject')
+        return true
+      return false
+    }
+    if (status.type === 'reject') {
+      if (optionType === 'pending' || optionType === 'done') return true
+      return false
+    }
+    return false
+  }
+
   useState(() => {
     handleGetStatusOptions()
   }, [])
@@ -28,9 +48,10 @@ const ChangeStatus = ({ status, setStatus }) => {
       <Autocomplete
         value={status || null}
         onChange={(_, data) => setStatus(data)}
-        options={statusOptions}
+        options={statusOptions || []}
         disablePortal
         getOptionLabel={(option) => option.label || ''}
+        getOptionDisabled={(option) => handleDisableOptions(option.type)}
         renderOption={(props, option) => (
           <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
             <Box

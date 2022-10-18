@@ -3,11 +3,34 @@ import React from 'react'
 import { useState } from 'react'
 import MainButton from '../../../components/MainButton'
 import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
-import ModalRegisterForm from '../../../sections/admin/calendar/schedule/ModalRegisterForm'
 import { Link as RouterLink } from 'react-router-dom'
+import ModalEditOrder from '../../../sections/admin/calendar/schedule/modal-form/ModalEditOrder'
+import calendarApi from '../../../api/calendar'
 
 const CalendarManagement = () => {
   const [openModal, setOpenModal] = useState(false)
+
+  const handleGetListOrder = async () => {
+    try {
+      const data = await calendarApi.getFutureOrder('633e5ddff1be5d928b97c813')
+      const appointments = data.map((item) => {
+        return {
+          id: item._id,
+          startDate: new Date(item.startDate),
+          endDate: new Date(item.endDate),
+          title: item.infoUser.name + ' - ' + item.infoUser.phone,
+          status: item.status._id,
+          service: item.service._id,
+          staff: item.staff,
+        }
+      })
+
+      dispatch(getFullList(appointments))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Stack gap={2}>
       <Breadcrumbs separator='/'>
@@ -34,7 +57,13 @@ const CalendarManagement = () => {
         </MainButton>
       </Stack>
       <Calendar onOpenModal={() => setOpenModal(true)} />
-      <ModalRegisterForm openModal={openModal} onCloseModal={() => setOpenModal(false)} />
+      {openModal && (
+        <ModalEditOrder
+          openModal={openModal}
+          onCloseModal={() => setOpenModal(false)}
+          getListOrder={handleGetListOrder}
+        />
+      )}
     </Stack>
   )
 }
