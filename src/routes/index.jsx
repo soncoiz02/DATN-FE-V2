@@ -20,6 +20,7 @@ import TabServices from '../sections/client/detail-store/TabsItem/TabServices'
 import TabRate from '../sections/client/detail-store/TabsItem/TabRate'
 import AuthLayout from '../layouts/auth/AuthLayout'
 import Register from '../pages/auth/Register'
+import ServiceStatistic from '../pages/admin/services-statistic'
 
 const Router = () => {
   return (
@@ -41,6 +42,7 @@ const Router = () => {
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='services-statistic' element={<ServiceStatistic />} />
         <Route path='calendar-schedule' element={<CalendarManagement />} />
         <Route path='calendar-list' element={<CalendarList />} />
         <Route path='services-management' element={<ServiceList />} />
