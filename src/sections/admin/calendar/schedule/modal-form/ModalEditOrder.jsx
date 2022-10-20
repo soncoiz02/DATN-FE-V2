@@ -25,7 +25,11 @@ import useAuth from '../../../../../hook/useAuth'
 const defaultFormValue = {
   name: '',
   phone: '',
-  service: '',
+  service: {
+    id: '',
+    label: '',
+    price: 0,
+  },
   date: new Date(),
   timeSlot: 0,
   staff: '',
@@ -46,12 +50,6 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
 
   const [currentStatus, setCurrentStatus] = useState()
 
-  const [alertInfo, setAlertInfo] = useState({
-    isOpen: false,
-    message: '',
-    status: '',
-  })
-
   const allService = useSelector((state) => state.order.services)
 
   const { userInfo } = useAuth()
@@ -65,7 +63,14 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
       .trim()
       .required('Vui lòng nhập số điện thoại')
       .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
-    service: yup.string().required('Vui lòng chọn dịch vụ'),
+    service: yup
+      .object()
+      .shape({
+        id: yup.string().required('Vui lòng chọn dịch vụ'),
+        label: yup.string().required('Vui lòng chọn dịch vụ'),
+        price: yup.number().required('Vui lòng chọn dịch vụ'),
+      })
+      .typeError('Vui lòng chọn dịch vụ'),
     date: yup.date().required('Vui lòng chọn ngày'),
   })
 
@@ -77,9 +82,9 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
 
   const onSubmit = (values) => {
     setFormValues(values)
-    handleGetDetailService(values.service)
+    handleGetDetailService(values.service.id)
     handleGetRegisteredServiceByUser(values.phone, values.date)
-    handleGetTimeSlotCheckByStaff(values.date, values.service)
+    handleGetTimeSlotCheckByStaff(values.date, values.service.id)
   }
 
   // function
@@ -104,7 +109,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
     if (time === convertTimeToNumber(currentOrder?.startDate)) return
     let isDisable = false
     const serviceDetail = allService.find(
-      (item) => item._id === formValues?.service || currentOrder?.serviceId,
+      (item) => item._id === formValues?.service.id || currentOrder?.serviceId,
     )
     const hourDuration = (serviceDetail.duration + 15) / 60
     userServiceRegisteredTime.forEach((item) => {
@@ -175,7 +180,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
     const activity = {
       content: 'Cập nhật lịch đặt',
       orderId: currentOrder._id,
-      userId: '633bfa86da9a3812759e3bfe',
+      userId: userInfo._id,
     }
 
     updateOrder(updateData)
@@ -195,7 +200,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
   const handleCreateOrder = async () => {
     try {
       const date = formValues.date
-      const service = allService.find((service) => service._id === formValues.service)
+      const service = allService.find((service) => service._id === formValues.service.id)
       const timeStart = convertNumberToHour(checkedData, 'getTime')
       const timeEnd = convertNumberToHour(checkedData + (service.duration + 15) / 60, 'getTime')
 
@@ -207,7 +212,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
           name: formValues.name,
           phone: formValues.phone,
         },
-        serviceId: formValues.service,
+        serviceId: formValues.service.id,
         startDate,
         endDate,
         userId: userInfo._id,
@@ -226,11 +231,6 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
     try {
       await calendarApi.updateOrder(data, currentOrder._id)
       getListOrder()
-      setAlertInfo({
-        isOpen: true,
-        message: 'Cập nhật thành công',
-        status: 'success',
-      })
       handleCloseModal()
     } catch (error) {
       console.log(error)
@@ -248,7 +248,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
 
   const handleGetTimeSlotCheckByStaff = async (date, id) => {
     try {
-      const serviceId = formValues?.service || id
+      const serviceId = formValues?.service.id || id
       const data = await serviceApi.getTimeSlotCheckByStaff(serviceId, date.toISOString())
       setTimeSlotCheckByStaff(data)
     } catch (error) {
@@ -315,15 +315,6 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
           py: { xs: '15px', md: '30px' },
         }}
       >
-        {alertInfo.isOpen && (
-          <AlertCustom
-            open={alertInfo.isOpen}
-            onClose={() => setAlertInfo({ ...alertInfo, isOpen: false })}
-            message={alertInfo.message}
-            status={alertInfo.status}
-            time={3000}
-          />
-        )}
         <GlassBox sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }} opacity={1}>
           <Stack gap={3}>
             <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -415,7 +406,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
                 staffValue={currentStaff}
                 setStaffValue={setCurrentStaff}
                 categoryId={currentOrder.serviceId.categoryId}
-                serviceId={formValues?.service || currentOrder.serviceId._id}
+                serviceId={formValues?.service.id || currentOrder.serviceId._id}
                 timeSlot={checkedData}
                 date={
                   formValues?.date.toISOString() || new Date(currentOrder.startDate).toISOString()

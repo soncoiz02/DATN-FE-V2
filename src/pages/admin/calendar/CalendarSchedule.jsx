@@ -6,9 +6,12 @@ import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
 import { Link as RouterLink } from 'react-router-dom'
 import ModalEditOrder from '../../../sections/admin/calendar/schedule/modal-form/ModalEditOrder'
 import calendarApi from '../../../api/calendar'
+import { useDispatch } from 'react-redux'
+import { getFullList } from '../../../redux/slice/serviceRegisterSlice'
 
 const CalendarManagement = () => {
   const [openModal, setOpenModal] = useState(false)
+  const dispatch = useDispatch()
 
   const handleGetListOrder = async () => {
     try {

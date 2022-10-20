@@ -31,6 +31,9 @@ const calendarApi = {
   addUpdateActivity(data) {
     return axiosClient.post('/activityLog', data)
   },
+  createBill(data) {
+    return axiosClient.post('/bill', data)
+  },
 }
 
 export default calendarApi

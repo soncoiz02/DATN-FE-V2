@@ -19,11 +19,11 @@ const ChangeStatus = ({ status, setStatus }) => {
 
   const handleDisableOptions = (optionType) => {
     if (status.type === 'pending') {
-      if (optionType === 'done') return true
+      if (optionType === 'done' || optionType === 'paid') return true
       return false
     }
     if (status.type === 'accepted') {
-      if (optionType === 'pending') return true
+      if (optionType === 'pending' || optionType === 'paid') return true
       return false
     }
     if (status.type === 'done') {
@@ -32,7 +32,7 @@ const ChangeStatus = ({ status, setStatus }) => {
       return false
     }
     if (status.type === 'reject') {
-      if (optionType === 'pending' || optionType === 'done') return true
+      if (optionType === 'pending' || optionType === 'done' || optionType === 'paid') return true
       return false
     }
     return false
@@ -58,7 +58,7 @@ const ChangeStatus = ({ status, setStatus }) => {
               sx={{
                 width: '20px',
                 height: '20px',
-                background: (theme) => theme.palette[getStatusColor(option.type)].main,
+                background: (theme) => theme.palette[getStatusColor(option.type)]?.main,
                 borderRadius: '50%',
                 mr: 1,
               }}

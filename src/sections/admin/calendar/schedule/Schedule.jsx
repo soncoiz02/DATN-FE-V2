@@ -26,6 +26,7 @@ import { getFullList } from '../../../../redux/slice/serviceRegisterSlice'
 import formatPrice from '../../../../utils/formatPrice'
 import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
+import ModalPay from './modal-pay/ModalPay'
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -34,6 +35,7 @@ const Calendar = () => {
   const [openModal, setOpenModal] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
+  const [openModalPay, setOpenModalPay] = useState(false)
 
   const theme = useTheme()
   const appointments = useSelector((state) => state.serviceRegister.listFiltered)
@@ -73,11 +75,10 @@ const Calendar = () => {
               /* eslint-disable-next-line no-alert */
               onClick={() => {
                 setOrderId(appointmentData.id)
-                setDialogTitle('Bạn muốn xác nhận lịch đặt này ?')
-                setOpenDialog(true)
+                setOpenModalPay(true)
               }}
               size='large'
-              disabled={disablePayment(appointmentData.status)}
+              disabled={disablePayment(appointmentData.status) || isPast(appointmentData.startDate)}
               sx={{ marginRight: 'auto' }}
             >
               <CreditScore />
@@ -90,11 +91,13 @@ const Calendar = () => {
               /* eslint-disable-next-line no-alert */
               onClick={() => {
                 setOrderId(appointmentData.id)
-                setDialogTitle('Bạn muốn xác nhận lịch đặt này ?')
+                setDialogTitle('Xác nhận lịch đặt này đã hoàn thành ?')
                 setOpenDialog(true)
               }}
               size='large'
-              disabled={disableByStatus(appointmentData.status)}
+              disabled={
+                disableByStatus(appointmentData.status) || isPast(appointmentData.startDate)
+              }
             >
               <Done />
             </IconButton>
@@ -128,6 +131,7 @@ const Calendar = () => {
     if (statusType === 'done') return theme.palette.secondary.main
     if (statusType === 'reject') return theme.palette.primary.main
     if (statusType === 'accepted') return theme.palette.info.main
+    if (statusType === 'paid') return theme.palette.success.main
   }
 
   // async function
@@ -260,6 +264,14 @@ const Calendar = () => {
           onCloseModal={() => setOpenModal(false)}
           orderId={orderId}
           removeOrderId={() => setOrderId(null)}
+          getListOrder={handleGetListOrder}
+        />
+      )}
+      {openModalPay && orderId && (
+        <ModalPay
+          openModal={openModalPay}
+          onCloseModal={() => setOpenModalPay(false)}
+          orderId={orderId}
           getListOrder={handleGetListOrder}
         />
       )}
