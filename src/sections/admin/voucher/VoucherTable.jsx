@@ -32,14 +32,6 @@ const VoucherTable = () => {
       },
     },
     {
-      field: 'subject',
-      headerName: 'Subject',
-      width: isMobile ? 130 : 180,
-      valueGetter: (params) => {
-        return `${params.row.subject}`
-      },
-    },
-    {
       field: 'discount',
       headerName: 'Giảm',
       width: isMobile ? 130 : 180,

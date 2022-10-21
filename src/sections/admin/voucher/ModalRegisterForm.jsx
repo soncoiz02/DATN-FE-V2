@@ -10,11 +10,12 @@ import { RHFAutoComplete } from '../../../components/ReactHookForm/RHFAutoComple
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import categoryApi from '../../../api/category'
+import voucherApi from '../../../api/voucher'
 import userApis from '../../../api/user'
 
 import { useState } from 'react'
 import { useEffect } from 'react'
+import VoucherTable from './VoucherTable'
 
 import { Close } from '@mui/icons-material'
 
@@ -22,7 +23,6 @@ const defaultFormValues = {
   title: '',
   discount: '',
   description: '',
-  subject: '',
   startDate: new Date(),
   endDate: new Date(),
   userId: '',
@@ -36,7 +36,8 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
   const formSchema = yup.object().shape({
     title: yup.string().trim().required('Vui lòng nhập tên voucher'),
     discount: yup.number('Giá trị phải là dạng số').required('Vui lòng nhập % giảm'),
-    timeRange: yup.number().required('Vui lòng chọn khung giờ'),
+    description: yup.string().trim().required('Vui lòng nhập mô tả'),
+    userId: yup.string().trim().required('Vui lòng chọn người sở hữu'),
   })
 
   const methods = useForm({
@@ -48,16 +49,21 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
 
   const onSubmit = (values) => {
     const registerData = {
-      name: values.name,
-      status: values.status,
+      title: values.title,
+      discount: values.discount,
+      description: values.description,
+      isUsed: false,
+      startDate: new Date(values.startDate),
+      endDate: new Date(values.endDate),
+      userId: values.userId,
+      storeId: '633e5ddff1be5d928b97c813',
     }
-
-    handleRegisterCategoryService(registerData)
+    handleRegisterUser(registerData)
   }
 
-  const handleRegisterCategoryService = async (data) => {
+  const handleRegisterUser = async (data) => {
     try {
-      await categoryApi.registerCategoryService(data)
+      await voucherApi.create(data)
       reset(defaultFormValues)
       onCloseModal()
     } catch (error) {
@@ -98,9 +104,6 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <RHFTextField name='title' label='Tên voucher' />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <RHFTextField name='subject' label='Subject' />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <RHFTextField name='discount' label='Giảm (%)' />
