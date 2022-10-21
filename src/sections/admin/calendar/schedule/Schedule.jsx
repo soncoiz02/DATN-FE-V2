@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import calendarApi from '../../../../api/calendar'
 import serviceApi from '../../../../api/service'
 import userApis from '../../../../api/user'
+import AlertCustom from '../../../../components/AlertCustom'
 import GlassBox from '../../../../components/GlassBox'
 import useAuth from '../../../../hook/useAuth'
 import { setServices, setStatus } from '../../../../redux/slice/orderSlice'
@@ -36,6 +37,12 @@ const Calendar = () => {
   const [openDialog, setOpenDialog] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
   const [openModalPay, setOpenModalPay] = useState(false)
+
+  const [openAlert, setOpenAlert] = useState(true)
+  const [alertInfo, setAlertInfo] = useState({
+    message: '',
+    type: '',
+  })
 
   const theme = useTheme()
   const appointments = useSelector((state) => state.serviceRegister.listFiltered)
@@ -147,7 +154,7 @@ const Calendar = () => {
 
   const handleGetListOrder = async () => {
     try {
-      const data = await calendarApi.getFutureOrder('633e5ddff1be5d928b97c813')
+      const data = await calendarApi.getFutureOrder(userInfo.storeId)
       const appointments = data.map((item) => {
         return {
           id: item._id,
@@ -169,7 +176,7 @@ const Calendar = () => {
   const handleGetResources = async () => {
     try {
       const allData = await Promise.all([
-        serviceApi.getAll(),
+        serviceApi.getByStore(userInfo.storeId),
         calendarApi.getListStatus(),
         userApis.getStoreStaff('633e759de2466f29efaab9fd'),
       ])
@@ -265,6 +272,8 @@ const Calendar = () => {
           orderId={orderId}
           removeOrderId={() => setOrderId(null)}
           getListOrder={handleGetListOrder}
+          onOpenAlert={() => setOpenAlert(true)}
+          setAlertInfo={setAlertInfo}
         />
       )}
       {openModalPay && orderId && (
@@ -273,6 +282,17 @@ const Calendar = () => {
           onCloseModal={() => setOpenModalPay(false)}
           orderId={orderId}
           getListOrder={handleGetListOrder}
+          onOpenAlert={() => setOpenAlert(true)}
+          setAlertInfo={setAlertInfo}
+        />
+      )}
+      {openAlert && (
+        <AlertCustom
+          open={openAlert}
+          onClose={() => setOpenAlert(true)}
+          message={alertInfo.message}
+          status={alertInfo.type}
+          time={2000}
         />
       )}
     </GlassBox>

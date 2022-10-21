@@ -25,7 +25,7 @@ export const getHtmlTemplate = (info) => {
         >
           <tr>
             <td>
-              <div class="logo" style="display: flex; justify-content: center;">
+              <div style="display: flex; justify-content: center;">
                 <div style="border-radius: 50%; width: 100px; height: 100px; overflow: hidden;">
                     <img src="${
                       storeInfo.avt

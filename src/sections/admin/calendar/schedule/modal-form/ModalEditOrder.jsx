@@ -25,6 +25,7 @@ import useAuth from '../../../../../hook/useAuth'
 const defaultFormValue = {
   name: '',
   phone: '',
+  email: '',
   service: {
     id: '',
     label: '',
@@ -36,7 +37,15 @@ const defaultFormValue = {
   status: '',
 }
 
-const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getListOrder }) => {
+const ModalEditOrder = ({
+  openModal,
+  onCloseModal,
+  orderId,
+  removeOrderId,
+  getListOrder,
+  onOpenAlert,
+  setAlertInfo,
+}) => {
   const [currentOrder, setCurrentOrder] = useState()
   const [serviceOptions, setServiceOptions] = useState(null)
   const [checkedIndex, setCheckedIndex] = useState(-1)
@@ -63,6 +72,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
       .trim()
       .required('Vui lòng nhập số điện thoại')
       .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
+    email: yup.string().trim().required('Vui lòng nhập email').email('Sai định dạng email'),
     service: yup
       .object()
       .shape({
@@ -211,6 +221,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
         infoUser: {
           name: formValues.name,
           phone: formValues.phone,
+          email: formValues.email,
         },
         serviceId: formValues.service.id,
         startDate,
@@ -222,8 +233,17 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
       await serviceApi.registerService(registerData)
       getListOrder()
       handleCloseModal()
+      onOpenAlert()
+      setAlertInfo({
+        message: 'Tạo mới lịch đặt thành công',
+        type: 'success',
+      })
     } catch (error) {
-      console.log(error)
+      onOpenAlert()
+      setAlertInfo({
+        message: 'Tạo mới lịch đặt thất bại',
+        type: 'error',
+      })
     }
   }
 
@@ -259,10 +279,10 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
   const handleGetDetailOrder = async (id) => {
     try {
       const data = await calendarApi.getDetailOrder(id)
-
       reset({
         name: data.infoUser.name,
         phone: data.infoUser.phone,
+        email: data.infoUser.email,
         service: {
           id: data.serviceId._id,
           image: data.serviceId.image,
@@ -325,11 +345,14 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
             </Stack>
             <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <RHFTextField name='name' label='Họ tên' />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={4}>
                   <RHFTextField name='phone' label='Số điện thoại' />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <RHFTextField name='email' label='Email' />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   {serviceOptions && (
@@ -405,7 +428,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId, getLi
               <AssignStaff
                 staffValue={currentStaff}
                 setStaffValue={setCurrentStaff}
-                categoryId={currentOrder.serviceId.categoryId}
+                categoryId={currentOrder.serviceId.categoryId._id}
                 serviceId={formValues?.service.id || currentOrder.serviceId._id}
                 timeSlot={checkedData}
                 date={

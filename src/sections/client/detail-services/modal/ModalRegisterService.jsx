@@ -18,19 +18,19 @@ import {
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import GlassBox from '../../../components/GlassBox'
-import MainButton from '../../../components/MainButton'
-import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
-import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
-import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
-import useAuth from '../../../hook/useAuth'
-import { convertNumberToHour, dateFormat, minuteToHours } from '../../../utils/dateFormat'
-import phoneRegExp from '../../../utils/phoneRegExp'
+import GlassBox from '../../../../components/GlassBox'
+import MainButton from '../../../../components/MainButton'
+import RHFDatePicker from '../../../../components/ReactHookForm/RHFDatePicker'
+import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
+import RHFTextField from '../../../../components/ReactHookForm/RHFTextField'
+import useAuth from '../../../../hook/useAuth'
+import { convertNumberToHour, dateFormat, minuteToHours } from '../../../../utils/dateFormat'
+import phoneRegExp from '../../../../utils/phoneRegExp'
 
 import addDate from 'date-fns/add'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import serviceApi from '../../../api/service'
+import serviceApi from '../../../../api/service'
 
 const registerStep = [
   {
@@ -39,10 +39,6 @@ const registerStep = [
   },
   {
     key: 2,
-    title: 'Chọn khung giờ',
-  },
-  {
-    key: 3,
     title: 'Hoàn thành',
   },
 ]
@@ -51,6 +47,7 @@ const defaultFormValues = {
   name: '',
   phone: '',
   date: new Date(),
+  email: '',
 }
 
 const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
@@ -59,10 +56,14 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const [checkedIndex, setCheckedIndex] = useState(-1)
   const [timeRange, setTimeRange] = useState()
   const [formValues, setFormValues] = useState()
-  const [registerDetail, setRegisterDetail] = useState()
-  const [totalSlot, setTotalSlot] = useState([])
   const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
   const [timeSlotCheckByStaff, setTimeSlotCheckByStaff] = useState([])
+
+  const [openAlert, setOpenAlert] = useState(false)
+  const [alertInfo, setAlertInfo] = useState({
+    message: '',
+    type: '',
+  })
 
   const serviceId = useParams().id
   const { userInfo, isLogin } = useAuth()
@@ -75,6 +76,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       .trim()
       .required('Vui lòng nhập số điện thoại')
       .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
+    email: yup.string().trim().required('Vui lòng nhập email').email('Sai định dạng email'),
     date: yup.date().required('Vui lòng chọn ngày'),
   })
 
@@ -94,16 +96,11 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   const onSubmit = (values) => {
     setFormValues(values)
-    handleGetTotalRegisteredService(values.date)
     handleGetRegisteredServiceByUser(values.phone, values.date)
     handleGetTimeSlotCheckByStaff(values.date)
-    setActiveStep(activeStep + 1)
   }
 
   const handleFinalStep = () => {
-    if (isLogin === false) return alert('You need to login')
-    if (!timeRange?.value) return setTimeRange({ error: true, value: null })
-
     const startDateConverted = convertNumberToHour(timeRange.value, 'getTime')
     // end time = start time + duration + 15
     const endDateConverted = convertNumberToHour(
@@ -156,6 +153,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       name: userInfo?.name,
       phone: userInfo?.phone,
       date: new Date(),
+      email: userInfo.email,
     })
   }
 
@@ -173,21 +171,18 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     return isDisable
   }
 
-  // async function
-  const handleGetTotalRegisteredService = async (date) => {
-    try {
-      const data = await serviceApi.getTotalRegisterInADay(serviceId, date.toISOString())
-      setTotalSlot(data)
-    } catch (error) {
-      console.log(error)
-    }
+  const handleVerify = () => {
+    if (isLogin === false) return alert('You need to login')
+    if (!timeRange?.value) return setTimeRange({ error: true, value: null })
+    setActiveStep(activeStep + 1)
   }
+
+  // async function
 
   const handleRegisterService = async (registerData) => {
     try {
       const data = await serviceApi.registerService(registerData)
-      setRegisterDetail(data)
-      setActiveStep(activeStep + 1)
+      handleCloseModal()
     } catch (error) {
       console.log(error)
     }
@@ -219,8 +214,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     setCheckedIndex(-1)
     setFormValues(null)
     setTimeRange(null)
-    setRegisterDetail(null)
-    setTotalSlot([])
   }
 
   const handleCloseModal = () => {
@@ -233,10 +226,17 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }, [])
 
   return (
-    <Modal open={openModal} onClose={onCloseModal}>
+    <Modal open={openModal} onClose={onCloseModal} sx={{ overflowY: 'auto' }}>
       <Container
         maxWidth='lg'
-        sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          height: { xs: 'auto', md: '100vh' },
+          justifyContent: 'center',
+          py: { xs: '15px', md: '30px' },
+          outline: 'none',
+        }}
       >
         <GlassBox sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }} opacity={1}>
           <Stack gap={4}>
@@ -262,136 +262,139 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
               </Stepper>
               <Box sx={{ mt: '30px' }}>
                 {activeStep === 1 && (
-                  <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                    <Stack gap={1}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
-                          <RHFTextField name='name' fullWidth label='Họ tên' />
+                  <Stack gap={3}>
+                    <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+                      <Stack gap={1}>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <RHFTextField name='name' fullWidth label='Họ tên' />
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <RHFTextField name='phone' fullWidth label='Số điện thoại' />
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <RHFTextField name='email' fullWidth label='Email' />
+                          </Grid>
+                          <Grid item xs={12} md={6} lg={3}>
+                            <RHFDatePicker name='date' label='Chọn ngày' disablePast />
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12} md={4}>
-                          <RHFTextField name='phone' fullWidth label='Số điện thoại' />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <RHFDatePicker name='date' label='Chọn ngày' disablePast />
-                        </Grid>
-                      </Grid>
-                      <MainButton
-                        sx={{ alignSelf: 'center', padding: '15px 85px', mt: 10 }}
-                        colorType='primary'
-                        type='submit'
-                      >
-                        Tiếp theo
-                      </MainButton>
-                    </Stack>
-                  </RHFProvider>
-                )}
-                {activeStep === 2 && (
-                  <Stack gap={4}>
-                    {timeRange?.error && (
-                      <Typography variant='h3' color='primary' textAlign='center'>
-                        Vui lòng chọn khung giờ
-                      </Typography>
-                    )}
-                    <Stack direction='row' gap={5} flexWrap='wrap'>
-                      {serviceInfo.timeSlot.map((time, index) => (
-                        <Box key={index}>
-                          <input
-                            hidden
-                            type='radio'
-                            name='time'
-                            id={`time-range-${index}`}
-                            value={time}
-                            onChange={() => {
-                              setCheckedIndex(index)
-                              setTimeRange({ error: false, value: time })
-                            }}
-                          />
-                          <MainButton
-                            sx={{
-                              border: isChecked(index) ? 'none' : '1px solid #e3e3e3',
-                              padding: '10px 25px',
-                            }}
-                            colorType={isChecked(index) ? 'primary' : 'neutral'}
-                            component='label'
-                            htmlFor={`time-range-${index}`}
-                            disabled={
-                              checkTimeSlotByStaff(index) ||
-                              handleDisableByCurrentTime(time) ||
-                              handleDisableByUser(time)
-                            }
-                          >
-                            <Typography variant='body1'>
-                              {convertNumberToHour(time, 'formatTime')}
-                            </Typography>
-                          </MainButton>
-                        </Box>
-                      ))}
-                    </Stack>
-                    <Box>
-                      <Typography variant='h3' color='primary' mb={1}>
-                        Khung giờ sẽ khóa nếu:
-                      </Typography>
-                      <Stack>
-                        <Typography variant='title2'>
-                          - Khung giờ đó đã qua so với thời gian hiện tại
-                        </Typography>
-                        <Typography variant='title2'>
-                          - Khung giờ đó không còn nhân viên làm dịch vụ
-                        </Typography>
-                        <Typography variant='title2'>
-                          - Số điện thoại bạn đặt đã có lịch đặt trong khoảng khung giờ đó
-                        </Typography>
+                        <MainButton
+                          sx={{ alignSelf: 'center', mt: 5, px: 5 }}
+                          colorType='primary'
+                          type='submit'
+                        >
+                          Xem khung giờ
+                        </MainButton>
                       </Stack>
-                    </Box>
-                    <Stack
-                      direction='row'
-                      alignItems='center'
-                      justifyContent='space-between'
-                      sx={{ mt: 3 }}
-                    >
-                      <MainButton
-                        sx={{ border: '1px solid #e3e3e3', px: { xs: '25px', sm: '50px' } }}
-                        colorType='neutral'
-                        onClick={() => setActiveStep(activeStep - 1)}
-                      >
-                        Quay lại
-                      </MainButton>
-                      <MainButton
-                        sx={{ px: { xs: '25px', sm: '50px' } }}
-                        colorType='primary'
-                        onClick={handleFinalStep}
-                      >
-                        Tiếp theo
-                      </MainButton>
-                    </Stack>
+                    </RHFProvider>
+                    {formValues && (
+                      <Stack gap={4}>
+                        <Typography variant='h3'>Chọn khung giờ</Typography>
+                        {timeRange?.error && (
+                          <Typography variant='h3' color='primary' textAlign='center'>
+                            Vui lòng chọn khung giờ
+                          </Typography>
+                        )}
+                        <Stack direction='row' gap={5} flexWrap='wrap'>
+                          {serviceInfo.timeSlot.map((time, index) => (
+                            <Box key={index}>
+                              <input
+                                hidden
+                                type='radio'
+                                name='time'
+                                id={`time-range-${index}`}
+                                value={time}
+                                onChange={() => {
+                                  setCheckedIndex(index)
+                                  setTimeRange({ error: false, value: time })
+                                }}
+                              />
+                              <MainButton
+                                sx={{
+                                  border: isChecked(index) ? 'none' : '1px solid #e3e3e3',
+                                  padding: '10px 25px',
+                                }}
+                                colorType={isChecked(index) ? 'primary' : 'neutral'}
+                                component='label'
+                                htmlFor={`time-range-${index}`}
+                                disabled={
+                                  checkTimeSlotByStaff(index) ||
+                                  handleDisableByCurrentTime(time) ||
+                                  handleDisableByUser(time)
+                                }
+                              >
+                                <Typography variant='body1'>
+                                  {convertNumberToHour(time, 'formatTime')}
+                                </Typography>
+                              </MainButton>
+                            </Box>
+                          ))}
+                        </Stack>
+                        <Box>
+                          <Typography variant='h3' color='primary' mb={1}>
+                            Khung giờ sẽ khóa nếu:
+                          </Typography>
+                          <Stack>
+                            <Typography variant='title2'>
+                              - Khung giờ đó đã qua so với thời gian hiện tại
+                            </Typography>
+                            <Typography variant='title2'>
+                              - Khung giờ đó không còn nhân viên làm dịch vụ
+                            </Typography>
+                            <Typography variant='title2'>
+                              - Số điện thoại bạn đặt đã có lịch đặt trong khoảng khung giờ đó
+                            </Typography>
+                          </Stack>
+                        </Box>
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          justifyContent='center'
+                          sx={{ mt: 3 }}
+                        >
+                          <MainButton
+                            sx={{ px: { xs: '25px', sm: '50px' } }}
+                            colorType='primary'
+                            onClick={handleVerify}
+                          >
+                            Tiếp theo
+                          </MainButton>
+                        </Stack>
+                      </Stack>
+                    )}
                   </Stack>
                 )}
-                {activeStep === 3 && (
+                {activeStep === 2 && (
                   <Stack gap={2} alignItems='center'>
                     <Stack direction='row' alignItems='center' gap={1}>
                       <CheckCircle color='secondary' />
                       <Typography variant='h3' color='secondary'>
-                        Đăng ký thành công
+                        Xác nhận thông tin
                       </Typography>
                     </Stack>
-                    {registerDetail && (
+                    {formValues && (
                       <Stack sx={{ width: { xs: '100%', sm: '500px' } }}>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
                           <Typography variant='body1'>Họ tên:</Typography>
-                          <Typography variant='body1'>{registerDetail.infoUser.name}</Typography>
+                          <Typography variant='body1'>{formValues.name}</Typography>
                         </Stack>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
                           <Typography variant='body1'>Số điện thoại:</Typography>
-                          <Typography variant='body1'>{registerDetail.infoUser.phone}</Typography>
+                          <Typography variant='body1'>{formValues.phone}</Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+                          <Typography variant='body1'>Email:</Typography>
+                          <Typography variant='body1'>{formValues.email}</Typography>
                         </Stack>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
                           <Typography variant='body1'>Dịch vụ đăng ký: </Typography>
-                          <Typography variant='body1'>{registerDetail.serviceId.name}</Typography>
+                          <Typography variant='body1'>{serviceInfo.name}</Typography>
                         </Stack>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
                           <Typography variant='body1'>Ngày làm dịch vụ: </Typography>
                           <Typography variant='body1'>
-                            {dateFormat(new Date(registerDetail.startDate))}
+                            {dateFormat(new Date(formValues.date))}
                           </Typography>
                         </Stack>
                         <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -402,13 +405,27 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                         </Stack>
                       </Stack>
                     )}
-                    <MainButton
-                      sx={{ padding: '15px 85px', mt: 3 }}
-                      colorType='primary'
-                      onClick={handleCloseModal}
+                    <Stack
+                      direction='row'
+                      alignItems='center'
+                      justifyContent='space-between'
+                      sx={{ mt: 5, width: '100%' }}
                     >
-                      Hoàn thành
-                    </MainButton>
+                      <MainButton
+                        sx={{ border: '1px solid #e3e3e3', px: { xs: '25px', sm: '50px' } }}
+                        colorType='neutral'
+                        onClick={() => setActiveStep(activeStep - 1)}
+                      >
+                        Bước trước
+                      </MainButton>
+                      <MainButton
+                        sx={{ px: { xs: '25px', sm: '50px' } }}
+                        colorType='primary'
+                        onClick={handleFinalStep}
+                      >
+                        Xác nhận
+                      </MainButton>
+                    </Stack>
                   </Stack>
                 )}
               </Box>
@@ -499,8 +516,7 @@ const IconCircle = styled(Box)(
 function QontoStepIcon({ active, completed, className, icon }) {
   const icons = {
     1: <Person />,
-    2: <AccessTime />,
-    3: <FileDownloadDone />,
+    2: <FileDownloadDone />,
   }
   return (
     <QontoStepIconRoot ownerState={{ active }} className={className}>

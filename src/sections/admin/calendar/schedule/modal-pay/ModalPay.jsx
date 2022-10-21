@@ -24,6 +24,8 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
 
   const { userInfo } = useAuth()
 
+  console.log(userInfo)
+
   const handleCloseModal = () => {
     onCloseModal()
   }
@@ -49,7 +51,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
 
     const emailOption = {
       from: userInfo.email,
-      to: detailOrder.userId.email,
+      to: detailOrder.infoUser.email,
       subject: `${storeInfo.name} gửi bạn hóa đơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.`,
       html: htmlTemplate,
     }
