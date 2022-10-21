@@ -73,7 +73,14 @@ const Header = ({ openMenu }) => {
               <IconButton color='primary'>
                 <Notifications />
               </IconButton>
-              <UserInfo onClick={handleOpenPopper}>
+              <IconButton
+                color='primary'
+                sx={{ display: { xs: 'flex', sm: 'none' } }}
+                onClick={openMenu}
+              >
+                <Menu />
+              </IconButton>
+              <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <Avatar />
                 <Typography variant='h4' color='white'>
                   {userInfo.name}
@@ -97,20 +104,13 @@ const Header = ({ openMenu }) => {
               </Popper>
             </Stack>
           )}
-          <IconButton
-            color='primary'
-            sx={{ display: { xs: 'flex', sm: 'none' } }}
-            onClick={openMenu}
-          >
-            <Menu />
-          </IconButton>
         </Stack>
       </Container>
     </HeaderWrapper>
   )
 }
 
-const CustomLink = styled(Link)(
+export const CustomLink = styled(Link)(
   ({ theme }) => `
   display: flex;
   align-items: center;
@@ -126,7 +126,7 @@ const CustomLink = styled(Link)(
 `,
 )
 
-const UserInfo = styled(Box)(
+export const UserInfo = styled(Box)(
   ({ theme }) => `
   padding: 5px 20px 5px 5px;
   border-radius: 50px;

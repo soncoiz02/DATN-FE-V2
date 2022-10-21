@@ -16,18 +16,36 @@ import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/d
 import AssignStaff from './AssignStaff'
 import ChangeStatus from './ChangeStatus'
 import { useSelector } from 'react-redux'
+import AlertCustom from '../../../../../components/AlertCustom'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import phoneRegExp from '../../../../../utils/phoneRegExp'
+import useAuth from '../../../../../hook/useAuth'
 
 const defaultFormValue = {
   name: '',
   phone: '',
-  service: '',
-  date: Date,
+  email: '',
+  service: {
+    id: '',
+    label: '',
+    price: 0,
+  },
+  date: new Date(),
   timeSlot: 0,
   staff: '',
   status: '',
 }
 
-const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => {
+const ModalEditOrder = ({
+  openModal,
+  onCloseModal,
+  orderId,
+  removeOrderId,
+  getListOrder,
+  onOpenAlert,
+  setAlertInfo,
+}) => {
   const [currentOrder, setCurrentOrder] = useState()
   const [serviceOptions, setServiceOptions] = useState(null)
   const [checkedIndex, setCheckedIndex] = useState(-1)
@@ -43,12 +61,32 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
 
   const allService = useSelector((state) => state.order.services)
 
+  const { userInfo } = useAuth()
+
   // hook form
 
-  // const formSchema = yup.object().shape({})
+  const formSchema = yup.object().shape({
+    name: yup.string().trim().required('Vui lòng nhập họ tên'),
+    phone: yup
+      .string()
+      .trim()
+      .required('Vui lòng nhập số điện thoại')
+      .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
+    email: yup.string().trim().required('Vui lòng nhập email').email('Sai định dạng email'),
+    service: yup
+      .object()
+      .shape({
+        id: yup.string().required('Vui lòng chọn dịch vụ'),
+        label: yup.string().required('Vui lòng chọn dịch vụ'),
+        price: yup.number().required('Vui lòng chọn dịch vụ'),
+      })
+      .typeError('Vui lòng chọn dịch vụ'),
+    date: yup.date().required('Vui lòng chọn ngày'),
+  })
 
   const methods = useForm({
     defaultValues: defaultFormValue,
+    resolver: yupResolver(formSchema),
   })
   const { handleSubmit, reset } = methods
 
@@ -56,7 +94,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
     setFormValues(values)
     handleGetDetailService(values.service.id)
     handleGetRegisteredServiceByUser(values.phone, values.date)
-    handleGetTimeSlotCheckByStaff(values.date)
+    handleGetTimeSlotCheckByStaff(values.date, values.service.id)
   }
 
   // function
@@ -66,19 +104,22 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
   }
 
   const handleCloseModal = () => {
-    removeOrderId()
+    if (orderId) removeOrderId()
+    setCheckedData(null)
     onCloseModal()
   }
 
-  const checkTimeSlotByStaff = (index) => {
+  const checkTimeSlotByStaff = (index, time) => {
+    if (time === convertTimeToNumber(currentOrder?.startDate)) return
     return timeSlotCheckByStaff[index]
   }
 
   const handleDisableByUser = (time) => {
     if (userServiceRegisteredTime.length === 0) return false
+    if (time === convertTimeToNumber(currentOrder?.startDate)) return
     let isDisable = false
     const serviceDetail = allService.find(
-      (item) => item._id === formValues?.service.id || currentOrder.serviceId,
+      (item) => item._id === formValues?.service.id || currentOrder?.serviceId,
     )
     const hourDuration = (serviceDetail.duration + 15) / 60
     userServiceRegisteredTime.forEach((item) => {
@@ -93,7 +134,8 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
 
   const handleDisableByCurrentTime = (time) => {
     const today = new Date()
-    if (new Date(formValues?.date).getDate() === today.getDate()) {
+    const thatDay = new Date(formValues?.date || currentOrder.startDate)
+    if (thatDay.getDate() === today.getDate()) {
       const hourNumber = today.getHours()
       const minuteNumber = today.getMinutes() / 60
       const currentTime = hourNumber + minuteNumber
@@ -119,7 +161,101 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
     setTimeSlot(data.timeSlot)
   }
 
+  const handleUpdateOrder = () => {
+    const date = formValues?.date || currentOrder.startDate
+    const infoUser = formValues
+      ? { name: formValues.name, phone: formValues.phone }
+      : currentOrder.infoUser
+    const service =
+      allService.find((service) => service._id === formValues?.service?.id) ||
+      currentOrder.serviceId
+    const timeStart = convertNumberToHour(checkedData, 'getTime')
+    const timeEnd = convertNumberToHour(checkedData + (service.duration + 15) / 60, 'getTime')
+
+    const startDate = new Date(new Date(date).setHours(timeStart.hour, timeStart.minute, 0))
+    const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
+
+    const staff = currentStaff.id
+    const status = currentStatus.id
+
+    const updateData = {
+      infoUser,
+      serviceId: service._id,
+      staff: staff,
+      status: status,
+      startDate,
+      endDate,
+    }
+
+    const activity = {
+      content: 'Cập nhật lịch đặt',
+      orderId: currentOrder._id,
+      userId: userInfo._id,
+    }
+
+    updateOrder(updateData)
+    handleAddUpdateActivity(activity)
+  }
+
   // async function
+
+  const handleAddUpdateActivity = async (data) => {
+    try {
+      await calendarApi.addUpdateActivity(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleCreateOrder = async () => {
+    try {
+      const date = formValues.date
+      const service = allService.find((service) => service._id === formValues.service.id)
+      const timeStart = convertNumberToHour(checkedData, 'getTime')
+      const timeEnd = convertNumberToHour(checkedData + (service.duration + 15) / 60, 'getTime')
+
+      const startDate = new Date(new Date(date).setHours(timeStart.hour, timeStart.minute, 0))
+      const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
+
+      const registerData = {
+        infoUser: {
+          name: formValues.name,
+          phone: formValues.phone,
+          email: formValues.email,
+        },
+        serviceId: formValues.service.id,
+        startDate,
+        endDate,
+        userId: userInfo._id,
+        status: '632bc736dc2a7f68a3f383e7',
+      }
+
+      await serviceApi.registerService(registerData)
+      getListOrder()
+      handleCloseModal()
+      onOpenAlert()
+      setAlertInfo({
+        message: 'Tạo mới lịch đặt thành công',
+        type: 'success',
+      })
+    } catch (error) {
+      onOpenAlert()
+      setAlertInfo({
+        message: 'Tạo mới lịch đặt thất bại',
+        type: 'error',
+      })
+    }
+  }
+
+  const updateOrder = async (data) => {
+    try {
+      await calendarApi.updateOrder(data, currentOrder._id)
+      getListOrder()
+      handleCloseModal()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleGetRegisteredServiceByUser = async (userPhone, date) => {
     try {
@@ -130,11 +266,10 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
     }
   }
 
-  const handleGetTimeSlotCheckByStaff = async (date) => {
+  const handleGetTimeSlotCheckByStaff = async (date, id) => {
     try {
-      const categoryId = formValues?.service.categoryId || currentOrder?.serviceId.categoryId
-      const serviceId = formValues?.service.id || currentOrder?.serviceId._id
-      const data = await serviceApi.getTimeSlotCheckByStaff(categoryId, serviceId, date)
+      const serviceId = formValues?.service.id || id
+      const data = await serviceApi.getTimeSlotCheckByStaff(serviceId, date.toISOString())
       setTimeSlotCheckByStaff(data)
     } catch (error) {
       console.log(error)
@@ -144,15 +279,10 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
   const handleGetDetailOrder = async (id) => {
     try {
       const data = await calendarApi.getDetailOrder(id)
-
-      handleGetTimeSlotCheckByStaff(new Date(data.startDate))
-      handleGetRegisteredServiceByUser(data.infoUser.phone, new Date(data.startDate))
-
-      console.log(data)
-
       reset({
         name: data.infoUser.name,
         phone: data.infoUser.phone,
+        email: data.infoUser.email,
         service: {
           id: data.serviceId._id,
           image: data.serviceId.image,
@@ -170,10 +300,19 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
         image: data.staff?.avt || '',
       }
 
+      const currentStatus = {
+        id: data.status._id,
+        label: data.status.name,
+        type: data.status.type,
+      }
       setCurrentOrder(data)
       setCheckedData(valueChecked)
       setTimeSlot(data.serviceId.timeSlot)
       setCurrentStaff(currentStaff)
+      setCurrentStatus(currentStatus)
+
+      handleGetTimeSlotCheckByStaff(new Date(data.startDate), data.serviceId._id)
+      handleGetRegisteredServiceByUser(data.infoUser.phone, new Date(data.startDate))
     } catch (error) {
       console.log(error)
     }
@@ -181,7 +320,7 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
 
   useEffect(() => {
     handleGetServiceOptions()
-    handleGetDetailOrder(orderId)
+    if (orderId) handleGetDetailOrder(orderId)
   }, [orderId])
 
   return (
@@ -206,13 +345,16 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
             </Stack>
             <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={4}>
                   <RHFTextField name='name' label='Họ tên' />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={4}>
                   <RHFTextField name='phone' label='Số điện thoại' />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={4}>
+                  <RHFTextField name='email' label='Email' />
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   {serviceOptions && (
                     <RHFAutoCompleteRenderImg
                       name='service'
@@ -221,18 +363,27 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
                     />
                   )}
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} sm={6}>
                   <RHFDatePicker name='date' label='Ngày sử dụng dịch vụ' disablePast />
                 </Grid>
                 <Grid item xs={12}>
                   <Stack justifyContent='center' alignItems='center'>
                     <MainButton type='submit' colorType='primary'>
-                      Chọn khung giờ
+                      Xem khung giờ
                     </MainButton>
                   </Stack>
                 </Grid>
               </Grid>
             </RHFProvider>
+            <Stack gap={1}>
+              <Typography variant='h4' color='primary'>
+                Chú ý:
+              </Typography>
+              <Typography variant='body1'>
+                Khi thay đổi các thông tin ở trên phải ấn nút xem khung giờ để hệ thống xử lý việc
+                lấy ra các khung giờ tương ứng với mỗi dịch vụ
+              </Typography>
+            </Stack>
             {timeSlot && (
               <Stack gap={2}>
                 <Typography variant='h3'>Khung giờ</Typography>
@@ -259,8 +410,8 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
                         component='label'
                         htmlFor={`time-range-${index}`}
                         disabled={
-                          checkTimeSlotByStaff(index) ||
                           handleDisableByCurrentTime(time) ||
+                          checkTimeSlotByStaff(index, time) ||
                           handleDisableByUser(time)
                         }
                       >
@@ -277,20 +428,31 @@ const ModalEditOrder = ({ openModal, onCloseModal, orderId, removeOrderId }) => 
               <AssignStaff
                 staffValue={currentStaff}
                 setStaffValue={setCurrentStaff}
-                categoryId={currentOrder.serviceId.categoryId}
-                serviceId={formValues?.service.id ?? currentOrder.serviceId._id}
+                categoryId={currentOrder.serviceId.categoryId._id}
+                serviceId={formValues?.service.id || currentOrder.serviceId._id}
                 timeSlot={checkedData}
                 date={
                   formValues?.date.toISOString() || new Date(currentOrder.startDate).toISOString()
                 }
               />
             )}
-            <ChangeStatus status={currentStatus} setStatus={setCurrentStatus} />
-            <Stack direction='row' alignItems='center' justifyContent='space-between'>
-              <MainButton colorType='primary'>Hủy lịch</MainButton>
+            {orderId && <ChangeStatus status={currentStatus} setStatus={setCurrentStatus} />}
+            <Stack
+              direction='row'
+              alignItems='center'
+              justifyContent={orderId ? 'space-between' : 'flex-end'}
+            >
+              {orderId && <MainButton colorType='primary'>Hủy lịch</MainButton>}
               <Stack direction='row' gap={1}>
-                <MainButton colorType='neutral'>Hủy</MainButton>
-                <MainButton colorType='primary'>Cập nhật</MainButton>
+                <MainButton colorType='neutral' onClick={handleCloseModal}>
+                  Hủy
+                </MainButton>
+                <MainButton
+                  colorType='primary'
+                  onClick={orderId ? handleUpdateOrder : handleCreateOrder}
+                >
+                  {orderId ? 'Cập nhật' : 'Tạo mới'}
+                </MainButton>
               </Stack>
             </Stack>
           </Stack>
