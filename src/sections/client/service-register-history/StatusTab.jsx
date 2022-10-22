@@ -5,6 +5,7 @@ import {
   FilterAlt,
   Pending,
   AccessTimeFilled,
+  MonetizationOn,
 } from '@mui/icons-material'
 import GlassBox from '../../../components/GlassBox'
 import {
@@ -70,6 +71,7 @@ const StatusTab = () => {
     <CheckCircle sx={{ color: green[600], fontSize: '20px' }} />,
     <NotInterested sx={{ color: red[600], fontSize: '20px' }} />,
     <Pending sx={{ color: blue[600], fontSize: '20px' }} />,
+    <MonetizationOn sx={{ color: green[600], fontSize: '20px' }} />,
   ]
 
   return (

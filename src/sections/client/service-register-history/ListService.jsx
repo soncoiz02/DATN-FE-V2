@@ -90,14 +90,10 @@ const ListService = () => {
                 </Stack>
               </Stack>
               <Box>
+                <Typography variant='body1'>Họ tên: {item.infoUser.name}</Typography>
+                <Typography variant='body1'>Số điện thoại: {item.infoUser.phone}</Typography>
                 <Typography variant='body1'>
-                  Nhân viên: <PrimaryText>Trần Bảo Sơn</PrimaryText>
-                </Typography>
-                <Typography variant='body1'>
-                  Cửa hàng: <PrimaryText>Spa Ánh Dương</PrimaryText>
-                </Typography>
-                <Typography variant='body1'>
-                  Thời gian: <PrimaryText>{renderDateFormated(item.startDate)}1</PrimaryText>
+                  Thời gian: {renderDateFormated(item.startDate)}
                 </Typography>
               </Box>
               <Stack direction='row' justifyContent='flex-end'>
