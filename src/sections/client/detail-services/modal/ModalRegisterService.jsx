@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { AccessTime, CheckCircle, Close, FileDownloadDone, Person } from '@mui/icons-material'
+import { CheckCircle, Close, FileDownloadDone, Person } from '@mui/icons-material'
 import {
   Box,
   Container,
@@ -24,13 +24,14 @@ import RHFDatePicker from '../../../../components/ReactHookForm/RHFDatePicker'
 import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../../components/ReactHookForm/RHFTextField'
 import useAuth from '../../../../hook/useAuth'
-import { convertNumberToHour, dateFormat, minuteToHours } from '../../../../utils/dateFormat'
+import { convertNumberToHour, dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
 import phoneRegExp from '../../../../utils/phoneRegExp'
 
-import addDate from 'date-fns/add'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import serviceApi from '../../../../api/service'
+
+import getSocket from '../../../../utils/socket'
 
 const registerStep = [
   {
@@ -47,8 +48,9 @@ const defaultFormValues = {
   name: '',
   phone: '',
   date: new Date(),
-  email: '',
 }
+
+const socket = getSocket('order')
 
 const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   // state
@@ -58,12 +60,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const [formValues, setFormValues] = useState()
   const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
   const [timeSlotCheckByStaff, setTimeSlotCheckByStaff] = useState([])
-
-  const [openAlert, setOpenAlert] = useState(false)
-  const [alertInfo, setAlertInfo] = useState({
-    message: '',
-    type: '',
-  })
 
   const serviceId = useParams().id
   const { userInfo, isLogin } = useAuth()
@@ -76,7 +72,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       .trim()
       .required('Vui lòng nhập số điện thoại')
       .matches(phoneRegExp, 'Không đúng định dạng số điện thoại'),
-    email: yup.string().trim().required('Vui lòng nhập email').email('Sai định dạng email'),
     date: yup.date().required('Vui lòng chọn ngày'),
   })
 
@@ -115,12 +110,11 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       formValues.date.setHours(endDateConverted.hour, endDateConverted.minute, 0),
     )
 
-    console.log(startDate, endDate)
-
     const registerData = {
       infoUser: {
         name: formValues.name,
         phone: formValues.phone,
+        email: userInfo.email,
       },
       serviceId,
       startDate,
@@ -128,7 +122,15 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       userId: userInfo._id,
       status: '632bc736dc2a7f68a3f383e7',
     }
-    handleRegisterService(registerData)
+
+    const notifyData = {
+      storeId: serviceInfo.categoryId.storeId,
+      userId: userInfo._id,
+      content: `${userInfo.name} đã đăng ký dịch vụ ${serviceInfo.name} vào lúc ${formatDateToHour(
+        startDate,
+      )} ngày ${dateFormat(formValues.date)}`,
+    }
+    handleRegisterService(registerData, notifyData)
   }
 
   const checkTimeSlotByStaff = (index) => {
@@ -179,9 +181,10 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   // async function
 
-  const handleRegisterService = async (registerData) => {
+  const handleRegisterService = async (registerData, notifyData) => {
     try {
-      const data = await serviceApi.registerService(registerData)
+      await serviceApi.registerService(registerData)
+      socket.emit('send-notify', { storeId: serviceInfo.categoryId.storeId, notifyData })
       handleCloseModal()
     } catch (error) {
       console.log(error)
@@ -222,6 +225,10 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }
 
   useEffect(() => {
+    if (isLogin)
+      socket.on('connect', () => {
+        console.log(socket.id)
+      })
     fillUserData()
   }, [])
 
@@ -266,16 +273,13 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                     <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                       <Stack gap={1}>
                         <Grid container spacing={3}>
-                          <Grid item xs={12} md={6} lg={3}>
+                          <Grid item xs={12} md={4}>
                             <RHFTextField name='name' fullWidth label='Họ tên' />
                           </Grid>
-                          <Grid item xs={12} md={6} lg={3}>
+                          <Grid item xs={12} md={4}>
                             <RHFTextField name='phone' fullWidth label='Số điện thoại' />
                           </Grid>
-                          <Grid item xs={12} md={6} lg={3}>
-                            <RHFTextField name='email' fullWidth label='Email' />
-                          </Grid>
-                          <Grid item xs={12} md={6} lg={3}>
+                          <Grid item xs={12} md={4}>
                             <RHFDatePicker name='date' label='Chọn ngày' disablePast />
                           </Grid>
                         </Grid>
