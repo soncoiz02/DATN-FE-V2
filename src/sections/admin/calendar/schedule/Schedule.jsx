@@ -25,9 +25,12 @@ import useAuth from '../../../../hook/useAuth'
 import { setServices, setStatus } from '../../../../redux/slice/orderSlice'
 import { getFullList } from '../../../../redux/slice/serviceRegisterSlice'
 import formatPrice from '../../../../utils/formatPrice'
+import getSocket from '../../../../utils/socket'
 import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
+
+const socket = getSocket('order')
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -178,7 +181,7 @@ const Calendar = () => {
       const allData = await Promise.all([
         serviceApi.getByStore(userInfo.storeId),
         calendarApi.getListStatus(),
-        userApis.getStoreStaff('633e759de2466f29efaab9fd'),
+        userApis.getStoreStaff(userInfo.storeId),
       ])
       const serviceData = allData[0]
       const statusData = allData[1]
@@ -230,6 +233,16 @@ const Calendar = () => {
     handleGetListOrder()
     handleGetResources()
   }, [])
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      socket.on('receive-new-order', (data) => {
+        if (data === userInfo.storeId) {
+          handleGetListOrder()
+        }
+      })
+    })
+  }, [socket])
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>

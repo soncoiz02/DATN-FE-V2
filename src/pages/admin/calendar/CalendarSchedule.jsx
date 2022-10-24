@@ -1,13 +1,12 @@
 import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
-import React from 'react'
-import { useState } from 'react'
-import MainButton from '../../../components/MainButton'
-import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
-import { Link as RouterLink } from 'react-router-dom'
-import ModalEditOrder from '../../../sections/admin/calendar/schedule/modal-form/ModalEditOrder'
-import calendarApi from '../../../api/calendar'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { Link as RouterLink } from 'react-router-dom'
+import calendarApi from '../../../api/calendar'
+import MainButton from '../../../components/MainButton'
 import { getFullList } from '../../../redux/slice/serviceRegisterSlice'
+import ModalEditOrder from '../../../sections/admin/calendar/schedule/modal-form/ModalEditOrder'
+import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
 
 const CalendarManagement = () => {
   const [openModal, setOpenModal] = useState(false)

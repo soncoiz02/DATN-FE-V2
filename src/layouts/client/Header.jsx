@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
@@ -75,7 +75,7 @@ const Header = ({ openMenu }) => {
               </IconButton>
               <IconButton
                 color='primary'
-                sx={{ display: { xs: 'flex', sm: 'none' } }}
+                sx={{ display: { xs: 'flex', md: 'none' } }}
                 onClick={openMenu}
               >
                 <Menu />

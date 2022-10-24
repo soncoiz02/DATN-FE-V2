@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
 import { CookiesProvider } from 'react-cookie'
+import Notistack from './components/Notistack'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,7 +16,9 @@ ReactDOM.render(
         <BrowserRouter>
           <MuiThemeProvider>
             <ScrollToTop />
-            <App />
+            <Notistack>
+              <App />
+            </Notistack>
           </MuiThemeProvider>
         </BrowserRouter>
       </CookiesProvider>
