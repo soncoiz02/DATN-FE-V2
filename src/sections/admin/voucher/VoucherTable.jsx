@@ -6,6 +6,7 @@ import { IconButton, Stack, useMediaQuery, useTheme, Chip } from '@mui/material'
 import { Delete, ModeEditOutline, RemoveRedEye } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
 import EditVoucher from '../../../sections/admin/voucher/EditVoucher'
+import DeleteVoucher from '../../../sections/admin/voucher/DeleteVoucher'
 import { dateFormat } from '../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
 
@@ -14,18 +15,10 @@ const VoucherTable = () => {
   const [openModal, setOpenModal] = useState(false)
   const [openModalEdit, setOpenModalEdit] = useState(false)
   const [openModalDelete, setOpenModalDelete] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState('')
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [registerId, setRegisterId] = useState()
-
-  const deleteItem = async (id) => {
-    try {
-      await voucherApi.delete(id)
-      handleGetCateforyServicesRegister()
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const columns = [
     {
@@ -101,7 +94,8 @@ const VoucherTable = () => {
             </IconButton>
             <IconButton
               onClick={() => {
-                deleteItem(params.id)
+                setRegisterId(params.id)
+                setDialogTitle('Bạn có chắc muốn xóa voucher không?')
                 setOpenModalDelete(true)
               }}
             >
@@ -113,7 +107,7 @@ const VoucherTable = () => {
     },
   ]
 
-  const handleGetCateforyServicesRegister = async () => {
+  const handleGetVoucherRegister = async () => {
     try {
       const data = await voucherApi.getAll()
       const rowData = data.map((item, index) => ({
@@ -131,7 +125,7 @@ const VoucherTable = () => {
     }
   }
   useEffect(() => {
-    handleGetCateforyServicesRegister()
+    handleGetVoucherRegister()
   }, [])
 
   return (
@@ -155,11 +149,12 @@ const VoucherTable = () => {
         />
       )}
       {openModalDelete && (
-        <EditVoucher
+        <DeleteVoucher
           openModalDelete={openModalDelete}
           onCloseModal={() => setOpenModalDelete(false)}
           registerId={registerId}
           resetVoucher={() => setRegisterId(null)}
+          title={dialogTitle}
         />
       )}
     </Stack>

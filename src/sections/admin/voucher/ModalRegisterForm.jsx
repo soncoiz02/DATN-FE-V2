@@ -17,12 +17,14 @@ import { useEffect } from 'react'
 
 import { Close } from '@mui/icons-material'
 
+var date = new Date()
+
 const defaultFormValues = {
   title: '',
   discount: '',
   description: '',
   startDate: new Date(),
-  endDate: new Date(),
+  endDate: date.setDate(date.getDate() + 1),
   userId: '',
   subject: '',
   isUsed: false,
