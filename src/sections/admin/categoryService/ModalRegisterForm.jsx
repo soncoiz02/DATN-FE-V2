@@ -10,7 +10,6 @@ import RHFSwitch from '../../../components/ReactHookForm/RHFSwitch'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import categoryApi from '../../../api/category'
-import { useState } from 'react'
 
 import { Close } from '@mui/icons-material'
 

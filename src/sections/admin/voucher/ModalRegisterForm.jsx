@@ -6,7 +6,6 @@ import MainButton from '../../../components/MainButton'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
-import { RHFAutoComplete } from '../../../components/ReactHookForm/RHFAutoComplete'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -15,7 +14,6 @@ import userApis from '../../../api/user'
 
 import { useState } from 'react'
 import { useEffect } from 'react'
-import VoucherTable from './VoucherTable'
 
 import { Close } from '@mui/icons-material'
 
@@ -26,6 +24,7 @@ const defaultFormValues = {
   startDate: new Date(),
   endDate: new Date(),
   userId: '',
+  subject: '',
   isUsed: false,
 }
 
@@ -37,7 +36,6 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
     title: yup.string().trim().required('Vui lòng nhập tên voucher'),
     discount: yup.number('Giá trị phải là dạng số').required('Vui lòng nhập % giảm'),
     description: yup.string().trim().required('Vui lòng nhập mô tả'),
-    userId: yup.string().trim().required('Vui lòng chọn người sở hữu'),
   })
 
   const methods = useForm({
@@ -54,8 +52,9 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
       description: values.description,
       isUsed: false,
       startDate: new Date(values.startDate),
+      subject: 'mat-xa',
       endDate: new Date(values.endDate),
-      userId: values.userId,
+      userId: '634e65a857b7ea792917962d',
       storeId: '633e5ddff1be5d928b97c813',
     }
     handleRegisterUser(registerData)
@@ -107,9 +106,6 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <RHFTextField name='discount' label='Giảm (%)' />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <RHFAutoComplete name='userId' options={options} label='Người sở hữu' />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <RHFDatePicker name='startDate' disablePast label='Ngày bắt đầu' />

@@ -5,17 +5,27 @@ import { useEffect } from 'react'
 import { IconButton, Stack, useMediaQuery, useTheme, Chip } from '@mui/material'
 import { Delete, ModeEditOutline, RemoveRedEye } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
-import ModalRegisterForm from '../../../sections/admin/voucher/ModalRegisterForm'
-import EditCategoryService from '../../../sections/admin/categoryService/EditForm'
+import EditVoucher from '../../../sections/admin/voucher/EditVoucher'
 import { dateFormat } from '../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
 
 const VoucherTable = () => {
   const [rows, setRows] = useState([])
   const [openModal, setOpenModal] = useState(false)
+  const [openModalEdit, setOpenModalEdit] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [registerId, setRegisterId] = useState()
+
+  const deleteItem = async (id) => {
+    try {
+      await voucherApi.delete(id)
+      handleGetCateforyServicesRegister()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const columns = [
     {
@@ -84,12 +94,17 @@ const VoucherTable = () => {
             <IconButton
               onClick={() => {
                 setRegisterId(params.id)
-                setOpenModal(true)
+                setOpenModalEdit(true)
               }}
             >
               <ModeEditOutline color='secondary' />
             </IconButton>
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                deleteItem(params.id)
+                setOpenModalDelete(true)
+              }}
+            >
               <Delete color='primary' />
             </IconButton>
           </Stack>
@@ -129,6 +144,22 @@ const VoucherTable = () => {
           openModal={openModal}
           onCloseModal={() => setOpenModal(false)}
           registerId={registerId}
+        />
+      )}
+      {openModalEdit && (
+        <EditVoucher
+          openModalEdit={openModalEdit}
+          onCloseModal={() => setOpenModalEdit(false)}
+          registerId={registerId}
+          resetVoucher={() => setRegisterId(null)}
+        />
+      )}
+      {openModalDelete && (
+        <EditVoucher
+          openModalDelete={openModalDelete}
+          onCloseModal={() => setOpenModalDelete(false)}
+          registerId={registerId}
+          resetVoucher={() => setRegisterId(null)}
         />
       )}
     </Stack>
