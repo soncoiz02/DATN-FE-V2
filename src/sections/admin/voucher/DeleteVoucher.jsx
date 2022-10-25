@@ -4,11 +4,12 @@ import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
 import voucherApi from '../../../api/voucher'
 
-const DeleteVoucher = ({ openModalDelete, onCloseModal, registerId, title }) => {
+const DeleteVoucher = ({ openModalDelete, onCloseModal, registerId, title, confirm }) => {
   const deleteItem = async (id) => {
     try {
       await voucherApi.delete(id)
       onCloseModal()
+      confirm()
     } catch (error) {
       console.log(error)
     }

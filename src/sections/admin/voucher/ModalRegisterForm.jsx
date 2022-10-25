@@ -30,7 +30,7 @@ const defaultFormValues = {
   isUsed: false,
 }
 
-const ModalRegisterForm = ({ openModal, onCloseModal }) => {
+const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
   const [options, setOptions] = useState([])
   const [user, setUser] = useState([])
 
@@ -66,6 +66,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
     try {
       await voucherApi.create(data)
       reset(defaultFormValues)
+      confirm()
       onCloseModal()
     } catch (error) {
       console.log(error)
@@ -88,7 +89,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
   }, [])
 
   return (
-    <Modal open={openModal} onClose={onCloseModal}>
+    <Modal open={openModalRegister} onClose={onCloseModal}>
       <Container
         maxWidth='sm'
         sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}

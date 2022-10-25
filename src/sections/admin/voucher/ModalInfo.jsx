@@ -1,18 +1,8 @@
 import { Close } from '@mui/icons-material'
-import {
-  Avatar,
-  Chip,
-  Container,
-  IconButton,
-  Modal,
-  Stack,
-  styled,
-  Typography,
-} from '@mui/material'
+import { Chip, Container, IconButton, Modal, Stack, styled, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import voucherApi from '../../../api/voucher'
 import GlassBox from '../../../components/GlassBox'
-import { getStatusColor } from '../../../utils/aboutColor'
 import { dateFormat } from '../../../utils/dateFormat'
 
 const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
@@ -20,7 +10,6 @@ const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
   const handleGetOneVoucher = async (id) => {
     try {
       const data = await voucherApi.getOne(id)
-      console.log(data)
       setOneVoucher(data)
     } catch (error) {
       console.log(error)

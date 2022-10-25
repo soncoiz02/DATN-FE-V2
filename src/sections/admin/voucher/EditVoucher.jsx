@@ -22,7 +22,7 @@ const defaultFormValues = {
   isUsed: false,
 }
 
-const EditVoucher = ({ openModalEdit, onCloseModal, registerId, resetVoucher }) => {
+const EditVoucher = ({ openModalEdit, onCloseModal, registerId, resetVoucher, confirm }) => {
   const [voucher, setVoucher] = useState()
   const [formValues, setFormValues] = useState()
 
@@ -49,6 +49,7 @@ const EditVoucher = ({ openModalEdit, onCloseModal, registerId, resetVoucher }) 
     try {
       const values = await voucherApi.update(id, data)
       setFormValues(values)
+      confirm()
       onCloseModal()
     } catch (error) {
       console.log(error)

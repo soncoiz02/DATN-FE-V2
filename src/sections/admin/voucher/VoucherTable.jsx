@@ -2,19 +2,32 @@ import React, { useState } from 'react'
 import GlassBox from '../../../components/GlassBox'
 import voucherApi from '../../../api/voucher'
 import { useEffect } from 'react'
-import { IconButton, Stack, useMediaQuery, useTheme, Chip } from '@mui/material'
-import { Delete, ModeEditOutline, RemoveRedEye } from '@mui/icons-material'
+import {
+  IconButton,
+  Stack,
+  useMediaQuery,
+  Grid,
+  InputBase,
+  useTheme,
+  Chip,
+  Typography,
+} from '@mui/material'
+import { Delete, ModeEditOutline, RemoveRedEye, Search } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
 import EditVoucher from '../../../sections/admin/voucher/EditVoucher'
 import DeleteVoucher from '../../../sections/admin/voucher/DeleteVoucher'
 import { dateFormat } from '../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
 
+import MainButton from '../../../components/MainButton'
+import ModalRegisterForm from '../../../sections/admin/voucher/ModalRegisterForm'
+
 const VoucherTable = () => {
   const [rows, setRows] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalEdit, setOpenModalEdit] = useState(false)
   const [openModalDelete, setOpenModalDelete] = useState(false)
+  const [openModalRegister, setOpenModalRegister] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -131,6 +144,43 @@ const VoucherTable = () => {
   return (
     <Stack gap={2}>
       <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
+        <Grid container paddingBottom={{ md: '50px', xs: '15px' }}>
+          <Grid item xs={10} md={6}>
+            <form action=''>
+              <GlassBox
+                sx={{
+                  p: '5px 5px 5px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: 1,
+                  height: '50px',
+                  borderRadius: '10px',
+                }}
+              >
+                <Search />
+                <InputBase
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder='Tìm kiếm voucher ...'
+                  inputProps={{ 'aria-label': 'Tìm kiếm voucher' }}
+                />
+              </GlassBox>
+            </form>
+          </Grid>
+          <Grid
+            item
+            xs={2}
+            md={6}
+            sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
+          >
+            <MainButton
+              colorType='primary'
+              sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}
+              onClick={() => setOpenModalRegister(true)}
+            >
+              <Typography variant='h6'>Thêm +</Typography>
+            </MainButton>
+          </Grid>
+        </Grid>
         <DataGridCustom rows={rows} columns={columns} />
       </GlassBox>
       {openModal && (
@@ -146,6 +196,7 @@ const VoucherTable = () => {
           onCloseModal={() => setOpenModalEdit(false)}
           registerId={registerId}
           resetVoucher={() => setRegisterId(null)}
+          confirm={handleGetVoucherRegister}
         />
       )}
       {openModalDelete && (
@@ -155,6 +206,14 @@ const VoucherTable = () => {
           registerId={registerId}
           resetVoucher={() => setRegisterId(null)}
           title={dialogTitle}
+          confirm={handleGetVoucherRegister}
+        />
+      )}
+      {openModalRegister && (
+        <ModalRegisterForm
+          openModalRegister={openModalRegister}
+          onCloseModal={() => setOpenModalRegister(false)}
+          confirm={handleGetVoucherRegister}
         />
       )}
     </Stack>
