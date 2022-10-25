@@ -12,9 +12,9 @@ const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, se
     try {
       const data = await userApis.getStaffByServiceCategory(categoryId)
       const options = data.map((item) => ({
-        id: item.staff._id,
-        label: item.staff.name,
-        image: item.staff.avt,
+        id: item._id,
+        label: item.name,
+        image: item.avt,
       }))
       setStaffOptions(options)
     } catch (error) {
@@ -25,7 +25,8 @@ const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, se
   const handleGetStaffInTimeSlot = async (timeSlot, serviceId, date) => {
     try {
       const data = await userApis.getStaffInTimeSlot(timeSlot, serviceId, date)
-      setStaffInTimeSlot(data)
+      const filterData = data.filter((item) => item !== staffValue.id)
+      setStaffInTimeSlot(filterData)
     } catch (error) {
       console.log(error)
     }

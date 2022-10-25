@@ -32,3 +32,8 @@ export const convertTimeToNumber = (time) => {
   const minute = date.getMinutes() / 60
   return hour + minute
 }
+
+export const formatDateToHour = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm')
+}

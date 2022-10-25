@@ -192,12 +192,11 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 }
               >
                 {item.items.map((subItem) => (
-                  <>
+                  <div key={subItem.key}>
                     {subItem.children ? (
                       <>
                         <CustomListItemButton
                           className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
-                          key={subItem.key}
                           onClick={() => setChildOpenedIndex(childOpenedIndex ? null : subItem.key)}
                         >
                           <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
@@ -247,7 +246,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                         <Typography variant='body1'>{subItem.title}</Typography>
                       </CustomListItemButton>
                     )}
-                  </>
+                  </div>
                 ))}
               </List>
             ))}

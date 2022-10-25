@@ -41,10 +41,11 @@ export const RHFAutoCompleteRenderImg = ({ name, options, ...other }) => {
       name={name}
       render={({ field: { value, ref, onChange, ...field }, fieldState: { error } }) => (
         <Autocomplete
-          value={value}
+          value={value || null}
           onChange={(_, data) => onChange(data)}
           options={options}
           getOptionLabel={(option) => option.label || ''}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           disablePortal
           renderOption={(props, option) => (
             <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
