@@ -10,6 +10,7 @@ import {
   RateReview,
   Store,
   WorkspacePremium,
+  Loyalty,
 } from '@mui/icons-material'
 import {
   Avatar,
@@ -98,6 +99,12 @@ const VERTICAL_ITEMS = [
         title: 'Đánh giá',
         icon: <RateReview />,
         path: '/admin/rated-management',
+      },
+      {
+        key: 'voucher-management',
+        title: 'Voucher',
+        icon: <Loyalty />,
+        path: '/admin/voucher-management',
       },
     ],
   },

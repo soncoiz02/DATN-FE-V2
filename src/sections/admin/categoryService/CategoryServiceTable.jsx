@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 import { IconButton, Stack, useMediaQuery, useTheme, Switch } from '@mui/material'
 import { Delete, ModeEditOutline } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
-import ModalRegisterForm from '../../../sections/admin/categoryService/ModalRegisterForm'
 import EditCategoryService from '../../../sections/admin/categoryService/EditForm'
 
 const CategoryServicesTable = () => {

@@ -5,6 +5,7 @@ import ClientLayout from '../layouts/client/ClientLayout'
 import CalendarList from '../pages/admin/calendar/CalendarList'
 import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
 import CategoryServices from '../pages/admin/category-services'
+import Voucher from '../pages/admin/voucher/VoucherList'
 import Dashboard from '../pages/admin/dashboard'
 import ServiceAdd from '../pages/admin/service/ServiceAdd'
 import ServiceList from '../pages/admin/service/ServiceList'
@@ -47,6 +48,7 @@ const Router = () => {
         <Route path='services-management/add' element={<ServiceAdd />} />
         <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
         <Route path='category-management' element={<CategoryServices />} />
+        <Route path='voucher-management' element={<Voucher />} />
       </Route>
     </Routes>
   )
