@@ -25,3 +25,15 @@ export const convertNumberToHour = (num, option) => {
       minute,
     }
 }
+
+export const convertTimeToNumber = (time) => {
+  const date = new Date(time)
+  const hour = date.getHours()
+  const minute = date.getMinutes() / 60
+  return hour + minute
+}
+
+export const formatDateToHour = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm')
+}

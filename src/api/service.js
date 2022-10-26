@@ -37,10 +37,8 @@ const serviceApi = {
   getRegisteredServiceByUserAndDate(userPhone, date) {
     return axiosClient.get(`/getOrderByUserAndDate?date=${date}&userPhone=${userPhone}`)
   },
-  getTimeSlotCheckByStaff(categoryId, serviceId, date) {
-    return axiosClient.get(
-      `/getOrderByStaffCategory?categoryId=${categoryId}&serviceId=${serviceId}&date=${date}`,
-    )
+  getTimeSlotCheckByStaff(serviceId, date) {
+    return axiosClient.get(`/getOrderByStaffCategory?serviceId=${serviceId}&date=${date}`)
   },
 }
 

@@ -58,6 +58,7 @@ const ServiceTable = () => {
       headerName: 'Danh mục',
       width: isMobile ? 120 : 140,
       valueGetter: (params) => {
+        console.log(params)
         return `${params.row.categoryId.name}`
       },
     },

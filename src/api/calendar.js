@@ -22,6 +22,18 @@ const calendarApi = {
   updateOrder(data, id) {
     return axiosClient.put(`/order/${id}`, data)
   },
+  getDetailOrder(id) {
+    return axiosClient.get(`/order/${id}`)
+  },
+  getFutureOrder(storeId) {
+    return axiosClient.get(`/getFutureOrderByStore/${storeId}`)
+  },
+  addUpdateActivity(data) {
+    return axiosClient.post('/activityLog', data)
+  },
+  createBill(data) {
+    return axiosClient.post('/bill', data)
+  },
 }
 
 export default calendarApi
