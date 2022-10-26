@@ -88,7 +88,11 @@ const Header = ({ openMenu }) => {
               </UserInfo>
               <Popper open={open} anchorEl={anchorEl}>
                 <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
-                  <CustomLink underline='none'>
+                  <CustomLink
+                    underline='none'
+                    component={RouterLink}
+                    to='/account-setting/account-info'
+                  >
                     <Person />
                     <Typography variant='body1'>Cài đặt tài khoản</Typography>
                   </CustomLink>
