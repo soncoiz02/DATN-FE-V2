@@ -28,6 +28,12 @@ import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+// import EditorToolbar, { modules, formats } from "./EditorToolbar";
+
+import EditorToolbar, { modules, formats } from '../../../components/EditorToolbar'
+
 // import MUIRichTextEditor from 'mui-rte'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -157,6 +163,10 @@ const ServiceForm = () => {
     }
   }
 
+  const [value, setValue] = useState('')
+
+  console.log(value)
+
   useEffect(() => {
     handleGetServices()
     if (id) handleGetOneService(id)
@@ -192,9 +202,7 @@ const ServiceForm = () => {
                     <Typography variant='subtitle2'>Tải ảnh lên</Typography>
                   </Stack>
                 )}
-                <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                  <input hidden accept='image/*' type='file' name='picture' />
-                </RHFProvider>
+                <input hidden accept='image/*' type='file' name='picture' />
               </IconButton>
             </CustomBox>
             <Typography variant='subtitle2' sx={{ textAlign: 'center' }}>
@@ -239,32 +247,21 @@ const ServiceForm = () => {
                 </RHFSelect>
               </Grid>
               <Grid item xs={12}>
-                {/* <Typography fontSize={18}>Mô tả</Typography>
-                <Box sx={{ border: '1px solid #c9bebe', borderRadius: '4px', padding: '0 10px' }}>
-                  <MUIRichTextEditor 
-                    controls={[
-                      'title',
-                      'bold',
-                      'italic',
-                      'underline',
-                      'strikethrough',
-                      'undo',
-                      'redo',
-                      'link',
-                      'media',
-                      'numberList',
-                      'bulletList',
-                      'quote',
-                      'code',
-                      'clear',
-                    ]}
-
-                    defaultValue={text}
-                    onChange={onEditorChange}
-                    label='Viết ở đây ạ...'
-                  />
-                </Box> */}
-                <RHFTextField name='desc' label='Mô tả' />
+                <Typography fontSize={18}>Mô tả</Typography>
+                <EditorToolbar toolbarId={'t2'} />
+                <ReactQuill
+                  style={{
+                    height: '200px',
+                    maxHeight: '200px',
+                    // paddingBottom: '30px'
+                  }}
+                  theme='snow'
+                  value={value}
+                  onChange={setValue}
+                  placeholder={'Viết mô tả...'}
+                  modules={modules('t2')}
+                  formats={formats}
+                />
               </Grid>
 
               <Grid item xs={12}>
