@@ -1,7 +1,9 @@
+import { dateFormat, formatDateToHour } from '../../../../../utils/dateFormat'
 import formatPrice from '../../../../../utils/formatPrice'
 
 export const getHtmlTemplate = (info) => {
   const { storeInfo, user, serviceUsed } = info
+  const today = new Date()
   return `
     <table
     width="100%"
@@ -25,8 +27,8 @@ export const getHtmlTemplate = (info) => {
         >
           <tr>
             <td>
-              <div style="display: flex; justify-content: center;">
-                <div style="border-radius: 50%; width: 100px; height: 100px; overflow: hidden;">
+              <div>
+                <div style="border-radius: 50%; width: 100px; height: 100px; overflow: hidden; margin: 0 auto;">
                     <img src="${
                       storeInfo.avt
                     }" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
@@ -63,6 +65,7 @@ export const getHtmlTemplate = (info) => {
                       tôi. Nhờ sự tin tưởng của Quý khách hàng mà chúng tôi có
                       được sự thành công như ngày hôm nay.
                     </p>
+                    <p>Thời gian: ${formatDateToHour(today)} ngày ${dateFormat(today)}</p>
                   </td>
                 </tr>
                 <tr>
