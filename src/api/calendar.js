@@ -1,9 +1,12 @@
 import axiosClient from './axiosClient'
 
-const statusId = {
+export const statusId = {
   done: '632bc757dc2a7f68a3f383e9',
   cancel: '632bc765dc2a7f68a3f383eb',
   pending: '632bc736dc2a7f68a3f383e7',
+  accepted: '632bc784dc2a7f68a3f383ed',
+  doing: '63561be0a20abb23c688724e',
+  paid: '634e59b757b7ea792917962c',
 }
 
 const calendarApi = {
@@ -19,6 +22,9 @@ const calendarApi = {
   updateOrderStatusToDone(id) {
     return axiosClient.put(`/order/${id}`, { status: statusId.done })
   },
+  updateOrderStatusToAccepted(id) {
+    return axiosClient.put(`/order/${id}`, { status: statusId.accepted })
+  },
   updateOrder(data, id) {
     return axiosClient.put(`/order/${id}`, data)
   },
@@ -33,6 +39,9 @@ const calendarApi = {
   },
   createBill(data) {
     return axiosClient.post('/bill', data)
+  },
+  changeStatus(orderId, statusType) {
+    return axiosClient.put(`/order/${orderId}`, { status: statusId[statusType] })
   },
 }
 

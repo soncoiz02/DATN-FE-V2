@@ -7,20 +7,18 @@ import serviceApi from '../../../../../api/service'
 import GlassBox from '../../../../../components/GlassBox'
 import RHFProvider from '../../../../../components/ReactHookForm/RHFProvider'
 
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import * as yup from 'yup'
 import MainButton from '../../../../../components/MainButton'
 import { RHFAutoCompleteRenderImg } from '../../../../../components/ReactHookForm/RHFAutoComplete'
 import RHFDatePicker from '../../../../../components/ReactHookForm/RHFDatePicker'
 import RHFTextField from '../../../../../components/ReactHookForm/RHFTextField'
-import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/dateFormat'
-import AssignStaff from './AssignStaff'
-import ChangeStatus from './ChangeStatus'
-import { useSelector } from 'react-redux'
-import AlertCustom from '../../../../../components/AlertCustom'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import phoneRegExp from '../../../../../utils/phoneRegExp'
 import useAuth from '../../../../../hook/useAuth'
+import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/dateFormat'
+import phoneRegExp from '../../../../../utils/phoneRegExp'
+import AssignStaff from './AssignStaff'
 
 const defaultFormValue = {
   name: '',
@@ -34,7 +32,6 @@ const defaultFormValue = {
   date: new Date(),
   timeSlot: 0,
   staff: '',
-  status: '',
 }
 
 const ModalEditOrder = ({
@@ -56,8 +53,6 @@ const ModalEditOrder = ({
   const [formValues, setFormValues] = useState()
 
   const [currentStaff, setCurrentStaff] = useState()
-
-  const [currentStatus, setCurrentStatus] = useState()
 
   const allService = useSelector((state) => state.order.services)
 
@@ -164,7 +159,7 @@ const ModalEditOrder = ({
   const handleUpdateOrder = () => {
     const date = formValues?.date || currentOrder.startDate
     const infoUser = formValues
-      ? { name: formValues.name, phone: formValues.phone }
+      ? { name: formValues.name, phone: formValues.phone, email: formValues.email }
       : currentOrder.infoUser
     const service =
       allService.find((service) => service._id === formValues?.service?.id) ||
@@ -176,13 +171,11 @@ const ModalEditOrder = ({
     const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
 
     const staff = currentStaff.id
-    const status = currentStatus.id
 
     const updateData = {
       infoUser,
       serviceId: service._id,
       staff: staff,
-      status: status,
       startDate,
       endDate,
     }
@@ -300,16 +293,10 @@ const ModalEditOrder = ({
         image: data.staff?.avt || '',
       }
 
-      const currentStatus = {
-        id: data.status._id,
-        label: data.status.name,
-        type: data.status.type,
-      }
       setCurrentOrder(data)
       setCheckedData(valueChecked)
       setTimeSlot(data.serviceId.timeSlot)
       setCurrentStaff(currentStaff)
-      setCurrentStatus(currentStatus)
 
       handleGetTimeSlotCheckByStaff(new Date(data.startDate), data.serviceId._id)
       handleGetRegisteredServiceByUser(data.infoUser.phone, new Date(data.startDate))
@@ -436,24 +423,16 @@ const ModalEditOrder = ({
                 }
               />
             )}
-            {orderId && <ChangeStatus status={currentStatus} setStatus={setCurrentStatus} />}
-            <Stack
-              direction='row'
-              alignItems='center'
-              justifyContent={orderId ? 'space-between' : 'flex-end'}
-            >
-              {orderId && <MainButton colorType='primary'>Hủy lịch</MainButton>}
-              <Stack direction='row' gap={1}>
-                <MainButton colorType='neutral' onClick={handleCloseModal}>
-                  Hủy
-                </MainButton>
-                <MainButton
-                  colorType='primary'
-                  onClick={orderId ? handleUpdateOrder : handleCreateOrder}
-                >
-                  {orderId ? 'Cập nhật' : 'Tạo mới'}
-                </MainButton>
-              </Stack>
+            <Stack direction='row' alignItems='center' justifyContent='flex-end' gap={1}>
+              <MainButton colorType='neutral' onClick={handleCloseModal}>
+                Hủy
+              </MainButton>
+              <MainButton
+                colorType='primary'
+                onClick={orderId ? handleUpdateOrder : handleCreateOrder}
+              >
+                {orderId ? 'Cập nhật' : 'Tạo mới'}
+              </MainButton>
             </Stack>
           </Stack>
         </GlassBox>
