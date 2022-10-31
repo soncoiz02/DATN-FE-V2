@@ -19,6 +19,9 @@ const categoryApi = {
   registerCategoryService(data) {
     return axiosClient.post('/category', data)
   },
+  search(keyword) {
+    return axiosClient.post(`/search-category?q=${keyword}`)
+  },
 }
 
 export default categoryApi
