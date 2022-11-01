@@ -225,8 +225,8 @@ const Calendar = () => {
     return (
       <AppointmentTooltip.Content appointmentData={appointmentData} {...restProps}>
         <Stack gap={1} sx={{ mt: 1.5 }}>
-          {appointmentData.servicesRegistered.map((item) => (
-            <Stack gap={1} sx={{ ml: 2.5 }} key={item.id}>
+          {appointmentData.servicesRegistered.map((item, index) => (
+            <Stack gap={1} sx={{ ml: 2.5 }} key={index}>
               <Stack direction='row' alignItems='center' gap={1}>
                 <Avatar src={item.service.image} sx={{ width: '30px', height: '30px' }} />
                 <Typography variant='body1'>

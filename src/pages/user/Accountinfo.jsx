@@ -10,17 +10,15 @@ import RHFTextField from '../../components/ReactHookForm/RHFTextField'
 import useAuth from '../../hook/useAuth'
 import { useNavigate } from 'react-router-dom'
 import RHFDatePicker from '../../components/ReactHookForm/RHFDatePicker'
+import { uploadAvatarImage } from '../../utils/uploadImage'
 
 const Accountinfo = () => {
-  const { userInfo } = useAuth()
-  console.log(userInfo)
-  const id = userInfo._id
+  const { userInfo, token, updateInfo } = useAuth()
+
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [imgPreview, setimgPreview] = useState('')
-  const [imgUpload, setimgUpload] = useState('')
-  const [data, setData] = useState('')
-  const [url, setUrl] = useState('')
+  const [imgPreview, setImgPreview] = useState('')
+  const [imgUpload, setImgUpload] = useState()
 
   const userInforSchema = yup.object().shape({
     name: yup
@@ -55,10 +53,6 @@ const Accountinfo = () => {
     })
   }
 
-  useEffect(() => {
-    fillUserData()
-  }, [])
-
   const methods = useForm({
     defaultValues: {
       avt: '',
@@ -69,122 +63,113 @@ const Accountinfo = () => {
     },
     resolver: yupResolver(userInforSchema),
   })
-  const updateData = (event) => {
-    setData(event.target.values)
-  }
-  const { handleSubmit, reset } = methods
-  const onSubmit = (values) => {
-    const usserData = {
-      avt: values.avt,
-      name: values.name,
-      phone: values.phone,
-      email: values.email,
-      birthday: values.birthday,
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = methods
+
+  const onSubmit = async (values) => {
+    if (imgUpload) {
+      const imgLink = await uploadAvatarImage(imgUpload)
+      setImgUpload(null)
+      setImgPreview('')
+      return handleUpdateUser({ ...values, avt: imgLink })
     }
-    handleUpdateUser(id, usserData)
+    handleUpdateUser({ ...values })
   }
 
-  const handleUpdateUser = async (id, usserData) => {
+  const handleUpdateUser = async (userData) => {
     try {
-      const data = await userApis.userUpdate(id, usserData)
-      console.log(data)
-
-      setOpen(true)
-      setTimeout(() => {
-        navigate('/account-setting/account-info')
-      }, 2000)
+      const data = await userApis.userUpdate(token, userData)
+      reset({
+        ...data,
+      })
+      updateInfo(data)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const handlePreviwe = (event) => {
-    setimgPreview(URL.createObjectURL(event.target.files[0]))
+  const previewFile = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        setImgPreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+      setImgUpload(file)
+    }
   }
 
-  const uploadImage = () => {
-    const formData = new FormData()
-    formData.append('file', imgUpload)
-    formData.append('upload_preset', 'dxrqjome')
-    fetch('https://api.cloudinary.com/v1_1/djultth5g/image/upload', {
-      method: 'post',
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((formData) => {
-        setUrl(formData.url)
-        console.log(formData.url)
-      })
-      .catch((error) => console.log(error))
+  const checkDataChange = () => {
+    return imgUpload || !formState.isDirty
   }
+
+  useEffect(() => {
+    fillUserData()
+  }, [])
 
   return (
     <Box>
       <Grid container spacing={2} mt={4}>
-        <Snackbar open={open} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-          <Alert severity='success'>Cập nhật thành công</Alert>
-        </Snackbar>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
           <Stack direction='column' justifyContent='center' alignItems='center' spacing={2}>
             <Avatar
               src={imgPreview ? imgPreview : userInfo.avt}
               sx={{ width: 200, height: 200 }}
             ></Avatar>
 
-            <MainButton
-              onChange={handlePreviwe}
-              sx={{ m: 'auto' }}
-              colorType='primary'
-              component='label'
-            >
+            <MainButton sx={{ m: 'auto' }} colorType='primary' component='label'>
               <input
                 hidden
                 accept='image/*'
                 type='file'
                 onChange={(event) => {
-                  setimgUpload(event.target.files[0])
+                  previewFile(event)
                 }}
               />
               Thay đổi ảnh mới
             </MainButton>
-            {/* <img src={imgFile} width="250" height="250" /> */}
           </Stack>
         </Grid>
-        <Grid item xs={8} mt={2} onChange={(e) => updateData(e)}>
+        <Grid item xs={12} md={8}>
           <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
-              <Grid style={{ width: '315px' }} xs={4}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Họ và tên
                 </Typography>
                 <RHFTextField name='name' />
               </Grid>
-              <Grid style={{ width: '315px' }} ml={4}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Số điện thoại
                 </Typography>
                 <RHFTextField name='phone' />
               </Grid>
-              <Grid style={{ width: '315px' }} xs={4} mt={2}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Email
                 </Typography>
                 <RHFTextField name='email' />
               </Grid>
-              <Grid style={{ width: '315px' }} ml={4} mt={2}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Ngày sinh
                 </Typography>
                 <RHFDatePicker name='birthday' />
               </Grid>
 
-              <Grid style={{ width: '180px' }} m={15}>
+              <Grid item mt={3} xs={12}>
                 <Stack>
                   <MainButton
-                    disabled={imgPreview ? false : true || data ? true : false}
                     type='submit'
                     colorType='primary'
-                    onClick={uploadImage}
+                    sx={{ alignSelf: 'center', px: '30px' }}
+                    disabled={!isDirty && !imgUpload}
                   >
                     Cập Nhật
                   </MainButton>
