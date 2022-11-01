@@ -1,68 +1,71 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import AdminLayout from '../layouts/admin/AdminLayout'
-import ClientLayout from '../layouts/client/ClientLayout'
-import CalendarList from '../pages/admin/calendar/CalendarList'
-import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
-import CategoryServices from '../pages/admin/category-services'
-import Voucher from '../pages/admin/voucher/VoucherList'
-import Dashboard from '../pages/admin/dashboard'
-import ServiceAdd from '../pages/admin/service/ServiceAdd'
-import ServiceList from '../pages/admin/service/ServiceList'
-import ServiceUpdate from '../pages/admin/service/ServiceUpdate'
-import DetailService from '../pages/client/detail-service'
-import DetailStore from '../pages/client/detail-store'
-import HomePage from '../pages/client/home'
-import Login from '../pages/auth/Login'
-import Store from '../pages/client/store'
-import TabInfo from '../sections/client/detail-store/TabsItem/TabInfo'
-import TabPost from '../sections/client/detail-store/TabsItem/TabPost'
-import TabServices from '../sections/client/detail-store/TabsItem/TabServices'
-import TabRate from '../sections/client/detail-store/TabsItem/TabRate'
-import AuthLayout from '../layouts/auth/AuthLayout'
-import Register from '../pages/auth/Register'
-import ServiceRegister from '../pages/client/service-register-history'
-import User from '../pages/user'
-import Changepassword from '../pages/user/Changepassword'
-import AccountSetting from '../pages/user/index'
-import Accountinfo from '../pages/user/Accountinfo'
-import ServiceStatistic from '../pages/admin/services-statistic'
+import React, { Suspense, lazy } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Loading from '../components/Loading'
+
+const AdminLayout = lazy(() => import('../layouts/admin/AdminLayout'))
+const AuthLayout = lazy(() => import('../layouts/auth/AuthLayout'))
+const ClientLayout = lazy(() => import('../layouts/client/ClientLayout'))
+const CalendarList = lazy(() => import('../pages/admin/calendar/CalendarList'))
+const CalendarManagement = lazy(() => import('../pages/admin/calendar/CalendarSchedule'))
+const CategoryServices = lazy(() => import('../pages/admin/category-services'))
+const Dashboard = lazy(() => import('../pages/admin/dashboard'))
+const ServiceAdd = lazy(() => import('../pages/admin/service/ServiceAdd'))
+const ServiceList = lazy(() => import('../pages/admin/service/ServiceList'))
+const ServiceUpdate = lazy(() => import('../pages/admin/service/ServiceUpdate'))
+const ServiceStatistic = lazy(() => import('../pages/admin/services-statistic'))
+const Voucher = lazy(() => import('../pages/admin/voucher/VoucherList'))
+const Login = lazy(() => import('../pages/auth/Login'))
+const Register = lazy(() => import('../pages/auth/Register'))
+const DetailService = lazy(() => import('../pages/client/detail-service'))
+const DetailStore = lazy(() => import('../pages/client/detail-store'))
+const HomePage = lazy(() => import('../pages/client/home'))
+const ServiceRegister = lazy(() => import('../pages/client/service-register-history'))
+const Store = lazy(() => import('../pages/client/store'))
+const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
+const Changepassword = lazy(() => import('../pages/user/Changepassword'))
+const AccountSetting = lazy(() => import('../pages/user/index'))
+const TabInfo = lazy(() => import('../sections/client/detail-store/TabsItem/TabInfo'))
+const TabPost = lazy(() => import('../sections/client/detail-store/TabsItem/TabPost'))
+const TabRate = lazy(() => import('../sections/client/detail-store/TabsItem/TabRate'))
+const TabServices = lazy(() => import('../sections/client/detail-store/TabsItem/TabServices'))
 
 const Router = () => {
   return (
-    <Routes>
-      <Route path='/' element={<ClientLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path='store' element={<Store />} />
-        <Route path='account-setting' element={<AccountSetting />}>
-          <Route path='account-info' element={<Accountinfo />} />
-          <Route path='change-password' element={<Changepassword />} />
+    <Suspense fallback={<Loading />}>
+      <Routes>
+        <Route path='/' element={<ClientLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path='store' element={<Store />} />
+          <Route path='account-setting' element={<AccountSetting />}>
+            <Route path='account-info' element={<Accountinfo />} />
+            <Route path='change-password' element={<Changepassword />} />
+          </Route>
+          <Route path='store/:id' element={<DetailStore />}>
+            <Route path='info' element={<TabInfo />} />
+            <Route path='services' element={<TabServices />} />
+            <Route path='post' element={<TabPost />} />
+            <Route path='rate' element={<TabRate />} />
+          </Route>
+          <Route path='service/:id' element={<DetailService />} />
+          <Route path='service-register-history' element={<ServiceRegister />} />
         </Route>
-        <Route path='store/:id' element={<DetailStore />}>
-          <Route path='info' element={<TabInfo />} />
-          <Route path='services' element={<TabServices />} />
-          <Route path='post' element={<TabPost />} />
-          <Route path='rate' element={<TabRate />} />
+        <Route path='auth' element={<AuthLayout />}>
+          <Route path='login' element={<Login />} />
+          <Route path='register' element={<Register />} />
         </Route>
-        <Route path='service/:id' element={<DetailService />} />
-        <Route path='service-register-history' element={<ServiceRegister />} />
-      </Route>
-      <Route path='auth' element={<AuthLayout />}>
-        <Route path='login' element={<Login />} />
-        <Route path='register' element={<Register />} />
-      </Route>
-      <Route path='/admin' element={<AdminLayout />}>
-        <Route path='dashboard' element={<Dashboard />} />
-        <Route path='services-statistic' element={<ServiceStatistic />} />
-        <Route path='calendar-schedule' element={<CalendarManagement />} />
-        <Route path='calendar-list' element={<CalendarList />} />
-        <Route path='services-management' element={<ServiceList />} />
-        <Route path='services-management/add' element={<ServiceAdd />} />
-        <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
-        <Route path='category-management' element={<CategoryServices />} />
-        <Route path='voucher-management' element={<Voucher />} />
-      </Route>
-    </Routes>
+        <Route path='/admin' element={<AdminLayout />}>
+          <Route path='dashboard' element={<Dashboard />} />
+          <Route path='services-statistic' element={<ServiceStatistic />} />
+          <Route path='calendar-schedule' element={<CalendarManagement />} />
+          <Route path='calendar-list' element={<CalendarList />} />
+          <Route path='services-management' element={<ServiceList />} />
+          <Route path='services-management/add' element={<ServiceAdd />} />
+          <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
+          <Route path='category-management' element={<CategoryServices />} />
+          <Route path='voucher-management' element={<Voucher />} />
+        </Route>
+      </Routes>
+    </Suspense>
   )
 }
 

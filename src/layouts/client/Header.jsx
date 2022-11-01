@@ -96,7 +96,7 @@ const Header = ({ openMenu }) => {
                     <Person />
                     <Typography variant='body1'>Cài đặt tài khoản</Typography>
                   </CustomLink>
-                  <CustomLink underline='none'>
+                  <CustomLink underline='none' component={RouterLink} to='service-register-history'>
                     <Assignment />
                     <Typography variant='body1'>Dịch vụ đăng ký</Typography>
                   </CustomLink>
