@@ -22,6 +22,8 @@ import {
   Workspaces,
 } from '@mui/icons-material'
 import {
+  Avatar,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -49,6 +51,7 @@ import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
 import { statusId } from '../../../../api/calendar'
+import { formatDateToHour } from '../../../../utils/dateFormat'
 
 const socket = getSocket('order')
 
@@ -218,6 +221,35 @@ const Calendar = () => {
     )
   }
 
+  const Content = ({ children, appointmentData, ...restProps }) => {
+    return (
+      <AppointmentTooltip.Content appointmentData={appointmentData} {...restProps}>
+        <Stack gap={1} sx={{ mt: 1.5 }}>
+          {appointmentData.servicesRegistered.map((item) => (
+            <Stack gap={1} sx={{ ml: 2.5 }} key={item.id}>
+              <Stack direction='row' alignItems='center' gap={1}>
+                <Avatar src={item.service.image} sx={{ width: '30px', height: '30px' }} />
+                <Typography variant='body1'>
+                  {item.service.name} | {formatDateToHour(item.timeStart)} -{' '}
+                  {formatDateToHour(item.timeEnd)}
+                </Typography>
+              </Stack>
+              <Stack
+                direction='row'
+                alignItems='center'
+                gap={1}
+                sx={{ ml: 1.5, borderLeft: '1px solid gray', pl: 2 }}
+              >
+                <Avatar src={item.staff.avt} sx={{ width: '30px', height: '30px' }} />
+                <Typography variant='body2'>{item.staff.name}</Typography>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+      </AppointmentTooltip.Content>
+    )
+  }
+
   // functions
 
   const currentDateChange = (dateChange) => setCurrentDate(dateChange)
@@ -268,8 +300,7 @@ const Calendar = () => {
           endDate: new Date(item.endDate),
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
-          service: item.service._id,
-          staff: item.staff,
+          servicesRegistered: item.servicesRegistered,
         }
       })
 
@@ -288,7 +319,6 @@ const Calendar = () => {
       ])
       const serviceData = allData[0]
       const statusData = allData[1]
-      const staffData = allData[2]
 
       const status = statusData.map((item) => ({
         id: item._id,
@@ -296,35 +326,13 @@ const Calendar = () => {
         color: getStatusColor(item.type),
       }))
 
-      const services = serviceData.map((item) => ({
-        id: item._id,
-        text: `${item.name} - ${formatPrice(item.price)}`,
-      }))
-
-      const staff = staffData.map((item) => ({
-        id: item._id,
-        text: 'Nhân viên: ' + item.name,
-      }))
-
-      const serviceResources = {
-        fieldName: 'service',
-        title: 'Dịch vụ',
-        instances: services,
-      }
-
       const statusResources = {
         fieldName: 'status',
         title: 'Trạng thái',
         instances: status,
       }
 
-      const staffResources = {
-        fieldName: 'staff',
-        title: 'Nhân viên',
-        instances: staff,
-      }
-
-      setResources([serviceResources, statusResources, staffResources])
+      setResources([statusResources])
       dispatch(setStatus(statusData))
       dispatch(setServices(serviceData))
     } catch (error) {
@@ -369,7 +377,7 @@ const Calendar = () => {
 
           <ViewSwitcher />
           <Appointments />
-          <AppointmentTooltip headerComponent={Header} showCloseButton />
+          <AppointmentTooltip headerComponent={Header} showCloseButton contentComponent={Content} />
           <Resources data={resources} mainResourceName='status' />
         </Scheduler>
       </Stack>

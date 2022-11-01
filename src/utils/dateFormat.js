@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 
 export const dateFormat = (date) => {
-  const dateFormated = format(date, 'dd/MM/yyyy')
+  const dateFormated = format(new Date(date), 'dd/MM/yyyy')
   return dateFormated
 }
 

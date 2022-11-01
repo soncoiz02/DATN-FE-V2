@@ -21,21 +21,27 @@ import { getHtmlTemplate } from './htmlTemplate'
 
 const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
   const [detailOrder, setDetailOrder] = useState()
+  const [totalServicePrice, setTotalServicePrice] = useState(0)
+  const [discountPrice, setDiscountPrice] = useState(0)
 
   const { userInfo } = useAuth()
-
-  console.log(userInfo)
 
   const handleCloseModal = () => {
     onCloseModal()
   }
 
   const handleAcceptPay = () => {
-    const storeInfo = detailOrder.serviceId.categoryId.storeId
-    const serviceUsed = detailOrder.serviceId
+    const storeInfo = userInfo.storeId
+    const serviceUsed = detailOrder.servicesRegistered
     const user = detailOrder.userId
 
-    const htmlTemplate = getHtmlTemplate({ storeInfo, serviceUsed, user })
+    const htmlTemplate = getHtmlTemplate({
+      storeInfo,
+      serviceUsed,
+      user,
+      totalServicePrice,
+      discountPrice,
+    })
 
     const billData = {
       order: orderId,
@@ -69,10 +75,24 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
     }
   }
 
+  const caculateTotalPrice = (servicesRegistered, discount) => {
+    let total = 0
+    servicesRegistered.forEach((item) => {
+      total += item.service.price
+    })
+
+    if (discount) {
+      setDiscountPrice(total * (discount / 100))
+    }
+
+    setTotalServicePrice(total)
+  }
+
   const handleGetDetailOrder = async () => {
     try {
       const data = await calendarApi.getDetailOrder(orderId)
       setDetailOrder(data)
+      caculateTotalPrice(data.servicesRegistered, data.voucher.discount)
     } catch (error) {
       console.log(error)
     }
@@ -116,16 +136,16 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
                   <Typography variant='h4'>Thông tin người dùng</Typography>
                   <Stack direction={{ xs: 'column', sm: 'row' }} gap={{ xs: 0, sm: 5 }}>
                     <Stack>
-                      <Typography variant='body2'>Họ tên: {detailOrder.infoUser.name}</Typography>
-                      <Typography variant='body2'>
+                      <Typography variant='body1'>Họ tên: {detailOrder.infoUser.name}</Typography>
+                      <Typography variant='body1'>
                         Số điện thoại: {detailOrder.infoUser.phone}
                       </Typography>
                     </Stack>
                     <Stack>
-                      <Typography variant='body2'>
+                      <Typography variant='body1'>
                         Ngày làm: {dateFormat(new Date(detailOrder.startDate))}
                       </Typography>
-                      <Typography variant='body2'>
+                      <Typography variant='body1'>
                         Thời gian: {formatDateToHour(detailOrder.startDate)} -{' '}
                         {formatDateToHour(detailOrder.endDate)}
                       </Typography>
@@ -134,48 +154,54 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
                 </Stack>
                 <Stack gap={1.5}>
                   <Typography variant='h4'>Dịch vụ sử dụng</Typography>
-                  <Stack>
-                    <Stack direction='row' gap={1}>
-                      <Avatar
-                        sx={{ width: '50px', height: '50px' }}
-                        variant='rounded'
-                        src={detailOrder.serviceId.image}
-                      />
-                      <Stack gap={0.5}>
-                        <Typography variant='h4' color='primary'>
-                          {detailOrder.serviceId.name}
-                        </Typography>
-                        <Typography variant='body2'>
-                          {formatPrice(detailOrder.serviceId.price)}
-                        </Typography>
+                  <Stack gap={1}>
+                    {detailOrder.servicesRegistered.map((item) => (
+                      <Stack direction='row' gap={1} key={item._id}>
+                        <Avatar
+                          sx={{ width: '50px', height: '50px' }}
+                          variant='rounded'
+                          src={item.service.image}
+                        />
+                        <Stack gap={0.5}>
+                          <Typography variant='h4' color='primary'>
+                            {item.service.name}
+                          </Typography>
+                          <Typography variant='body2'>{formatPrice(item.service.price)}</Typography>
+                        </Stack>
                       </Stack>
-                    </Stack>
+                    ))}
                   </Stack>
                 </Stack>
                 <Stack gap={1}>
                   <Typography variant='h4'>Voucher sử dụng</Typography>
-                  <Typography variant='body2' textAlign='center'>
-                    Không có voucher nào được sử dụng
-                  </Typography>
+                  {detailOrder.voucher ? (
+                    <Chip
+                      label={<Typography variant='h5'>{detailOrder.voucher.title}</Typography>}
+                      sx={{ alignSelf: 'flex-start' }}
+                      color='secondary'
+                    />
+                  ) : (
+                    <Typography variant='body1' textAlign='center'>
+                      Không có voucher nào được sử dụng
+                    </Typography>
+                  )}
                 </Stack>
                 <Stack gap={1}>
                   <Typography variant='h4'>Thành tiền</Typography>
                   <Stack>
                     <Stack direction='row' gap={1} justifyContent='space-between'>
-                      <Typography variant='body2'>Tổng tiền dịch vụ: </Typography>
-                      <Typography variant='body2'>
-                        {formatPrice(detailOrder.serviceId.price)}
-                      </Typography>
+                      <Typography variant='body1'>Tổng tiền dịch vụ: </Typography>
+                      <Typography variant='body1'>{formatPrice(totalServicePrice)}</Typography>
                     </Stack>
                     <Stack direction='row' gap={1} justifyContent='space-between'>
-                      <Typography variant='body2'>Voucher áp dụng: </Typography>
-                      <Typography variant='body2'>- {formatPrice(0)}</Typography>
+                      <Typography variant='body1'>Voucher áp dụng: </Typography>
+                      <Typography variant='body1'>- {formatPrice(discountPrice)}</Typography>
                     </Stack>
                     <Divider sx={{ my: 1.5 }} />
                     <Stack direction='row' gap={1} justifyContent='space-between'>
                       <Typography variant='h3'>Tổng</Typography>
                       <Typography variant='h4' color='primary'>
-                        {formatPrice(detailOrder.serviceId.price)}
+                        {formatPrice(totalServicePrice - discountPrice)}
                       </Typography>
                     </Stack>
                   </Stack>

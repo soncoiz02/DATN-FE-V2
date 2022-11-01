@@ -2,7 +2,7 @@ import { dateFormat, formatDateToHour } from '../../../../../utils/dateFormat'
 import formatPrice from '../../../../../utils/formatPrice'
 
 export const getHtmlTemplate = (info) => {
-  const { storeInfo, user, serviceUsed } = info
+  const { storeInfo, user, serviceUsed, totalServicePrice, discountPrice } = info
   const today = new Date()
   return `
     <table
@@ -96,13 +96,19 @@ export const getHtmlTemplate = (info) => {
                           Giá
                         </th>
                       </tr>
-                      <tr>
-                        <td style="padding: 5px 15px 5px 0;">${serviceUsed.name}</td>
-                        <td style="padding: 0 15px;">x 1</td>
-                        <td style="padding: 0 0 0 15px;" align="right">
-                        ${formatPrice(serviceUsed.price)}
-                        </td>
-                      </tr>
+                        ${serviceUsed
+                          .map((item) => {
+                            return `
+                              <tr>
+                              <td style="padding: 5px 15px 5px 0;">${item.service.name}</td>
+                              <td style="padding: 0 15px;">x 1</td>
+                              <td style="padding: 0 0 0 15px;" align="right">
+                              ${formatPrice(item.service.price)}
+                              </td>
+                            </tr>
+                            `
+                          })
+                          .join('')}
                       <tr
                         style="
                           border-bottom: 2px solid #ecedee;
@@ -117,7 +123,7 @@ export const getHtmlTemplate = (info) => {
                         </td>
                         <td style="padding: 0 15px;"></td>
                         <td style="padding: 0 0 0 15px;" align="right">
-                          - ${formatPrice(0)}
+                          - ${formatPrice(discountPrice)}
                         </td>
                       </tr>
                       <tr
@@ -140,7 +146,7 @@ export const getHtmlTemplate = (info) => {
                           style="padding: 0 0 0 15px; font-weight: bold;"
                           align="right"
                         >
-                          ${formatPrice(serviceUsed.price)}
+                          ${formatPrice(totalServicePrice - discountPrice)}
                         </td>
                       </tr>
                     </table>

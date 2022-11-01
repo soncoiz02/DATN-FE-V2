@@ -16,6 +16,16 @@ const userApis = {
   getStaffInTimeSlot(timeSlot, serviceId, date) {
     return axiosClient.get(`/staffInTimeSlot/${serviceId}?timeSlot=${timeSlot}&date=${date}`)
   },
+  getUserVoucher(token, storeId) {
+    return axiosClient.get(`/getUserVoucher?storeId=${storeId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  },
+  getStaffInTimeSlotAllService(storeId, timeStart, date) {
+    return axiosClient.get(
+      `/staffInTimeSlotAllService/${storeId}?timeStart=${timeStart}&date=${date}`,
+    )
+  },
 }
 
 export default userApis
