@@ -25,3 +25,8 @@ export const convertNumberToHour = (num, option) => {
       minute,
     }
 }
+
+export const formatHourMinuteSecond = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm:ss')
+}
