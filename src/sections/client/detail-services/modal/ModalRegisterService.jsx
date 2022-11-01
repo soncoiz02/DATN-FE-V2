@@ -1,11 +1,25 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { CheckCircle, Close, FileDownloadDone, Person } from '@mui/icons-material'
+import {
+  Abc,
+  AddCircleOutlineRounded,
+  CheckCircle,
+  Close,
+  FileDownloadDone,
+  Loyalty,
+  Person,
+  Phone,
+} from '@mui/icons-material'
 import {
   Box,
+  Button,
+  ClickAwayListener,
   Container,
+  Divider,
   Grid,
   IconButton,
+  InputAdornment,
   Modal,
+  Popper,
   Stack,
   Step,
   StepConnector,
@@ -32,6 +46,9 @@ import { useParams } from 'react-router-dom'
 import serviceApi from '../../../../api/service'
 
 import getSocket from '../../../../utils/socket'
+import { grey } from '@mui/material/colors'
+import ModalVoucher from './ModalVoucher'
+import AnotherService from './AnotherService'
 
 const registerStep = [
   {
@@ -64,6 +81,16 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const serviceId = useParams().id
   const { userInfo, isLogin } = useAuth()
 
+  const [voucherAnchor, setVoucherAnchor] = useState(null)
+  const openVoucher = Boolean(voucherAnchor)
+
+  const [voucherInfo, setVoucherInfo] = useState()
+
+  const [anotherServiceAnchor, setAnotherServiceAnchor] = useState(null)
+  const openAnotherService = Boolean(anotherServiceAnchor)
+
+  const [anotherServiceInfo, setAnotherServiceInfo] = useState()
+
   // form schema
   const formSchema = yup.object().shape({
     name: yup.string().trim().required('Vui lòng nhập họ tên'),
@@ -95,13 +122,9 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     handleGetTimeSlotCheckByStaff(values.date)
   }
 
-  const handleFinalStep = () => {
-    const startDateConverted = convertNumberToHour(timeRange.value, 'getTime')
-    // end time = start time + duration + 15
-    const endDateConverted = convertNumberToHour(
-      timeRange.value + (serviceInfo.duration + 15) / 60,
-      'getTime',
-    )
+  const getStartAndEndDate = (startTime, endTime) => {
+    const startDateConverted = convertNumberToHour(startTime, 'getTime')
+    const endDateConverted = convertNumberToHour(endTime, 'getTime')
 
     const startDate = new Date(
       formValues.date.setHours(startDateConverted.hour, startDateConverted.minute, 0),
@@ -110,17 +133,52 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       formValues.date.setHours(endDateConverted.hour, endDateConverted.minute, 0),
     )
 
+    return {
+      startDate,
+      endDate,
+    }
+  }
+
+  const handleFinalStep = () => {
+    const { startDate, endDate } = getStartAndEndDate(
+      timeRange.value,
+      timeRange.value + (serviceInfo.duration + 15) / 60,
+    )
+
     const registerData = {
       infoUser: {
         name: formValues.name,
         phone: formValues.phone,
         email: userInfo.email,
       },
-      serviceId,
+      servicesRegistered: [
+        {
+          service: serviceId,
+          timeStart: startDate,
+          timeEnd: endDate,
+        },
+      ],
       startDate,
       endDate,
+      voucher: voucherInfo ? voucherInfo._id : null,
       userId: userInfo._id,
-      status: '632bc736dc2a7f68a3f383e7',
+    }
+
+    if (anotherServiceInfo) {
+      const { startDate, endDate } = getStartAndEndDate(
+        timeRange.value + (serviceInfo.duration + 15) / 60,
+        timeRange.value +
+          (serviceInfo.duration + 15) / 60 +
+          (anotherServiceInfo.duration + 15) / 60,
+      )
+      const anotherService = {
+        service: anotherServiceInfo._id,
+        timeStart: startDate,
+        timeEnd: endDate,
+      }
+
+      registerData.servicesRegistered.push(anotherService)
+      registerData.endDate = endDate
     }
 
     const notifyData = {
@@ -233,9 +291,9 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }, [])
 
   return (
-    <Modal open={openModal} onClose={onCloseModal} sx={{ overflowY: 'auto' }}>
+    <CustomModal open={openModal} onClose={onCloseModal}>
       <Container
-        maxWidth='lg'
+        maxWidth='md'
         sx={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -253,7 +311,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                 <Close />
               </IconButton>
             </Stack>
-            <Box sx={{ width: '100%' }}>
+            <Stack sx={{ width: '100%' }}>
               <Stepper activeStep={activeStep} alternativeLabel connector={<QontoConnector />}>
                 {registerStep.map((step, index) => {
                   return (
@@ -267,17 +325,39 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                   )
                 })}
               </Stepper>
-              <Box sx={{ mt: '30px' }}>
+              <MainLayout sx={{ mt: { md: '30px', xs: '15px' }, pt: 1 }}>
                 {activeStep === 1 && (
                   <Stack gap={3}>
                     <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
                       <Stack gap={1}>
                         <Grid container spacing={3}>
                           <Grid item xs={12} md={4}>
-                            <RHFTextField name='name' fullWidth label='Họ tên' />
+                            <RHFTextField
+                              name='name'
+                              fullWidth
+                              label='Họ tên'
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position='start'>
+                                    <Person />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
                           </Grid>
                           <Grid item xs={12} md={4}>
-                            <RHFTextField name='phone' fullWidth label='Số điện thoại' />
+                            <RHFTextField
+                              name='phone'
+                              fullWidth
+                              label='Số điện thoại'
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position='start'>
+                                    <Phone />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
                           </Grid>
                           <Grid item xs={12} md={4}>
                             <RHFDatePicker name='date' label='Chọn ngày' disablePast />
@@ -292,15 +372,24 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                         </MainButton>
                       </Stack>
                     </RHFProvider>
+                    <Stack gap={1}>
+                      <Typography variant='h4' color='primary'>
+                        Chú ý:
+                      </Typography>
+                      <Typography variant='body1'>
+                        Khi thay đổi các thông tin ở trên phải ấn nút xem khung giờ để hệ thống xử
+                        lý việc lấy ra các khung giờ tương ứng với mỗi dịch vụ
+                      </Typography>
+                    </Stack>
                     {formValues && (
-                      <Stack gap={4}>
+                      <Stack gap={3}>
                         <Typography variant='h3'>Chọn khung giờ</Typography>
                         {timeRange?.error && (
                           <Typography variant='h3' color='primary' textAlign='center'>
                             Vui lòng chọn khung giờ
                           </Typography>
                         )}
-                        <Stack direction='row' gap={5} flexWrap='wrap'>
+                        <Stack direction='row' gap={{ md: 3, xs: 2 }} flexWrap='wrap'>
                           {serviceInfo.timeSlot.map((time, index) => (
                             <Box key={index}>
                               <input
@@ -351,11 +440,169 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                             </Typography>
                           </Stack>
                         </Box>
+                        {timeRange?.value && (
+                          <ClickAwayListener onClickAway={() => setAnotherServiceAnchor(null)}>
+                            <Stack gap={2}>
+                              <Typography variant='h3'>Thêm dịch vụ khác ?</Typography>
+                              {anotherServiceInfo ? (
+                                <Stack
+                                  direction='row'
+                                  alignItems='center'
+                                  justifyContent='space-between'
+                                  sx={{
+                                    border: (theme) => `1px dashed ${theme.palette.primary.main}`,
+                                    p: 2,
+                                    borderRadius: '10px',
+                                    position: 'relative',
+                                  }}
+                                >
+                                  <Divider sx={{ width: '100%' }}>
+                                    <Typography variant='h4' color='primary'>
+                                      {anotherServiceInfo.name}
+                                    </Typography>
+                                  </Divider>
+                                  <IconButton
+                                    size='small'
+                                    sx={{
+                                      position: 'absolute',
+                                      top: '-15px',
+                                      right: '-10px',
+                                      background: 'rgba(0,0,0,0.1)',
+                                    }}
+                                    onClick={() => setAnotherServiceInfo(null)}
+                                  >
+                                    <Close fontSize='small' />
+                                  </IconButton>
+                                </Stack>
+                              ) : (
+                                <Stack
+                                  alignItems='center'
+                                  justifyContent='center'
+                                  width='100%'
+                                  sx={{
+                                    border: `1px dashed ${grey[400]}`,
+                                    p: 1,
+                                    borderRadius: '10px',
+                                  }}
+                                >
+                                  <Button
+                                    aria-describedby='service-popper'
+                                    variant='outlined'
+                                    sx={{
+                                      borderRadius: '50px',
+                                      p: { md: '10px 45px', xs: '5px 35px' },
+                                    }}
+                                    onClick={(event) => {
+                                      setAnotherServiceAnchor(
+                                        anotherServiceAnchor ? null : event.currentTarget,
+                                      )
+                                    }}
+                                  >
+                                    <AddCircleOutlineRounded />
+                                  </Button>
+                                  <Popper
+                                    id='service-popper'
+                                    open={openAnotherService}
+                                    anchorEl={anotherServiceAnchor}
+                                    placement='top'
+                                    sx={{ zIndex: 2000 }}
+                                  >
+                                    <AnotherService
+                                      storeId={serviceInfo.categoryId.storeId}
+                                      getAnotherServiceInfo={setAnotherServiceInfo}
+                                      closePopup={() => setAnotherServiceAnchor(null)}
+                                      nextTimeSlot={
+                                        timeRange.value + (serviceInfo.duration + 15) / 60
+                                      }
+                                      date={formValues.date.toISOString()}
+                                      currentService={serviceInfo}
+                                    />
+                                  </Popper>
+                                </Stack>
+                              )}
+                            </Stack>
+                          </ClickAwayListener>
+                        )}
+                        <ClickAwayListener onClickAway={() => setVoucherAnchor(null)}>
+                          <Stack gap={2}>
+                            <Typography variant='h3'>Thêm mã giảm giá ?</Typography>
+                            {voucherInfo ? (
+                              <Stack
+                                direction='row'
+                                alignItems='center'
+                                justifyContent='space-between'
+                                sx={{
+                                  border: (theme) => `1px dashed ${theme.palette.primary.main}`,
+                                  p: 2,
+                                  borderRadius: '10px',
+                                  position: 'relative',
+                                }}
+                              >
+                                <Divider sx={{ width: '100%' }}>
+                                  <Typography variant='h4' color='primary'>
+                                    {voucherInfo.title}
+                                  </Typography>
+                                </Divider>
+                                <IconButton
+                                  size='small'
+                                  sx={{
+                                    position: 'absolute',
+                                    top: '-15px',
+                                    right: '-10px',
+                                    background: 'rgba(0,0,0,0.1)',
+                                  }}
+                                  onClick={() => setVoucherInfo(null)}
+                                >
+                                  <Close fontSize='small' />
+                                </IconButton>
+                              </Stack>
+                            ) : (
+                              <Stack
+                                alignItems='center'
+                                justifyContent='center'
+                                width='100%'
+                                sx={{
+                                  border: `1px dashed ${grey[400]}`,
+                                  p: 1,
+                                  borderRadius: '10px',
+                                }}
+                              >
+                                <Button
+                                  aria-describedby='voucher-popper'
+                                  variant='outlined'
+                                  sx={{
+                                    borderRadius: '50px',
+                                    p: { md: '10px 45px', xs: '5px 35px' },
+                                  }}
+                                  onClick={(event) => {
+                                    setVoucherAnchor(voucherAnchor ? null : event.currentTarget)
+                                  }}
+                                >
+                                  <AddCircleOutlineRounded />
+                                </Button>
+                                <Popper
+                                  id='voucher-popper'
+                                  open={openVoucher}
+                                  anchorEl={voucherAnchor}
+                                  placement='top'
+                                  sx={{ zIndex: 2000 }}
+                                >
+                                  <ModalVoucher
+                                    storeId={serviceInfo.categoryId.storeId}
+                                    getVoucherInfo={setVoucherInfo}
+                                    closePopup={() => setVoucherAnchor(null)}
+                                  />
+                                </Popper>
+                              </Stack>
+                            )}
+                          </Stack>
+                        </ClickAwayListener>
+                        <Divider />
                         <Stack
                           direction='row'
                           alignItems='center'
                           justifyContent='center'
-                          sx={{ mt: 3 }}
+                          sx={{ mt: 2 }}
                         >
                           <MainButton
                             sx={{ px: { xs: '25px', sm: '50px' } }}
@@ -373,9 +620,11 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                   <Stack gap={2} alignItems='center'>
                     <Stack direction='row' alignItems='center' gap={1}>
                       <CheckCircle color='secondary' />
-                      <Typography variant='h3' color='secondary'>
-                        Xác nhận thông tin
-                      </Typography>
+                      <Stack direction='row'>
+                        <Typography variant='h3' color='secondary'>
+                          Xác nhận thông tin
+                        </Typography>
+                      </Stack>
                     </Stack>
                     {formValues && (
                       <Stack sx={{ width: { xs: '100%', sm: '500px' } }}>
@@ -432,14 +681,31 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
                     </Stack>
                   </Stack>
                 )}
-              </Box>
-            </Box>
+              </MainLayout>
+            </Stack>
           </Stack>
         </GlassBox>
       </Container>
-    </Modal>
+    </CustomModal>
   )
 }
+
+const MainLayout = styled(Stack)`
+  overflow-y: auto;
+  max-height: 65vh;
+  padding: 0 10px;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`
+
+const CustomModal = styled(Modal)`
+  .MuiBackdrop-root {
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(10px);
+  }
+`
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
