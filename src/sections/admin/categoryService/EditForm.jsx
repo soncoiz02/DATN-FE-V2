@@ -50,7 +50,6 @@ const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategor
   const handleGetCategoryServiceInfo = async (registerId) => {
     try {
       const data = await categoryApi.getOne(registerId)
-      console.log(data)
       reset({
         name: data?.name,
         status: data?.status === 0 ? true : false,

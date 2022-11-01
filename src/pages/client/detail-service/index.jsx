@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import serviceApi from '../../../api/service'
 import GlassBox from '../../../components/GlassBox'
 import DescriptionTab from '../../../sections/client/detail-services/DescriptionTab'
-import ModalRegisterService from '../../../sections/client/detail-services/ModalRegisterService'
+import ModalRegisterService from '../../../sections/client/detail-services/modal/ModalRegisterService'
 import RatedTab from '../../../sections/client/detail-services/RatedTab'
 import ServiceInfo from '../../../sections/client/detail-services/ServiceInfo'
 

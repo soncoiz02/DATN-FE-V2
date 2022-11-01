@@ -5,6 +5,7 @@ import ClientLayout from '../layouts/client/ClientLayout'
 import CalendarList from '../pages/admin/calendar/CalendarList'
 import CalendarManagement from '../pages/admin/calendar/CalendarSchedule'
 import CategoryServices from '../pages/admin/category-services'
+import Voucher from '../pages/admin/voucher/VoucherList'
 import Dashboard from '../pages/admin/dashboard'
 import ServiceAdd from '../pages/admin/service/ServiceAdd'
 import ServiceList from '../pages/admin/service/ServiceList'
@@ -21,6 +22,11 @@ import TabRate from '../sections/client/detail-store/TabsItem/TabRate'
 import AuthLayout from '../layouts/auth/AuthLayout'
 import Register from '../pages/auth/Register'
 import ServiceRegister from '../pages/client/service-register-history'
+import User from '../pages/user'
+import Changepassword from '../pages/user/Changepassword'
+import AccountSetting from '../pages/user/index'
+import Accountinfo from '../pages/user/Accountinfo'
+import ServiceStatistic from '../pages/admin/services-statistic'
 
 const Router = () => {
   return (
@@ -28,6 +34,10 @@ const Router = () => {
       <Route path='/' element={<ClientLayout />}>
         <Route index element={<HomePage />} />
         <Route path='store' element={<Store />} />
+        <Route path='account-setting' element={<AccountSetting />}>
+          <Route path='account-info' element={<Accountinfo />} />
+          <Route path='change-password' element={<Changepassword />} />
+        </Route>
         <Route path='store/:id' element={<DetailStore />}>
           <Route path='info' element={<TabInfo />} />
           <Route path='services' element={<TabServices />} />
@@ -43,12 +53,14 @@ const Router = () => {
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='services-statistic' element={<ServiceStatistic />} />
         <Route path='calendar-schedule' element={<CalendarManagement />} />
         <Route path='calendar-list' element={<CalendarList />} />
         <Route path='services-management' element={<ServiceList />} />
         <Route path='services-management/add' element={<ServiceAdd />} />
         <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
         <Route path='category-management' element={<CategoryServices />} />
+        <Route path='voucher-management' element={<Voucher />} />
       </Route>
     </Routes>
   )

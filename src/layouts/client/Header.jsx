@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
@@ -73,7 +73,14 @@ const Header = ({ openMenu }) => {
               <IconButton color='primary'>
                 <Notifications />
               </IconButton>
-              <UserInfo onClick={handleOpenPopper}>
+              <IconButton
+                color='primary'
+                sx={{ display: { xs: 'flex', md: 'none' } }}
+                onClick={openMenu}
+              >
+                <Menu />
+              </IconButton>
+              <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <Avatar />
                 <Typography variant='h4' color='white'>
                   {userInfo.name}
@@ -81,7 +88,11 @@ const Header = ({ openMenu }) => {
               </UserInfo>
               <Popper open={open} anchorEl={anchorEl}>
                 <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
-                  <CustomLink underline='none'>
+                  <CustomLink
+                    underline='none'
+                    component={RouterLink}
+                    to='/account-setting/account-info'
+                  >
                     <Person />
                     <Typography variant='body1'>Cài đặt tài khoản</Typography>
                   </CustomLink>
@@ -97,20 +108,13 @@ const Header = ({ openMenu }) => {
               </Popper>
             </Stack>
           )}
-          <IconButton
-            color='primary'
-            sx={{ display: { xs: 'flex', sm: 'none' } }}
-            onClick={openMenu}
-          >
-            <Menu />
-          </IconButton>
         </Stack>
       </Container>
     </HeaderWrapper>
   )
 }
 
-const CustomLink = styled(Link)(
+export const CustomLink = styled(Link)(
   ({ theme }) => `
   display: flex;
   align-items: center;
@@ -126,7 +130,7 @@ const CustomLink = styled(Link)(
 `,
 )
 
-const UserInfo = styled(Box)(
+export const UserInfo = styled(Box)(
   ({ theme }) => `
   padding: 5px 20px 5px 5px;
   border-radius: 50px;
