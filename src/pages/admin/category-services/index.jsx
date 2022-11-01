@@ -1,13 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { Stack, Typography, Breadcrumbs, Link } from '@mui/material'
-import MainButton from '../../../components/MainButton'
-import ModalRegisterForm from '../../../sections/admin/categoryService/ModalRegisterForm'
 import CategoryServicesTable from '../../../sections/admin/categoryService/CategoryServiceTable'
 
 const CategoryServices = () => {
-  const [openModal, setOpenModal] = useState(false)
-
   return (
     <Stack gap={2}>
       <Breadcrumbs separator='/'>
@@ -25,16 +21,8 @@ const CategoryServices = () => {
         <Typography variant='h2' color='text.secondary'>
           Danh sách Danh mục dịch vụ
         </Typography>
-        <MainButton
-          colorType='primary'
-          sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}
-          onClick={() => setOpenModal(true)}
-        >
-          <Typography variant='h6'>Thêm +</Typography>
-        </MainButton>
       </Stack>
-      <CategoryServicesTable onOpenModal={() => setOpenModal(true)} />
-      <ModalRegisterForm openModal={openModal} onCloseModal={() => setOpenModal(false)} />
+      <CategoryServicesTable />
     </Stack>
   )
 }
