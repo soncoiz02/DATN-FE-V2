@@ -26,6 +26,10 @@ export const convertNumberToHour = (num, option) => {
     }
 }
 
+export const formatHourMinuteSecond = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm:ss')
+
 export const convertTimeToNumber = (time) => {
   const date = new Date(time)
   const hour = date.getHours()
