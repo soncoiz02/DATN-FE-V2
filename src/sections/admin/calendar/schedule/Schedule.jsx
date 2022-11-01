@@ -248,7 +248,6 @@ const Calendar = () => {
       console.log(error)
     }
   }
-
   const updateOrderStatusToDone = async () => {
     try {
       await calendarApi.updateOrderStatusToDone(orderId)

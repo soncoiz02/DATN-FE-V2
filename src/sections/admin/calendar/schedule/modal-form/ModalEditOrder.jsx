@@ -6,7 +6,6 @@ import calendarApi from '../../../../../api/calendar'
 import serviceApi from '../../../../../api/service'
 import GlassBox from '../../../../../components/GlassBox'
 import RHFProvider from '../../../../../components/ReactHookForm/RHFProvider'
-
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -32,6 +31,7 @@ const defaultFormValue = {
   date: new Date(),
   timeSlot: 0,
   staff: '',
+  status: '',
 }
 
 const ModalEditOrder = ({
@@ -53,6 +53,8 @@ const ModalEditOrder = ({
   const [formValues, setFormValues] = useState()
 
   const [currentStaff, setCurrentStaff] = useState()
+
+  const [currentStatus, setCurrentStatus] = useState()
 
   const allService = useSelector((state) => state.order.services)
 
@@ -171,11 +173,13 @@ const ModalEditOrder = ({
     const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
 
     const staff = currentStaff.id
+    const status = currentStatus.id
 
     const updateData = {
       infoUser,
       serviceId: service._id,
       staff: staff,
+      status: status,
       startDate,
       endDate,
     }
@@ -293,10 +297,16 @@ const ModalEditOrder = ({
         image: data.staff?.avt || '',
       }
 
+      const currentStatus = {
+        id: data.status._id,
+        label: data.status.name,
+        type: data.status.type,
+      }
       setCurrentOrder(data)
       setCheckedData(valueChecked)
       setTimeSlot(data.serviceId.timeSlot)
       setCurrentStaff(currentStaff)
+      setCurrentStatus(currentStatus)
 
       handleGetTimeSlotCheckByStaff(new Date(data.startDate), data.serviceId._id)
       handleGetRegisteredServiceByUser(data.infoUser.phone, new Date(data.startDate))

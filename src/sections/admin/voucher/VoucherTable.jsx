@@ -18,9 +18,10 @@ import EditVoucher from '../../../sections/admin/voucher/EditVoucher'
 import DeleteVoucher from '../../../sections/admin/voucher/DeleteVoucher'
 import { dateFormat } from '../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
-
+import { useForm } from 'react-hook-form'
 import MainButton from '../../../components/MainButton'
 import ModalRegisterForm from '../../../sections/admin/voucher/ModalRegisterForm'
+import { useSearchParams } from 'react-router-dom'
 
 const VoucherTable = () => {
   const [rows, setRows] = useState([])
@@ -32,6 +33,8 @@ const VoucherTable = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [registerId, setRegisterId] = useState()
+  const { register, handleSubmit } = useForm()
+  const [searchParams, setSearchParams] = useSearchParams({})
 
   const columns = [
     {
@@ -137,16 +140,45 @@ const VoucherTable = () => {
       console.log(error)
     }
   }
+
+  const key = searchParams.get('key')
+
+  const onSubmit = (data) => {
+    setSearchParams({ key: data.key })
+  }
+
+  const getVoucherByKey = async (keyword) => {
+    try {
+      const data = await voucherApi.search(keyword)
+      const rowData = data.map((item, index) => ({
+        ...item,
+        index: index + 1,
+        id: item._id,
+        time: {
+          startDate: item.startDate,
+          endDate: item.endDate,
+        },
+      }))
+      setRows(rowData)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    handleGetVoucherRegister()
-  }, [])
+    if (key) {
+      getVoucherByKey(key)
+    } else {
+      handleGetVoucherRegister()
+    }
+  }, [key])
 
   return (
     <Stack gap={2}>
       <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
         <Grid container paddingBottom={{ md: '50px', xs: '15px' }}>
           <Grid item xs={10} md={6}>
-            <form action=''>
+            <form action='' onSubmit={handleSubmit(onSubmit)}>
               <GlassBox
                 sx={{
                   p: '5px 5px 5px 20px',
@@ -157,12 +189,19 @@ const VoucherTable = () => {
                   borderRadius: '10px',
                 }}
               >
-                <Search />
                 <InputBase
                   sx={{ ml: 1, flex: 1 }}
-                  placeholder='Tìm kiếm voucher ...'
+                  placeholder='Tìm kiếm voucher'
                   inputProps={{ 'aria-label': 'Tìm kiếm voucher' }}
+                  {...register('key')}
                 />
+                <IconButton
+                  type='submit'
+                  sx={{ p: '10px', backgroundColor: theme.palette.primary.main, color: '#fff' }}
+                  aria-label='search'
+                >
+                  <Search />
+                </IconButton>
               </GlassBox>
             </form>
           </Grid>

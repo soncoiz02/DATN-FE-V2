@@ -19,6 +19,9 @@ const voucherApi = {
   registerCategoryService(data) {
     return axiosClient.post('/voucher', data)
   },
+  search(keyword) {
+    return axiosClient.post(`/search-voucher?q=${keyword}`)
+  },
 }
 
 export default voucherApi
