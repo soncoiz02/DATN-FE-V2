@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import orderApi from '../../../api/order'
 import { dateFormat } from '../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
+import { useSelector } from 'react-redux'
 
 const ListService = () => {
   const theme = useTheme()
@@ -12,6 +13,9 @@ const ListService = () => {
 
   const [order, setOrder] = useState([])
   const [orderId, setOrderId] = useState()
+
+  const serviceBySort = useSelector((state) => state.serviceRegister.listFiltered)
+  console.log(serviceBySort)
 
   const getOrder = async () => {
     try {

@@ -6,6 +6,7 @@ import {
   Pending,
   AccessTimeFilled,
   MonetizationOn,
+  Contactless,
 } from '@mui/icons-material'
 import GlassBox from '../../../components/GlassBox'
 import {
@@ -23,9 +24,15 @@ import {
 import { green, pink, yellow, red, blue } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
 import orderStatusApi from '../../../api/orderStatus'
+import { useDispatch, useSelector } from 'react-redux'
+import { getFullList, getBySort } from '../../../redux/slice/serviceRegisterSlice'
+import calendarApi from '../../../api/calendar'
 
 const StatusTab = () => {
   const navigate = useNavigate()
+  const [orderStatus, setOrderStatus] = useState([])
+
+  const dispatch = useDispatch()
 
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef(null)
@@ -48,11 +55,14 @@ const StatusTab = () => {
     }
   }
 
-  const handleClick = () => {
+  const handleClick = (key, order) => {
+    navigate({
+      pathname: '/service-register-history',
+      search: `?sort/${key}=${order}`,
+    })
+    dispatch(getBySort({ key, order }))
     setOpen(false)
   }
-
-  const [orderStatus, setOrderStatus] = useState([])
 
   const getOrderStatus = async () => {
     try {
@@ -62,8 +72,19 @@ const StatusTab = () => {
       console.log(error)
     }
   }
+
+  const handleGetListOrder = async () => {
+    try {
+      const serviceBy = await calendarApi.getListOrder()
+      dispatch(getFullList(serviceBy))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getOrderStatus()
+    handleGetListOrder()
   }, [])
 
   const icon = [
@@ -72,6 +93,7 @@ const StatusTab = () => {
     <NotInterested sx={{ color: red[600], fontSize: '20px' }} />,
     <Pending sx={{ color: blue[600], fontSize: '20px' }} />,
     <MonetizationOn sx={{ color: green[600], fontSize: '20px' }} />,
+    <Contactless sx={{ color: green[600], fontSize: '20px' }} />,
   ]
 
   return (
@@ -122,17 +144,17 @@ const StatusTab = () => {
                       id='menu-list-grow'
                       onKeyDown={handleListKeyDown}
                     >
-                      <MenuItem onClick={handleClick}>
+                      <MenuItem onClick={() => handleClick('name', 'asc')}>
                         <Typography variant='body2'>Sắp xếp tên A-Z</Typography>
                       </MenuItem>
-                      <MenuItem onClick={handleClick}>
+                      <MenuItem onClick={() => handleClick('name', 'desc')}>
                         <Typography variant='body2'>Sắp xếp tên Z-A</Typography>
                       </MenuItem>
-                      <MenuItem onClick={handleClick}>
-                        <Typography variant='body2'>Đánh giá Cao - Thấp</Typography>
+                      <MenuItem onClick={() => handleClick('time', 'asc')}>
+                        <Typography variant='body2'>Gần đây</Typography>
                       </MenuItem>
-                      <MenuItem onClick={handleClick}>
-                        <Typography variant='body2'>Đánh giá Thấp - Cao</Typography>
+                      <MenuItem onClick={() => handleClick('time', 'desc')}>
+                        <Typography variant='body2'>Trước đây</Typography>
                       </MenuItem>
                     </MenuList>
                   </ClickAwayListener>
