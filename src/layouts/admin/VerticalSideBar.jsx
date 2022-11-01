@@ -29,6 +29,7 @@ import {
 import React, { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
+import useAuth from '../../hook/useAuth'
 
 const VERTICAL_ITEMS = [
   {
@@ -139,6 +140,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   const [childOpenedIndex, setChildOpenedIndex] = useState()
   const [activeMainTitle, setActiveMainTitle] = useState()
   const { pathname } = useLocation()
+  const { userInfo } = useAuth()
   return (
     <>
       {openMenu && (
@@ -164,10 +166,11 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 />
                 <Stack>
                   <Typography variant='h3' sx={{ color: theme.palette.text.secondary }}>
-                    Trần Bảo Sơn
+                    {userInfo?.name}
                   </Typography>
                   <Typography variant='body2' sx={{ color: theme.palette.text.secondary }}>
-                    Admin
+                    {userInfo?.roleId.name === 'Admin' && 'Quản trị viên'}
+                    {userInfo?.roleId.name === 'Staff' && 'Nhân viên'}
                   </Typography>
                 </Stack>
               </Stack>

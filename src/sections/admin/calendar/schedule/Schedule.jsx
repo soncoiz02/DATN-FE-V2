@@ -12,8 +12,27 @@ import {
   ViewSwitcher,
   WeekView,
 } from '@devexpress/dx-react-scheduler-material-ui'
-import { CreditScore, Done, Edit } from '@mui/icons-material'
-import { IconButton, Stack, Tooltip, useTheme } from '@mui/material'
+import {
+  Cancel,
+  CheckCircle,
+  CreditScore,
+  Done,
+  DoubleArrow,
+  Edit,
+  Workspaces,
+} from '@mui/icons-material'
+import {
+  IconButton,
+  MenuItem,
+  Paper,
+  Popper,
+  Stack,
+  styled,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import { amber } from '@mui/material/colors'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import calendarApi from '../../../../api/calendar'
@@ -29,6 +48,7 @@ import getSocket from '../../../../utils/socket'
 import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
+import { statusId } from '../../../../api/calendar'
 
 const socket = getSocket('order')
 
@@ -49,6 +69,7 @@ const Calendar = () => {
 
   const theme = useTheme()
   const appointments = useSelector((state) => state.serviceRegister.listFiltered)
+  const statuses = useSelector((state) => state.order.status)
   const dispatch = useDispatch()
 
   const { userInfo } = useAuth()
@@ -56,63 +77,128 @@ const Calendar = () => {
   // component
 
   const Header = ({ children, appointmentData, ...restProps }) => {
+    const [anchorEl, setAnchorEl] = useState(null)
+    const openPopper = Boolean(anchorEl)
+
+    const handleOpenPopper = (event) => {
+      setAnchorEl(anchorEl ? null : event.currentTarget)
+    }
+
     const isPast = (date) => {
       const today = new Date()
       const thatDay = new Date(date)
       return today > thatDay
     }
     const isDone = (status) => {
-      return status === '632bc757dc2a7f68a3f383e9'
+      return status === statusId.done
     }
 
-    const disableByStatus = (status) => {
+    const isPay = (status) => {
+      return status === statusId.paid
+    }
+
+    const disableSuccess = (status) => {
       return (
-        status === '632bc736dc2a7f68a3f383e7' ||
-        status === '632bc765dc2a7f68a3f383eb' ||
-        status === '632bc757dc2a7f68a3f383e9'
+        status === statusId.pending ||
+        status === statusId.cancel ||
+        status === statusId.done ||
+        status === statusId.accepted
       )
     }
 
     const disablePayment = (status) => {
-      return status !== '632bc757dc2a7f68a3f383e9' || status === '634e59b757b7ea792917962c'
+      return status !== statusId.done || status === statusId.paid
+    }
+
+    const disableStart = (status) => {
+      return status !== statusId.accepted
+    }
+
+    const disableAccepted = (status) => {
+      return status === statusId.accepted || status === statusId.done || status === statusId.doing
+    }
+
+    const disableCancel = (status) => {
+      return status === statusId.doing || status === statusId.cancel
     }
 
     return (
       <AppointmentTooltip.Header {...restProps} appointmentData={appointmentData}>
-        <Tooltip title='Thanh toán' placement='top'>
-          <span>
-            <IconButton
-              /* eslint-disable-next-line no-alert */
-              onClick={() => {
-                setOrderId(appointmentData.id)
-                setOpenModalPay(true)
-              }}
-              size='large'
-              disabled={disablePayment(appointmentData.status) || isPast(appointmentData.startDate)}
-              sx={{ marginRight: 'auto' }}
-            >
-              <CreditScore />
-            </IconButton>
-          </span>
+        <Tooltip title='Trạng thái' placement='top'>
+          <IconButton
+            /* eslint-disable-next-line no-alert */
+            onClick={handleOpenPopper}
+            disabled={isPast(appointmentData.startDate) || isPay(appointmentData.status)}
+            size='large'
+          >
+            <Workspaces />
+          </IconButton>
         </Tooltip>
-        <Tooltip title='Hoàn thành' placement='top'>
-          <span>
-            <IconButton
-              /* eslint-disable-next-line no-alert */
-              onClick={() => {
-                setOrderId(appointmentData.id)
-                setDialogTitle('Xác nhận lịch đặt này đã hoàn thành ?')
-                setOpenDialog(true)
-              }}
-              size='large'
-              disabled={
-                disableByStatus(appointmentData.status) || isPast(appointmentData.startDate)
-              }
-            >
-              <Done />
-            </IconButton>
-          </span>
-        </Tooltip>
+        <Popper open={openPopper} anchorEl={anchorEl} placement='top' sx={{ zIndex: 1500 }}>
+          <Paper>
+            <Stack>
+              <MenuItem
+                onClick={() => handleChangeStatus(appointmentData.id, 'accepted')}
+                disabled={
+                  disableAccepted(appointmentData.status) || isPast(appointmentData.startDate)
+                }
+              >
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <CheckCircle color='info' fontSize='small' />
+                  <Typography variant='body2'>Xác nhận</Typography>
+                </Stack>
+              </MenuItem>
+              <MenuItem
+                disabled={disableStart(appointmentData.status) || isPast(appointmentData.startDate)}
+                onClick={() => handleChangeStatus(appointmentData.id, 'doing')}
+              >
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <DoubleArrow color='primary' fontSize='small' />
+                  <Typography variant='body2'>Bắt đầu làm</Typography>
+                </Stack>
+              </MenuItem>
+              <MenuItem
+                disabled={
+                  disableSuccess(appointmentData.status) || isPast(appointmentData.startDate)
+                }
+                onClick={() => {
+                  setOrderId(appointmentData.id)
+                  setDialogTitle('Xác nhận lịch đặt này đã hoàn thành ?')
+                  setOpenDialog(true)
+                }}
+              >
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <Done color='success' fontSize='small' />
+                  <Typography variant='body2'>Hoàn thành</Typography>
+                </Stack>
+              </MenuItem>
+              <MenuItem
+                disabled={
+                  disablePayment(appointmentData.status) || isPast(appointmentData.startDate)
+                }
+                onClick={() => {
+                  setOrderId(appointmentData.id)
+                  setOpenModalPay(true)
+                }}
+              >
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <CreditScore color='secondary' fontSize='small' />
+                  <Typography variant='body2'>Thanh toán</Typography>
+                </Stack>
+              </MenuItem>
+              <MenuItem
+                disabled={
+                  disableCancel(appointmentData.status) || isPast(appointmentData.startDate)
+                }
+              >
+                <Stack direction='row' gap={1} alignItems='center'>
+                  <Cancel color='error' fontSize='small' />
+                  <Typography variant='body2'>Hủy</Typography>
+                </Stack>
+              </MenuItem>
+            </Stack>
+          </Paper>
+        </Popper>
         <Tooltip title='Sửa' placement='top'>
           <span>
             <IconButton
@@ -142,10 +228,26 @@ const Calendar = () => {
     if (statusType === 'reject') return theme.palette.primary.main
     if (statusType === 'accepted') return theme.palette.info.main
     if (statusType === 'paid') return theme.palette.success.main
+    if (statusType === 'doing') return amber[800]
   }
 
   // async function
 
+  const handleChangeStatus = async (orderId, statusType) => {
+    try {
+      const detailStatus = statuses.find((status) => status.type === statusType)
+      const activityLog = {
+        userId: userInfo._id,
+        orderId,
+        content: `Cập nhật trạng thái thành ${detailStatus.name}`,
+      }
+      await calendarApi.changeStatus(orderId, statusType)
+      await calendarApi.addUpdateActivity(activityLog)
+      handleGetListOrder()
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const updateOrderStatusToDone = async () => {
     try {
       await calendarApi.updateOrderStatusToDone(orderId)
@@ -311,5 +413,10 @@ const Calendar = () => {
     </GlassBox>
   )
 }
+
+const CustomPaper = styled(Paper)`
+  padding: 15px;
+  z-index: 60;
+`
 
 export default Calendar

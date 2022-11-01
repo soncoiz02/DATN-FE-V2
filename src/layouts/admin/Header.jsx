@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../hook/useAuth'
 import getSocket from '../../utils/socket'
 
@@ -36,7 +36,9 @@ const Header = ({ onOpenMenu }) => {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { userInfo } = useAuth()
+  const { userInfo, logout } = useAuth()
+
+  const navigate = useNavigate()
 
   window.onscroll = () => {
     if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
@@ -49,8 +51,14 @@ const Header = ({ onOpenMenu }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
   }
 
   useEffect(() => {
@@ -103,12 +111,15 @@ const Header = ({ onOpenMenu }) => {
             </IconButton>
             <Avatar onClick={handleClick} sx={{ cursor: 'pointer' }} />
             <CustomMenu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              <ListItem sx={{ pointerEvents: 'none' }}>
+              <ListItem sx={{ pointerEvents: 'none', outline: 'none' }}>
                 <Stack>
                   <Typography variant='h4' color='primary'>
-                    Trần Bảo Sơn
+                    {userInfo.name}
                   </Typography>
-                  <Typography variant='subtitle2'>Admin</Typography>
+                  <Typography variant='subtitle2'>
+                    {userInfo?.roleId.name === 'Admin' && 'Quản trị viên'}
+                    {userInfo?.roleId.name === 'Staff' && 'Nhân viên'}
+                  </Typography>
                 </Stack>
               </ListItem>
               <Divider />
@@ -128,7 +139,9 @@ const Header = ({ onOpenMenu }) => {
                 <ListItemIcon>
                   <Logout />
                 </ListItemIcon>
-                <Typography variant='body2'>Đăng xuất</Typography>
+                <Typography variant='body2' onClick={handleLogout}>
+                  Đăng xuất
+                </Typography>
               </MenuItem>
             </CustomMenu>
           </Stack>
@@ -158,10 +171,11 @@ const HeaderWrapper = styled(Box)(
 const CustomMenu = styled(Menu)`
   .MuiMenu-paper {
     margin-top: 10px;
+    margin-right: 30px;
     min-width: 200px;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(10px);
     box-shadow: 0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px rgba(145, 158, 171, 0.2);
   }
 `

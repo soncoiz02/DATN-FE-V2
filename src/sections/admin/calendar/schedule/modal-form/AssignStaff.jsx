@@ -25,8 +25,10 @@ const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, se
   const handleGetStaffInTimeSlot = async (timeSlot, serviceId, date) => {
     try {
       const data = await userApis.getStaffInTimeSlot(timeSlot, serviceId, date)
-      const filterData = data.filter((item) => item !== staffValue.id)
-      setStaffInTimeSlot(filterData)
+      if (staffValue) {
+        const filterData = data.filter((item) => item !== staffValue.id)
+        setStaffInTimeSlot(filterData)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -47,7 +49,9 @@ const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, se
           options={staffOptions}
           disablePortal
           getOptionLabel={(option) => option.label}
-          getOptionDisabled={(option) => staffInTimeSlot.includes(option.id)}
+          getOptionDisabled={(option) => {
+            if (staffInTimeSlot) staffInTimeSlot.includes(option.id)
+          }}
           renderOption={(props, option) => (
             <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
               <img

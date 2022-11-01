@@ -7,6 +7,9 @@ const userApis = {
   getStoreStaff(storeId) {
     return axiosClient.get(`/store-staff/${storeId}`)
   },
+  userUpdate(id, data) {
+    return axiosClient.put(`/user/${id}`, data)
+  },
   getStaffByServiceCategory(cateId) {
     return axiosClient.get(`/staffByCategory/${cateId}`)
   },

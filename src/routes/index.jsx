@@ -21,6 +21,11 @@ import TabServices from '../sections/client/detail-store/TabsItem/TabServices'
 import TabRate from '../sections/client/detail-store/TabsItem/TabRate'
 import AuthLayout from '../layouts/auth/AuthLayout'
 import Register from '../pages/auth/Register'
+import User from '../pages/user'
+import Changepassword from '../pages/user/Changepassword'
+import AccountSetting from '../pages/user/index'
+import Accountinfo from '../pages/user/Accountinfo'
+import ServiceStatistic from '../pages/admin/services-statistic'
 
 const Router = () => {
   return (
@@ -28,6 +33,10 @@ const Router = () => {
       <Route path='/' element={<ClientLayout />}>
         <Route index element={<HomePage />} />
         <Route path='store' element={<Store />} />
+        <Route path='account-setting' element={<AccountSetting />}>
+          <Route path='account-info' element={<Accountinfo />} />
+          <Route path='change-password' element={<Changepassword />} />
+        </Route>
         <Route path='store/:id' element={<DetailStore />}>
           <Route path='info' element={<TabInfo />} />
           <Route path='services' element={<TabServices />} />
@@ -42,6 +51,7 @@ const Router = () => {
       </Route>
       <Route path='/admin' element={<AdminLayout />}>
         <Route path='dashboard' element={<Dashboard />} />
+        <Route path='services-statistic' element={<ServiceStatistic />} />
         <Route path='calendar-schedule' element={<CalendarManagement />} />
         <Route path='calendar-list' element={<CalendarList />} />
         <Route path='services-management' element={<ServiceList />} />

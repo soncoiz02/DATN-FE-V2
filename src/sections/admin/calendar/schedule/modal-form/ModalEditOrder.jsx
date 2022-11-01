@@ -6,21 +6,18 @@ import calendarApi from '../../../../../api/calendar'
 import serviceApi from '../../../../../api/service'
 import GlassBox from '../../../../../components/GlassBox'
 import RHFProvider from '../../../../../components/ReactHookForm/RHFProvider'
-
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import * as yup from 'yup'
 import MainButton from '../../../../../components/MainButton'
 import { RHFAutoCompleteRenderImg } from '../../../../../components/ReactHookForm/RHFAutoComplete'
 import RHFDatePicker from '../../../../../components/ReactHookForm/RHFDatePicker'
 import RHFTextField from '../../../../../components/ReactHookForm/RHFTextField'
-import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/dateFormat'
-import AssignStaff from './AssignStaff'
-import ChangeStatus from './ChangeStatus'
-import { useSelector } from 'react-redux'
-import AlertCustom from '../../../../../components/AlertCustom'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import phoneRegExp from '../../../../../utils/phoneRegExp'
 import useAuth from '../../../../../hook/useAuth'
+import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/dateFormat'
+import phoneRegExp from '../../../../../utils/phoneRegExp'
+import AssignStaff from './AssignStaff'
 
 const defaultFormValue = {
   name: '',
@@ -164,7 +161,7 @@ const ModalEditOrder = ({
   const handleUpdateOrder = () => {
     const date = formValues?.date || currentOrder.startDate
     const infoUser = formValues
-      ? { name: formValues.name, phone: formValues.phone }
+      ? { name: formValues.name, phone: formValues.phone, email: formValues.email }
       : currentOrder.infoUser
     const service =
       allService.find((service) => service._id === formValues?.service?.id) ||
@@ -436,24 +433,16 @@ const ModalEditOrder = ({
                 }
               />
             )}
-            {orderId && <ChangeStatus status={currentStatus} setStatus={setCurrentStatus} />}
-            <Stack
-              direction='row'
-              alignItems='center'
-              justifyContent={orderId ? 'space-between' : 'flex-end'}
-            >
-              {orderId && <MainButton colorType='primary'>Hủy lịch</MainButton>}
-              <Stack direction='row' gap={1}>
-                <MainButton colorType='neutral' onClick={handleCloseModal}>
-                  Hủy
-                </MainButton>
-                <MainButton
-                  colorType='primary'
-                  onClick={orderId ? handleUpdateOrder : handleCreateOrder}
-                >
-                  {orderId ? 'Cập nhật' : 'Tạo mới'}
-                </MainButton>
-              </Stack>
+            <Stack direction='row' alignItems='center' justifyContent='flex-end' gap={1}>
+              <MainButton colorType='neutral' onClick={handleCloseModal}>
+                Hủy
+              </MainButton>
+              <MainButton
+                colorType='primary'
+                onClick={orderId ? handleUpdateOrder : handleCreateOrder}
+              >
+                {orderId ? 'Cập nhật' : 'Tạo mới'}
+              </MainButton>
             </Stack>
           </Stack>
         </GlassBox>
