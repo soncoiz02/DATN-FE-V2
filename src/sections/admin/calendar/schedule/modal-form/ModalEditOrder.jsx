@@ -116,7 +116,8 @@ const ModalEditOrder = ({
     if (time === convertTimeToNumber(currentOrder?.startDate)) return
     let isDisable = false
     const serviceDetail = allService.find(
-      (item) => item._id === formValues?.service.id || currentOrder?.serviceId,
+      (item) =>
+        item._id === formValues?.service.id || currentOrder?.servicesRegistered[0].service._id,
     )
     const hourDuration = (serviceDetail.duration + 15) / 60
     userServiceRegisteredTime.forEach((item) => {
@@ -281,10 +282,10 @@ const ModalEditOrder = ({
         phone: data.infoUser.phone,
         email: data.infoUser.email,
         service: {
-          id: data.serviceId._id,
-          image: data.serviceId.image,
-          price: data.serviceId.price,
-          label: data.serviceId.name,
+          id: data.servicesRegistered[0].service._id,
+          image: data.servicesRegistered[0].service.image,
+          price: data.servicesRegistered[0].service.price,
+          label: data.servicesRegistered[0].service.name,
         },
         date: new Date(data.startDate),
       })
@@ -292,9 +293,9 @@ const ModalEditOrder = ({
       const valueChecked = convertTimeToNumber(data.startDate)
 
       const currentStaff = {
-        id: data.staff?._id || '',
-        label: data.staff?.name || '',
-        image: data.staff?.avt || '',
+        id: data.servicesRegistered[0].staff._id || '',
+        label: data.servicesRegistered[0].staff.name || '',
+        image: data.servicesRegistered[0].staff.avt || '',
       }
 
       const currentStatus = {
@@ -304,11 +305,14 @@ const ModalEditOrder = ({
       }
       setCurrentOrder(data)
       setCheckedData(valueChecked)
-      setTimeSlot(data.serviceId.timeSlot)
+      setTimeSlot(data.servicesRegistered[0].service.timeSlot)
       setCurrentStaff(currentStaff)
       setCurrentStatus(currentStatus)
 
-      handleGetTimeSlotCheckByStaff(new Date(data.startDate), data.serviceId._id)
+      handleGetTimeSlotCheckByStaff(
+        new Date(data.startDate),
+        data.servicesRegistered[0].service._id,
+      )
       handleGetRegisteredServiceByUser(data.infoUser.phone, new Date(data.startDate))
     } catch (error) {
       console.log(error)
@@ -425,8 +429,8 @@ const ModalEditOrder = ({
               <AssignStaff
                 staffValue={currentStaff}
                 setStaffValue={setCurrentStaff}
-                categoryId={currentOrder.serviceId.categoryId._id}
-                serviceId={formValues?.service.id || currentOrder.serviceId._id}
+                categoryId={currentOrder.servicesRegistered[0].service.categoryId._id}
+                serviceId={formValues?.service.id || currentOrder.servicesRegistered[0].service._id}
                 timeSlot={checkedData}
                 date={
                   formValues?.date.toISOString() || new Date(currentOrder.startDate).toISOString()

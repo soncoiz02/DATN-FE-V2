@@ -81,8 +81,8 @@ const Header = ({ openMenu }) => {
                 <Menu />
               </IconButton>
               <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <Avatar />
-                <Typography variant='h4' color='white'>
+                <Avatar src={userInfo.avt} />
+                <Typography variant='h6' color='white'>
                   {userInfo.name}
                 </Typography>
               </UserInfo>

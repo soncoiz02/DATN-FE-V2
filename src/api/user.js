@@ -7,8 +7,10 @@ const userApis = {
   getStoreStaff(storeId) {
     return axiosClient.get(`/store-staff/${storeId}`)
   },
-  userUpdate(id, data) {
-    return axiosClient.put(`/user/${id}`, data)
+  userUpdate(token, data) {
+    return axiosClient.put(`/user`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
   },
   getStaffByServiceCategory(cateId) {
     return axiosClient.get(`/staffByCategory/${cateId}`)
