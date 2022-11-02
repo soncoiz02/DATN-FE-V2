@@ -6,6 +6,7 @@ import MainButton from '../../../components/MainButton'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFDatePicker from '../../../components/ReactHookForm/RHFDatePicker'
+import useAuth from '../../../hook/useAuth'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -33,6 +34,7 @@ const defaultFormValues = {
 const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
   const [options, setOptions] = useState([])
   const [user, setUser] = useState([])
+  const { userInfo } = useAuth()
 
   const formSchema = yup.object().shape({
     title: yup.string().trim().required('Vui lòng nhập tên voucher'),
@@ -56,7 +58,7 @@ const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
       startDate: new Date(values.startDate),
       subject: 'mat-xa',
       endDate: new Date(values.endDate),
-      userId: '634e65a857b7ea792917962d',
+      userId: userInfo?.id,
       storeId: '633e5ddff1be5d928b97c813',
     }
     handleRegisterUser(registerData)

@@ -4,9 +4,12 @@ import React, { useEffect, useState } from 'react'
 import voucherApi from '../../../api/voucher'
 import GlassBox from '../../../components/GlassBox'
 import { dateFormat } from '../../../utils/dateFormat'
+import useAuth from '../../../hook/useAuth'
 
 const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
   const [oneVoucher, setOneVoucher] = useState()
+  const { userInfo } = useAuth()
+
   const handleGetOneVoucher = async (id) => {
     try {
       const data = await voucherApi.getOne(id)
@@ -61,7 +64,7 @@ const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
                     <PrimaryText>{dateFormat(new Date(oneVoucher.endDate))}</PrimaryText>
                   </Typography>
                   <Typography variant='body1'>
-                    Người dùng: <PrimaryText>{oneVoucher.userId}</PrimaryText>
+                    Người dùng: <PrimaryText>{userInfo?.name}</PrimaryText>
                   </Typography>
                   <Typography variant='body1'>
                     Trạng thái:{' '}
