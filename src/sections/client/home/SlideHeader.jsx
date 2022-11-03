@@ -124,7 +124,7 @@ const ButtonCustom = styled(Button)({
   lineHeight: 1.5,
   borderColor: '#fff',
   color: '#fff',
-  borderRadius: '99px',
+  borderRadius: '10px',
   boxSizing: 'border-box',
   letterSpacing: '2px',
   opacity: '1',
