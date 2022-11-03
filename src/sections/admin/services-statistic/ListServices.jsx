@@ -10,6 +10,8 @@ import {
   Weekend,
 } from '@mui/icons-material'
 import { Bar } from 'react-chartjs-2'
+import { useEffect } from 'react'
+import axios from 'axios'
 import {
   Chart as ChartJS,
   BarElement,
@@ -20,74 +22,8 @@ import {
   Tooltip,
 } from 'chart.js'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    stacked: false,
-    title: {
-      display: true,
-      text: 'Chart Dịch Vụ',
-    },
-  },
-  scales: {
-    y: {
-      type: 'linear',
-      display: true,
-      position: 'left',
-    },
-    y1: {
-      type: 'linear',
-      display: true,
-      position: 'right',
-      grid: {
-        drawOnChartArea: true,
-      },
-    },
-  },
-}
-
-const labels = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-function randomNumberInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Doanh Thu',
-      data: labels.map(() => randomNumberInRange(0, 1000)),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      yAxisID: 'y',
-    },
-    {
-      label: 'Lượt Sử Dụng',
-      data: labels.map(() => randomNumberInRange(0, 100)),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      yAxisID: 'y1',
-    },
-  ],
-}
-
 const ListServices = () => {
+  ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
   const [anchorEl, setAnchorEl] = useState()
   const [] = useState()
   const open = Boolean(anchorEl)
@@ -96,6 +32,83 @@ const ListServices = () => {
   }
   const handleClose = () => {
     setAnchorEl()
+  }
+  const [chart, setChart] = useState({})
+  var baseUrl = 'https://api.coinranking.com/v2/coins/?limit=10'
+  var proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+  var apiKey = 'coinrankingbcfe6e59b020fbe0e471b2a060949d7d4eea1d79c111d2b7'
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetch(`${proxyUrl}${baseUrl}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${apiKey}`,
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            response.json().then((json) => {
+              console.log(json.data)
+              setChart(json.data)
+            })
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+    fetchData()
+  }, [baseUrl, proxyUrl, apiKey])
+
+  console.log(chart)
+
+  const data = {
+    labels: chart?.coins?.map((x) => x.name),
+    datasets: [
+      {
+        label: `lowVolume`,
+        data: chart?.coins?.map((x) => x.marketCap),
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        yAxisID: 'y',
+      },
+      {
+        label: `sparkline`,
+        data: chart?.coins?.map((x) => x.listedAt),
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        yAxisID: 'y1',
+      },
+    ],
+  }
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      stacked: false,
+      title: {
+        display: true,
+        text: 'Chart Dịch Vụ',
+      },
+    },
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        grid: {
+          drawOnChartArea: true,
+        },
+      },
+    },
   }
   return (
     <GlassBox
