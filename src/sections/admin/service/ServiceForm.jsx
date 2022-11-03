@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PhotoCamera } from '@mui/icons-material'
-import {
-  Avatar,
-  Box,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  SliderValueLabel,
-  Stack,
-  styled,
-  Typography,
-} from '@mui/material'
+import { Avatar, Box, Grid, IconButton, MenuItem, Stack, styled, Typography } from '@mui/material'
 import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
 
@@ -21,7 +8,6 @@ import categoryApi from '../../../api/category'
 import serviceApi from '../../../api/service'
 
 import { useForm } from 'react-hook-form'
-import RHFAutoComplete from '../../../components/ReactHookForm/RHFAutoComplete'
 import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFSelect from '../../../components/ReactHookForm/RHFSelect'
@@ -30,22 +16,19 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-// import EditorToolbar, { modules, formats } from "./EditorToolbar";
+import { modules, formats } from '../../../components/EditorToolbar'
 
-import EditorToolbar, { modules, formats } from '../../../components/EditorToolbar'
-
-// import MUIRichTextEditor from 'mui-rte'
 import { useNavigate, useParams } from 'react-router-dom'
+import { uploadImage } from '../../../utils/uploadImage'
 
 const defaultFormValues = {
   name: '',
   category: '',
   price: '',
   duration: '',
-  totalStaff: '',
+  totalStaff: 5,
   status: 0,
   image: '',
-  desc: '',
 }
 const listStatus = [
   { label: 'Đang hoạt động', value: 1 },
@@ -56,18 +39,9 @@ const ServiceForm = () => {
   const navigate = useNavigate()
   const { id } = useParams()
 
-  // PREVIEW IMAGE
-  const [img, setImg] = useState()
-
-  const handlePreviewImg = (e) => {
-    const file = e.target.files[0]
-
-    file.preview = URL.createObjectURL(file)
-    setImg(file)
-    console.log(file)
-  }
-
-  // CATEGORY
+  const [description, setDescription] = useState('')
+  const [img, setImg] = useState('')
+  const [imgUpload, setImgUpload] = useState()
   const [options, setOptions] = useState([])
 
   const formSchema = yup.object().shape({
@@ -83,13 +57,7 @@ const ServiceForm = () => {
       .trim()
       .required('Vui lòng nhập thời gian')
       .matches(/^[1-9]\d*$/, 'Bạn phải nhập giá trị là số'),
-    totalStaff: yup
-      .string()
-      .trim()
-      .required('Vui lòng nhập số nhân viên')
-      .matches(/^[1-9]\d*$/, 'Bạn phải nhập giá trị là số'),
     status: yup.string().trim().required('Vui lòng chọn trạng thái'),
-    desc: yup.string().trim().required('Vui lòng nhập thêm mô tả'),
   })
 
   const methods = useForm({
@@ -99,28 +67,45 @@ const ServiceForm = () => {
 
   const { handleSubmit, reset } = methods
 
-  const onSubmit = (values) => {
-    const serviceData = {
-      name: values.name,
-      categoryId: values.category,
-      price: values.price,
-      duration: values.duration,
-      totalStaff: values.totalStaff,
-      status: values.status,
-      image: 'https://picsum.photos/200/300',
-      desc: values.desc,
-    }
-    if (id) {
-      handleUpdateService(id, serviceData)
+  const onSubmit = async (values) => {
+    if (imgUpload) {
+      const imgURL = await uploadImage(imgUpload)
+      setImgUpload(null)
+      setImg('')
+      if (id) {
+        console.log(id)
+        return handleUpdateService(id, {
+          ...values,
+          categoryId: values.category,
+          image: imgURL,
+          desc: description,
+        })
+      } else {
+        return handleAddService({
+          ...values,
+          categoryId: values.category,
+          image: imgURL,
+          desc: description,
+        })
+      }
     } else {
-      handleAddService(serviceData)
+      if (id) {
+        console.log(id)
+        return handleUpdateService(id, {
+          ...values,
+          categoryId: values.category,
+          desc: description,
+        })
+      } else {
+        alert('Bạn vui lòng chọn ảnh dịch vụ')
+      }
     }
   }
 
   const handleAddService = async (service) => {
     try {
       const data = await serviceApi.create(service)
-      // console.log(data);
+      console.log(data)
       setTimeout(() => {
         navigate('/admin/services-management')
       }, 2000)
@@ -143,9 +128,11 @@ const ServiceForm = () => {
   const handleGetOneService = async (id) => {
     try {
       const data = await serviceApi.getOne(id)
+      setDescription(data.desc)
+      setImg(data.image)
       reset({
         ...data,
-        category: data.categoryId._id,
+        category: data.categoryId?._id,
       })
     } catch (error) {
       console.log(error)
@@ -157,19 +144,29 @@ const ServiceForm = () => {
       const data = await categoryApi.getAll()
       const options = data.map((category) => ({ id: category._id, label: category.name }))
       setOptions(options)
-      // console.log(options)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const [value, setValue] = useState('')
-
-  console.log(value)
+  const previewFile = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        setImg(reader.result)
+      }
+      reader.readAsDataURL(file)
+      setImgUpload(file)
+    }
+  }
 
   useEffect(() => {
-    handleGetServices()
-    if (id) handleGetOneService(id)
+    if (id) {
+      handleGetOneService(id)
+    } else {
+      handleGetServices()
+    }
   }, [id])
 
   return (
@@ -192,17 +189,24 @@ const ServiceForm = () => {
                 aria-label='upload picture'
                 component='label'
                 sx={{ width: 1, height: 1, padding: 0 }}
-                onChange={handlePreviewImg}
               >
                 {img ? (
-                  <Avatar alt={img.name} src={img.preview} sx={{ width: 1, height: 1 }} />
+                  <Avatar alt='' src={img} sx={{ width: 1, height: 1 }} />
                 ) : (
                   <Stack direction='column' justifyContent='center' alignItems='center' spacing={1}>
                     <PhotoCamera fontSize='large' />
                     <Typography variant='subtitle2'>Tải ảnh lên</Typography>
                   </Stack>
                 )}
-                <input hidden accept='image/*' type='file' name='picture' />
+                <input
+                  hidden
+                  name='image'
+                  accept='image/*'
+                  type='file'
+                  onChange={(e) => {
+                    previewFile(e)
+                  }}
+                />
               </IconButton>
             </CustomBox>
             <Typography variant='subtitle2' sx={{ textAlign: 'center' }}>
@@ -235,9 +239,6 @@ const ServiceForm = () => {
                 <RHFTextField name='duration' label='Thời gian sử dụng' />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <RHFTextField name='totalStaff' label='Nhân viên' />
-              </Grid>
-              <Grid item xs={12} sm={6}>
                 <RHFSelect name='status' label='Trạng thái' variant='outlined'>
                   {listStatus.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -248,19 +249,19 @@ const ServiceForm = () => {
               </Grid>
               <Grid item xs={12}>
                 <Typography fontSize={18}>Mô tả</Typography>
-                <EditorToolbar toolbarId={'t2'} />
+                {/* <EditorToolbar toolbarId={'t2'} /> */}
                 <ReactQuill
                   style={{
                     height: '200px',
                     maxHeight: '200px',
-                    // paddingBottom: '30px'
                   }}
                   theme='snow'
-                  value={value}
-                  onChange={setValue}
                   placeholder={'Viết mô tả...'}
-                  modules={modules('t2')}
+                  modules={modules}
                   formats={formats}
+                  defaultValue={description}
+                  value={description}
+                  onChange={setDescription}
                 />
               </Grid>
 
