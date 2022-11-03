@@ -181,8 +181,8 @@ const ServiceForm = () => {
             spacing={2}
           >
             <CustomBox
-              height={{ sm: '150px', lg: '200px' }}
-              width={{ sm: '150px', lg: '200px' }}
+              height={{ xs: '100px', sm: '150px', lg: '200px' }}
+              width={{ xs: '100px', sm: '150px', lg: '200px' }}
               sx={{ background: '#f5f5f5', border: '5px solid #fff' }}
             >
               <IconButton
@@ -249,7 +249,6 @@ const ServiceForm = () => {
               </Grid>
               <Grid item xs={12}>
                 <Typography fontSize={18}>Mô tả</Typography>
-                {/* <EditorToolbar toolbarId={'t2'} /> */}
                 <ReactQuill
                   style={{
                     height: '200px',
@@ -265,7 +264,7 @@ const ServiceForm = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} marginTop={{ xs: '80px', sm: '60px', lg: '60px' }}>
                 <Stack>
                   <MainButton sx={{ ml: 'auto' }} type='submit' colorType='primary'>
                     Xác nhận
