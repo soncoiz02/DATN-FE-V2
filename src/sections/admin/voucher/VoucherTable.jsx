@@ -10,6 +10,7 @@ import {
   InputBase,
   useTheme,
   Chip,
+  MenuItem,
   Typography,
 } from '@mui/material'
 import { Delete, ModeEditOutline, RemoveRedEye, Search } from '@mui/icons-material'
@@ -92,31 +93,33 @@ const VoucherTable = () => {
       renderCell: (params) => {
         return (
           <Stack direction='row' gap={3}>
-            <IconButton
+            <MenuItem
               onClick={() => {
                 setRegisterId(params.id)
                 setOpenModal(true)
               }}
             >
               <RemoveRedEye color='secondary' />
-            </IconButton>
-            <IconButton
+            </MenuItem>
+            <MenuItem
               onClick={() => {
                 setRegisterId(params.id)
                 setOpenModalEdit(true)
               }}
+              disabled={params.row.isUsed === true}
             >
               <ModeEditOutline color='secondary' />
-            </IconButton>
-            <IconButton
+            </MenuItem>
+            <MenuItem
               onClick={() => {
                 setRegisterId(params.id)
                 setDialogTitle('Bạn có chắc muốn xóa voucher không?')
                 setOpenModalDelete(true)
               }}
+              disabled={params.row.isUsed === true}
             >
               <Delete color='primary' />
-            </IconButton>
+            </MenuItem>
           </Stack>
         )
       },
