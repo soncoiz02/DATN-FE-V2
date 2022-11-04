@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 
 const initialState = {
   list: [],
@@ -28,9 +28,36 @@ export const serviceRegisterSlice = createSlice({
         state.listFiltered = state.list
       }
     },
+    getBySort: (state, action) => {
+      const arraySort = [...current(state).list]
+      const { key } = action.payload
+      const { order } = action.payload
+      if (key === 'name') {
+        if (order === 'asc') {
+          state.listFiltered = arraySort.sort((a, b) =>
+            a.serviceId.name.localeCompare(b.serviceId.name),
+          )
+        } else {
+          state.listFiltered = arraySort.sort((a, b) =>
+            b.serviceId.name.localeCompare(a.serviceId.name),
+          )
+        }
+      }
+      if (key === 'time') {
+        if (order === 'asc') {
+          state.listFiltered = arraySort.sort(
+            (a, b) => new Date(a.startDate) - new Date(b.startDate),
+          )
+        } else {
+          state.listFiltered = arraySort.sort(
+            (a, b) => new Date(b.startDate) - new Date(a.startDate),
+          )
+        }
+      }
+    },
   },
 })
 
-export const { getFullList, filterByStatusAndService } = serviceRegisterSlice.actions
+export const { getFullList, filterByStatusAndService, getBySort } = serviceRegisterSlice.actions
 
 export default serviceRegisterSlice.reducer

@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 
 export const dateFormat = (date) => {
-  const dateFormated = format(date, 'dd/MM/yyyy')
+  const dateFormated = format(new Date(date), 'dd/MM/yyyy')
   return dateFormated
 }
 
@@ -24,4 +24,21 @@ export const convertNumberToHour = (num, option) => {
       hour,
       minute,
     }
+}
+
+export const formatHourMinuteSecond = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm:ss')
+}
+
+export const convertTimeToNumber = (time) => {
+  const date = new Date(time)
+  const hour = date.getHours()
+  const minute = date.getMinutes() / 60
+  return hour + minute
+}
+
+export const formatDateToHour = (time) => {
+  const date = new Date(time)
+  return format(date, 'kk:mm')
 }

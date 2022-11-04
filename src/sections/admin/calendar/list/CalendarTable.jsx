@@ -1,24 +1,12 @@
-import React, { useState } from 'react'
-import GlassBox from '../../../../components/GlassBox'
-import { DataGrid } from '@mui/x-data-grid'
+import { RemoveRedEye } from '@mui/icons-material'
+import { Avatar, Chip, IconButton, Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import calendarApi from '../../../../api/calendar'
-import { useEffect } from 'react'
-import { useMemo } from 'react'
-import {
-  Avatar,
-  Chip,
-  IconButton,
-  Stack,
-  styled,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import DataGridCustom from '../../../../components/DataGridCustom'
+import GlassBox from '../../../../components/GlassBox'
+import { getStatusColor } from '../../../../utils/aboutColor'
 import { dateFormat } from '../../../../utils/dateFormat'
 import ModalInfo from './ModalInfo'
-import { RemoveRedEye } from '@mui/icons-material'
-import { getStatusColor } from '../../../../utils/aboutColor'
-import DataGridCustom from '../../../../components/DataGridCustom'
 
 const CalendarTable = () => {
   const [rows, setRows] = useState([])

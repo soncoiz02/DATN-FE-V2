@@ -10,7 +10,6 @@ import RHFSwitch from '../../../components/ReactHookForm/RHFSwitch'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import categoryApi from '../../../api/category'
-import { useState } from 'react'
 
 import { Close } from '@mui/icons-material'
 
@@ -19,7 +18,7 @@ const defaultFormValues = {
   status: false,
 }
 
-const ModalRegisterForm = ({ openModal, onCloseModal }) => {
+const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
   const formSchema = yup.object().shape({
     name: yup.string().trim().required('Vui lòng tên danh mục'),
   })
@@ -44,6 +43,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
     try {
       await categoryApi.registerCategoryService(data)
       reset(defaultFormValues)
+      confirm()
       onCloseModal()
     } catch (error) {
       console.log(error)
@@ -51,7 +51,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
   }
 
   return (
-    <Modal open={openModal} onClose={onCloseModal}>
+    <Modal open={openModalRegister} onClose={onCloseModal}>
       <Container
         maxWidth='sm'
         sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}
@@ -70,6 +70,7 @@ const ModalRegisterForm = ({ openModal, onCloseModal }) => {
                   <RHFTextField name='name' label='Tên danh mục' />
                 </Grid>
                 <Grid item xs={12}>
+                  <Typography color='text.secondary'>Trạng thái</Typography>
                   <RHFSwitch name='status' />
                 </Grid>
                 <Grid item xs={12}>

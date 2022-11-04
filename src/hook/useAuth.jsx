@@ -16,7 +16,18 @@ const useAuth = () => {
     setCookie('user', user, { path: '/' })
   }
 
-  return { isLogin: !!cookies.token, userInfo: cookies.user, logout, login }
+  const updateInfo = (info) => {
+    setCookie('user', info, { path: '/' })
+  }
+
+  return {
+    isLogin: !!cookies.token,
+    userInfo: cookies.user,
+    token: cookies.token,
+    logout,
+    login,
+    updateInfo,
+  }
 }
 
 export default useAuth

@@ -16,7 +16,7 @@ const defaultFormValues = {
   status: false,
 }
 
-const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategory }) => {
+const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategory, confirm }) => {
   const [categoryServiceInfo, setCategoryServiceInfo] = useState()
   const [formValues, setFormValues] = useState()
 
@@ -41,6 +41,7 @@ const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategor
     try {
       const values = await categoryApi.update(id, data)
       setFormValues(values)
+      confirm()
       onCloseModal()
     } catch (error) {
       console.log(error)
@@ -50,10 +51,9 @@ const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategor
   const handleGetCategoryServiceInfo = async (registerId) => {
     try {
       const data = await categoryApi.getOne(registerId)
-      console.log(data)
       reset({
         name: data?.name,
-        status: data?.status === 0 ? true : false,
+        status: data?.status === 0 ? false : true,
       })
       setCategoryServiceInfo(data)
     } catch (error) {
@@ -92,6 +92,7 @@ const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategor
                     <RHFTextField name='name' label='Tên danh mục' />
                   </Grid>
                   <Grid item xs={12}>
+                    <Typography color='text.secondary'>Trạng thái</Typography>
                     <RHFSwitch name='status' />
                   </Grid>
                   <Grid item xs={12}>

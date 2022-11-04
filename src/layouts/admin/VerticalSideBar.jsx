@@ -10,6 +10,7 @@ import {
   RateReview,
   Store,
   WorkspacePremium,
+  Loyalty,
 } from '@mui/icons-material'
 import {
   Avatar,
@@ -28,6 +29,7 @@ import {
 import React, { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
+import useAuth from '../../hook/useAuth'
 
 const VERTICAL_ITEMS = [
   {
@@ -99,6 +101,12 @@ const VERTICAL_ITEMS = [
         icon: <RateReview />,
         path: '/admin/rated-management',
       },
+      {
+        key: 'voucher-management',
+        title: 'Voucher',
+        icon: <Loyalty />,
+        path: '/admin/voucher-management',
+      },
     ],
   },
   {
@@ -132,6 +140,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   const [childOpenedIndex, setChildOpenedIndex] = useState()
   const [activeMainTitle, setActiveMainTitle] = useState()
   const { pathname } = useLocation()
+  const { userInfo } = useAuth()
   return (
     <>
       {openMenu && (
@@ -157,10 +166,11 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 />
                 <Stack>
                   <Typography variant='h3' sx={{ color: theme.palette.text.secondary }}>
-                    Trần Bảo Sơn
+                    {userInfo?.name}
                   </Typography>
                   <Typography variant='body2' sx={{ color: theme.palette.text.secondary }}>
-                    Admin
+                    {userInfo?.roleId.name === 'Admin' && 'Quản trị viên'}
+                    {userInfo?.roleId.name === 'Staff' && 'Nhân viên'}
                   </Typography>
                 </Stack>
               </Stack>
@@ -185,12 +195,11 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 }
               >
                 {item.items.map((subItem) => (
-                  <>
+                  <div key={subItem.key}>
                     {subItem.children ? (
                       <>
                         <CustomListItemButton
                           className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
-                          key={subItem.key}
                           onClick={() => setChildOpenedIndex(childOpenedIndex ? null : subItem.key)}
                         >
                           <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
@@ -240,7 +249,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                         <Typography variant='body1'>{subItem.title}</Typography>
                       </CustomListItemButton>
                     )}
-                  </>
+                  </div>
                 ))}
               </List>
             ))}
