@@ -20,11 +20,11 @@ const Footer = () => {
         sx={{
           borderTop: '6px solid #FF6073',
           backgroundColor: '#3B3B3B',
-          padding: '70px 0',
+          padding: { md: '70px 0', xs: '50px 0' },
         }}
       >
         <Container maxWidth='xl'>
-          <Grid container spacing={3} sx={{ padding: '15px' }}>
+          <Grid container spacing={3}>
             <Grid container item xs={12} sm={6} md={3}>
               <Stack>
                 <Box>
@@ -36,7 +36,7 @@ const Footer = () => {
                 <MainText sx={{ marginTop: '20px' }}>Địa chỉ: Quận Nam Từ Liêm, Hà Nội</MainText>
               </Stack>
             </Grid>
-            <Grid container item xs={12} sm={6} md={3}>
+            <Grid container item xs={6} sm={6} md={3}>
               <Box>
                 <FooterTitle>LIÊN HỆ</FooterTitle>
                 <Divider
@@ -44,7 +44,7 @@ const Footer = () => {
                     width: '100%',
                     backgroundColor: ' #FFF',
                     opacity: '0.3',
-                    marginBottom: '30px',
+                    marginBottom: { xs: '10px', md: '30px' },
                   }}
                 />
                 <Box sx={{ marginTop: '20px' }}>
@@ -83,7 +83,7 @@ const Footer = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid container item xs={12} sm={6} md={3}>
+            <Grid container item xs={6} sm={6} md={3}>
               <Box>
                 <FooterTitle>Thời gian mở cửa</FooterTitle>
                 <Divider
@@ -91,7 +91,7 @@ const Footer = () => {
                     width: '100%',
                     backgroundColor: ' #FFF',
                     opacity: '0.3',
-                    marginBottom: '30px',
+                    marginBottom: { xs: '20px', md: '30px' },
                   }}
                 />
                 <Box>
@@ -102,7 +102,7 @@ const Footer = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid container item xs={12} sm={6} md={3}>
+            <Grid container item xs={6} sm={6} md={3}>
               <Box>
                 <FooterTitle>Menu</FooterTitle>
                 <Divider
@@ -110,7 +110,7 @@ const Footer = () => {
                     width: '100%',
                     backgroundColor: ' #FFF',
                     opacity: '0.3',
-                    marginBottom: '30px',
+                    marginBottom: { xs: '20px', md: '30px' },
                   }}
                 />
                 <Stack>
@@ -152,7 +152,8 @@ const FooterTitle = styled(Typography)`
   font-weight: 500;
   color: #ff6073;
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 16px;
+    line-height: 18px;
   }
 `
 const MainText = styled(Typography)`
@@ -160,7 +161,6 @@ const MainText = styled(Typography)`
   line-height: 26px;
   color: #dadada;
   @media (max-width: 768px) {
-    font-size: 12px;
   }
 `
 const SubtitleFooter = styled(Typography)`
@@ -170,7 +170,6 @@ const SubtitleFooter = styled(Typography)`
   letter-spacing: 3px;
   font-weight: lighter;
   @media (max-width: 768px) {
-    font-size: 12px;
   }
 `
 

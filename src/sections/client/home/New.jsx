@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const New = () => {
   return (
-    <Box>
+    <Box sx={{ padding: { md: '70px 0', xs: '50px 0' } }}>
       <Container
         maxWidth='xl'
         sx={{
@@ -13,7 +13,6 @@ const New = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '70px 0',
         }}
       >
         <Box>
@@ -21,15 +20,15 @@ const New = () => {
             <Typography variant='enText'>Blog</Typography>
             <Typography variant='viText'>Tin mới nhất</Typography>
           </Stack>
-          <Stack>
-            <Grid container sx={{ padding: '15px' }}>
-              <Grid container item xs={1} sm={12} md={6}>
+          <Box>
+            <Grid container>
+              <Grid container item xs={12} sm={6} md={6}>
                 <Box>
                   <ImgNew src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/blog-1-1024x576.jpg' />
                 </Box>
               </Grid>
-              <Grid container item xs={12} sm={12} md={6}>
-                <Box sx={{ padding: '50px' }}>
+              <Grid container item xs={12} sm={6} md={6}>
+                <Box sx={{ padding: { sm: '20px', md: '30px', lg: '50px' } }}>
                   <CateNew>NEWS</CateNew>
                   <NameNew>New Oil Treatments Available</NameNew>
                   <DateNew>24 JANUARY</DateNew>
@@ -41,9 +40,15 @@ const New = () => {
                 </Box>
               </Grid>
             </Grid>
-            <Grid container sx={{ padding: '15px' }}>
-              <Grid container item xs={12} sm={12} md={6}>
-                <Box sx={{ padding: '50px' }}>
+            <Grid
+              container
+              sx={{
+                marginTop: { xs: '20px', lg: '30px' },
+                flexDirection: { xs: 'column-reverse', sm: 'row' },
+              }}
+            >
+              <Grid container item xs={12} sm={6} md={6}>
+                <Box sx={{ padding: { sm: '20px', md: '30px', lg: '50px' } }}>
                   <CateNew>RELAX</CateNew>
                   <NameNew>New Site Available</NameNew>
                   <DateNew>24 JANUARY</DateNew>
@@ -54,13 +59,13 @@ const New = () => {
                   <ReadMoreButton>Read more</ReadMoreButton>
                 </Box>
               </Grid>
-              <Grid container item xs={1} sm={12} md={6}>
+              <Grid container item xs={12} sm={6} md={6}>
                 <Box>
                   <ImgNew src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/blog-2-1024x576.jpg' />
                 </Box>
               </Grid>
             </Grid>
-          </Stack>
+          </Box>
         </Box>
       </Container>
     </Box>
@@ -69,9 +74,7 @@ const New = () => {
 
 const ImgNew = styled('img')`
   width: 100%;
-  @media (max-width: 768px) {
-    height: 150px;
-  }
+  border-radius: 10px;
 `
 const CateNew = styled(Typography)`
   font-size: 15px;
@@ -79,8 +82,9 @@ const CateNew = styled(Typography)`
   color: #ff6073;
   font-weight: bold;
   letter-spacing: 3px;
-  @media (max-width: 768px) {
-    font-size: 12px;
+  @media (max-width: 1024px) {
+    font-size: 13px;
+    line-height: 13px;
   }
 `
 const DateNew = styled(Typography)`
@@ -104,7 +108,8 @@ const DesNew = styled(Typography)`
   margin-top: 10px;
   font-family: 'Open Sans', sans-serif;
   @media (max-width: 768px) {
-    font-size: 12px;
+    line-height: 20px;
+    font-size: 14px;
   }
 `
 
@@ -113,8 +118,12 @@ const NameNew = styled(Typography)`
   font-size: 30px;
   line-height: 30px;
   margin-top: 10px;
+  @media (max-width: 1024px) {
+    font-size: 25px;
+    line-height: 25px;
+  }
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 23px;
   }
 `
 const ReadMoreButton = styled(Button)({
