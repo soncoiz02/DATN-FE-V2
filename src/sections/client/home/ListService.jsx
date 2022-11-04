@@ -4,11 +4,10 @@ import styled from 'styled-components'
 
 const ListService = () => {
   return (
-    <Box>
+    <Box sx={{ padding: { md: '70px 0', xs: '50px 0' } }}>
       <Container
         maxWidth='xl'
         sx={{
-          padding: '70px 0',
           textAlign: 'center',
         }}
       >
@@ -20,14 +19,14 @@ const ListService = () => {
         <Box
           sx={{
             flexGrow: 1,
-            marginTop: '60px',
+            marginTop: { lg: '60px', md: '50px', sx: '40px', xs: '20px' },
           }}
         >
-          <Grid container spacing={1}>
+          <Grid container>
             <Grid
               container
               item
-              xs={2}
+              xs={4}
               sm={4}
               md={2}
               sx={{
@@ -44,7 +43,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={4}
               sm={4}
               md={2}
               sx={{
@@ -61,7 +60,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={3}
               sm={4}
               md={2}
               sx={{
@@ -78,7 +77,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={4}
               sm={4}
               md={2}
               sx={{
@@ -95,7 +94,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={4}
               sm={4}
               md={2}
               sx={{
@@ -112,7 +111,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={4}
               sm={4}
               md={2}
               sx={{
@@ -134,14 +133,14 @@ const ListService = () => {
         <Box
           sx={{
             flexGrow: 1,
-            marginTop: '60px',
+            marginTop: { lg: '60px', xs: '50px' },
           }}
         >
-          <Grid container spacing={1}>
+          <Grid container rowSpacing={3} columnSpacing={{ xs: 1 }}>
             <Grid
               container
               item
-              xs={2}
+              xs={6}
               sm={4}
               md={4}
               sx={{
@@ -159,7 +158,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={6}
               sm={4}
               md={4}
               sx={{
@@ -177,7 +176,7 @@ const ListService = () => {
             <Grid
               container
               item
-              xs={2}
+              xs={6}
               sm={4}
               md={4}
               sx={{
@@ -202,9 +201,12 @@ const ListService = () => {
 
 const IconService = styled('img')`
   padding: 15px 20px;
-  max-width: 150px;
+  max-width: 120px;
   @media (max-width: 768px) {
-    height: 150px;
+    max-width: 110px;
+  }
+  @media (max-width: 425px) {
+    max-width: 100px;
   }
 `
 
@@ -213,8 +215,8 @@ const PriceService = styled(Typography)`
   line-height: 15px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  @media (max-width: 768px) {
-    font-size: 12px;
+  @media (max-width: 425px) {
+    letter-spacing: 2px;
   }
 `
 
@@ -225,27 +227,30 @@ const NameService = styled(Typography)`
   margin-top: 10px;
   margin-bottom: 10px;
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 21px;
+  }
+  @media (max-width: 425px) {
+    line-height: 20px;
+    margin-top: 5px;
+    font-size: 19px;
   }
 `
 const ImgService = styled('img')`
-  padding: 15px 40px;
   width: 100%;
-  @media (max-width: 768px) {
-    height: 150px;
-  }
+  border-radius: 10px;
 `
 
 const Item = styled(Paper)`
   box-shadow: none;
-  @media (max-width: 768px) {
-    height: 150px;
-  }
 `
 const ItemMostService = styled(Paper)`
+  padding: 0px 30px;
   box-shadow: none;
+  @media (max-width: 1024px) {
+    padding: 0px 10px;
+  }
   @media (max-width: 768px) {
-    height: 150px;
+    padding: 0px 5px;
   }
 `
 const DesService = styled(Typography)`
@@ -256,9 +261,6 @@ const DesService = styled(Typography)`
   font-weight: normal;
   color: #727475;
   text-transform: uppercase;
-  @media (max-width: 768px) {
-    font-size: 12px;
-  }
 `
 
 export default ListService
