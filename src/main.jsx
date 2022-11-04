@@ -1,13 +1,12 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import MuiThemeProvider from './themes/MuiThemeProvider'
-import { BrowserRouter } from 'react-router-dom'
-import ScrollToTop from './components/ScrollToTop'
-import { Provider } from 'react-redux'
-import { store } from './redux/store'
 import { CookiesProvider } from 'react-cookie'
-import Notistack from './components/Notistack'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import ScrollToTop from './components/ScrollToTop'
+import { store } from './redux/store'
+import MuiThemeProvider from './themes/MuiThemeProvider'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -16,9 +15,7 @@ ReactDOM.render(
         <BrowserRouter>
           <MuiThemeProvider>
             <ScrollToTop />
-            <Notistack>
-              <App />
-            </Notistack>
+            <App />
           </MuiThemeProvider>
         </BrowserRouter>
       </CookiesProvider>

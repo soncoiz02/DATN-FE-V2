@@ -92,7 +92,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
     try {
       const data = await calendarApi.getDetailOrder(orderId)
       setDetailOrder(data)
-      caculateTotalPrice(data.servicesRegistered, data.voucher.discount)
+      caculateTotalPrice(data.servicesRegistered, data.voucher?.discount)
     } catch (error) {
       console.log(error)
     }

@@ -1,6 +1,7 @@
 import { Container, Stack } from '@mui/material'
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import Toastify from '../../components/Toastify'
 import Header from './Header'
 import VerticalSideBar from './VerticalSideBar'
 
@@ -14,6 +15,7 @@ const AdminLayout = () => {
         <Container maxWidth='xl'>
           <Outlet />
         </Container>
+        <Toastify />
       </Stack>
     </Stack>
   )

@@ -1,4 +1,14 @@
-import { Grid, Stack, styled, Box, Typography, Snackbar, Alert, Avatar } from '@mui/material'
+import {
+  Grid,
+  Stack,
+  styled,
+  Box,
+  Typography,
+  Snackbar,
+  Alert,
+  Avatar,
+  CircularProgress,
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
@@ -11,12 +21,13 @@ import useAuth from '../../hook/useAuth'
 import { useNavigate } from 'react-router-dom'
 import RHFDatePicker from '../../components/ReactHookForm/RHFDatePicker'
 import { uploadAvatarImage } from '../../utils/uploadImage'
+import { LoadingButton } from '@mui/lab'
 
 const Accountinfo = () => {
   const { userInfo, token, updateInfo } = useAuth()
 
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [imgPreview, setImgPreview] = useState('')
   const [imgUpload, setImgUpload] = useState()
 
@@ -71,6 +82,7 @@ const Accountinfo = () => {
   } = methods
 
   const onSubmit = async (values) => {
+    setIsLoading(true)
     if (imgUpload) {
       const imgLink = await uploadAvatarImage(imgUpload)
       setImgUpload(null)
@@ -87,6 +99,7 @@ const Accountinfo = () => {
         ...data,
       })
       updateInfo(data)
+      setIsLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -165,14 +178,28 @@ const Accountinfo = () => {
 
               <Grid item mt={3} xs={12}>
                 <Stack>
-                  <MainButton
-                    type='submit'
-                    colorType='primary'
-                    sx={{ alignSelf: 'center', px: '30px' }}
-                    disabled={!isDirty && !imgUpload}
-                  >
-                    Cập Nhật
-                  </MainButton>
+                  {isLoading ? (
+                    <LoadingButton
+                      loading
+                      variant='contained'
+                      sx={{
+                        alignSelf: 'center',
+                        px: '30px',
+                        height: '45px',
+                        width: '150px',
+                        borderRadius: '10px',
+                      }}
+                    ></LoadingButton>
+                  ) : (
+                    <MainButton
+                      type='submit'
+                      colorType='primary'
+                      sx={{ alignSelf: 'center', px: '30px' }}
+                      disabled={!isDirty && !imgUpload}
+                    >
+                      Cập Nhật
+                    </MainButton>
+                  )}
                 </Stack>
               </Grid>
             </Grid>
