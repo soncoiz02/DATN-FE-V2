@@ -133,7 +133,7 @@ const ListService = () => {
         <Box
           sx={{
             flexGrow: 1,
-            marginTop: { lg: '60px', xs: '50px' },
+            marginTop: { lg: '60px', xs: '35px' },
           }}
         >
           <Grid container rowSpacing={3} columnSpacing={{ xs: 1 }}>

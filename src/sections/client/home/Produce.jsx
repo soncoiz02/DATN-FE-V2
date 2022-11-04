@@ -23,7 +23,7 @@ const Produce = () => {
         }}
       >
         <Box>
-          <Stack sx={{ marginBottom: '30px' }}>
+          <Stack sx={{ marginBottom: { xs: '15px', sm: '30px' } }}>
             <Typography variant='enText'>Achievement</Typography>
             <Typography variant='viText'>Các thành tựu đạt được</Typography>
           </Stack>
