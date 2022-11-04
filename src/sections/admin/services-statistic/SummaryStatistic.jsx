@@ -26,7 +26,7 @@ const SummaryStatistic = () => {
               alignItems={{ xs: 'center' }}
             >
               <Typography variant='body2' color='text.secondary'>
-                Dịch vụ sử dụng nhiều
+                Dacha vụ sử deng nhiều
               </Typography>
               <IconButton>
                 <Equalizer
@@ -48,7 +48,12 @@ const SummaryStatistic = () => {
             <Typography
               variant='h6'
               color='text.secondary'
-              sx={{ display: 'flex', justifyContent: 'end', color: '#229B16', marginTop: '8px' }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'end',
+                color: '#229B16',
+                marginTop: '8px',
+              }}
             >
               12% <ArrowUpward />
             </Typography>
@@ -96,7 +101,12 @@ const SummaryStatistic = () => {
             <Typography
               variant='h6'
               color='text.secondary'
-              sx={{ display: 'flex', justifyContent: 'end', color: '#229B16', marginTop: '8px' }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'end',
+                color: '#229B16',
+                marginTop: '8px',
+              }}
             >
               12% <ArrowUpward />
             </Typography>
@@ -122,7 +132,7 @@ const SummaryStatistic = () => {
               alignItems={{ xs: 'center' }}
             >
               <Typography variant='body2' color='text.secondary'>
-                Dịch vụ đặc biệt
+                Tổng doanh thu
               </Typography>
               <IconButton>
                 <PieChart
@@ -139,12 +149,17 @@ const SummaryStatistic = () => {
               color='text.secondary'
               sx={{ marginTop: '9px', lineHeight: '32.63px' }}
             >
-              12
+              60
             </Typography>
             <Typography
               variant='h6'
               color='text.secondary'
-              sx={{ display: 'flex', justifyContent: 'end', color: '#FF0000', marginTop: '8px' }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'end',
+                color: '#FF0000',
+                marginTop: '8px',
+              }}
             >
               10% <ArrowDownward />
             </Typography>

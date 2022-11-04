@@ -1,8 +1,8 @@
 import React from 'react'
 import { Typography, Breadcrumbs, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
-import SummaryStatistic from '../../../sections/admin/services-statistic/SummaryStatistic'
 import ListServices from '../../../sections/admin/services-statistic/ListServices'
+import SummaryStatistic from '../../../sections/admin/services-statistic/SummaryStatistic'
 
 const ServiceStatistic = () => {
   return (
