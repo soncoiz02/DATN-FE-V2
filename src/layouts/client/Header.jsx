@@ -2,6 +2,7 @@ import { Assignment, Logout, Menu, Notifications, Person, Sms } from '@mui/icons
 import {
   Avatar,
   Box,
+  ClickAwayListener,
   Container,
   IconButton,
   Link,
@@ -80,32 +81,40 @@ const Header = ({ openMenu }) => {
               >
                 <Menu />
               </IconButton>
-              <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <Avatar src={userInfo.avt} />
-                <Typography variant='h6' color='white'>
-                  {userInfo.name}
-                </Typography>
-              </UserInfo>
-              <Popper open={open} anchorEl={anchorEl}>
-                <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
-                  <CustomLink
-                    underline='none'
-                    component={RouterLink}
-                    to='/account-setting/account-info'
-                  >
-                    <Person />
-                    <Typography variant='body1'>Cài đặt tài khoản</Typography>
-                  </CustomLink>
-                  <CustomLink underline='none' component={RouterLink} to='service-register-history'>
-                    <Assignment />
-                    <Typography variant='body1'>Dịch vụ đăng ký</Typography>
-                  </CustomLink>
-                  <CustomLink underline='none' onClick={() => logout()}>
-                    <Logout />
-                    <Typography variant='body1'>Đăng xuất</Typography>
-                  </CustomLink>
-                </GlassBox>
-              </Popper>
+              <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+                <Box>
+                  <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <Avatar src={userInfo.avt} />
+                    <Typography variant='h6' color='white'>
+                      {userInfo.name}
+                    </Typography>
+                  </UserInfo>
+                  <Popper open={open} anchorEl={anchorEl} sx={{ zIndex: 150 }}>
+                    <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
+                      <CustomLink
+                        underline='none'
+                        component={RouterLink}
+                        to='/account-setting/account-info'
+                      >
+                        <Person />
+                        <Typography variant='body1'>Cài đặt tài khoản</Typography>
+                      </CustomLink>
+                      <CustomLink
+                        underline='none'
+                        component={RouterLink}
+                        to='service-register-history'
+                      >
+                        <Assignment />
+                        <Typography variant='body1'>Dịch vụ đăng ký</Typography>
+                      </CustomLink>
+                      <CustomLink underline='none' onClick={() => logout()}>
+                        <Logout />
+                        <Typography variant='body1'>Đăng xuất</Typography>
+                      </CustomLink>
+                    </GlassBox>
+                  </Popper>
+                </Box>
+              </ClickAwayListener>
             </Stack>
           )}
         </Stack>
