@@ -126,7 +126,7 @@ const ReadMoreButton = styled(Button)({
   borderColor: '#FF6073',
   backgroundColor: '#FF6073',
   color: '#fff',
-  borderRadius: '20px',
+  borderRadius: '10px',
   boxSizing: 'border-box',
   letterSpacing: '2px',
   display: 'flex',

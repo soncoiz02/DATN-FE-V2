@@ -105,7 +105,7 @@ const ButtonCustom = styled(Button)({
   lineHeight: 1.5,
   borderColor: '#FF6073',
   color: '#FF6073',
-  borderRadius: '99px',
+  borderRadius: '10px',
   boxSizing: 'border-box',
   letterSpacing: '2px',
   display: 'flex',
