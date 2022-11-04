@@ -67,7 +67,7 @@ const defaultFormValues = {
   date: new Date(),
 }
 
-const socket = getSocket('order')
+const socket = getSocket()
 
 const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   // state

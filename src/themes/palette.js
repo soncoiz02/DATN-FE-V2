@@ -35,9 +35,9 @@ const INFO = {
 }
 
 const TEXT_COLOR = {
-  primary: '#4B5563',
+  primary: '#212B36',
   secondary: '#363B64',
-  primaryChannel: '#6A6A6A',
+  primaryChannel: 'rgb(99, 115, 129)',
 }
 
 const palette = {

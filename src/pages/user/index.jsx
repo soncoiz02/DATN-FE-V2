@@ -11,6 +11,7 @@ const User = () => {
       <GlassBox opacity={0.8} mt={4}>
         <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
           <Tab
+            value={0}
             label='Thông tin tài khoản'
             id='tab-0'
             aria-controls='tab-panel-0'
@@ -18,6 +19,7 @@ const User = () => {
             to='/account-setting/account-info'
           />
           <Tab
+            value={1}
             label='Đổi mật khẩu'
             id='tab-1'
             aria-controls='tab-panel-1'

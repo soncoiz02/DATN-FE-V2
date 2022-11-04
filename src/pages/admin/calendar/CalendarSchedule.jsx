@@ -36,10 +36,15 @@ const CalendarManagement = () => {
   return (
     <Stack gap={2}>
       <Breadcrumbs separator='/'>
-        <Link underline='none' color='GrayText' component={RouterLink} to='/admin/dashboard'>
+        <Link
+          underline='none'
+          color='text.primaryChannel'
+          component={RouterLink}
+          to='/admin/dashboard'
+        >
           Dashboard
         </Link>
-        <Typography variant='body1' color='GrayText'>
+        <Typography variant='body1' color='text.primaryChannel'>
           Lịch đặt
         </Typography>
         <Typography variant='body1' color='primary'>
@@ -47,9 +52,7 @@ const CalendarManagement = () => {
         </Typography>
       </Breadcrumbs>
       <Stack direction='row' justifyContent='space-between'>
-        <Typography variant='h2' color='text.secondary'>
-          Bảng lịch
-        </Typography>
+        <Typography variant='h2'>Bảng lịch</Typography>
         <MainButton
           colorType='primary'
           sx={{ alignSelf: 'flex-end', padding: '10px 35px' }}

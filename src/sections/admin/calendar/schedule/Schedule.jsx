@@ -53,7 +53,7 @@ import ModalPay from './modal-pay/ModalPay'
 import { statusId } from '../../../../api/calendar'
 import { formatDateToHour } from '../../../../utils/dateFormat'
 
-const socket = getSocket('order')
+const socket = getSocket()
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())

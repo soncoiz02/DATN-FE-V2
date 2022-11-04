@@ -156,7 +156,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
       <GradientBackground sx={{ left: { xs: openMenu ? 0 : '-100%', md: 0 } }}>
         <Stack gap={{ xs: 2, sm: 3 }}>
           <Box sx={{ padding: { xs: '15px', sm: '30px 15px' } }}>
-            <GlassBox opacity={0.8} sx={{ padding: '15px' }}>
+            <GlassBox opacity={1} sx={{ padding: '15px' }}>
               <Stack direction='row' gap={2}>
                 <Avatar
                   sx={{
@@ -165,10 +165,10 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                   }}
                 />
                 <Stack>
-                  <Typography variant='h3' sx={{ color: theme.palette.text.secondary }}>
+                  <Typography variant='h3' sx={{ color: theme.palette.text.primary }}>
                     {userInfo?.name}
                   </Typography>
-                  <Typography variant='body2' sx={{ color: theme.palette.text.secondary }}>
+                  <Typography variant='body2' sx={{ color: theme.palette.text.primaryChannel }}>
                     {userInfo?.roleId.name === 'Admin' && 'Quản trị viên'}
                     {userInfo?.roleId.name === 'Staff' && 'Nhân viên'}
                   </Typography>
@@ -182,12 +182,12 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                 key={item.key}
                 subheader={
                   <Typography
-                    variant='h5'
+                    variant='h4'
                     sx={{
-                      color: theme.palette.text.primaryChanel,
+                      color: theme.palette.text.primaryChannel,
                       textTransform: 'uppercase',
                       padding: '0 15px',
-                      mb: { xs: 1, sm: 2 },
+                      mb: 1,
                     }}
                   >
                     {item.header}
@@ -203,7 +203,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                           onClick={() => setChildOpenedIndex(childOpenedIndex ? null : subItem.key)}
                         >
                           <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                          <Typography variant='body1'>{subItem.title}</Typography>
+                          <Typography variant='body2'>{subItem.title}</Typography>
                           {childOpenedIndex === subItem.key ? (
                             <ExpandLess sx={{ ml: 'auto' }} />
                           ) : (
@@ -221,12 +221,19 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                                 sx={{ pl: 4 }}
                                 component={Link}
                                 to={child.path}
-                                onClick={() => setActiveMainTitle(subItem.key)}
+                                onClick={() => {
+                                  setActiveMainTitle(subItem.key)
+                                  onCloseMenu()
+                                }}
                                 key={child.key}
                               >
                                 <Typography
-                                  variant='body1'
-                                  color={pathname.includes(child.path) ? 'primary' : ''}
+                                  variant='body2'
+                                  color={
+                                    pathname.includes(child.path)
+                                      ? 'primary'
+                                      : 'text.primaryChannel'
+                                  }
                                 >
                                   {child.title}
                                 </Typography>
@@ -243,10 +250,11 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                         onClick={() => {
                           setChildOpenedIndex(null)
                           setActiveMainTitle(null)
+                          onCloseMenu()
                         }}
                       >
                         <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                        <Typography variant='body1'>{subItem.title}</Typography>
+                        <Typography variant='body2'>{subItem.title}</Typography>
                       </CustomListItemButton>
                     )}
                   </div>
@@ -260,16 +268,21 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   )
 }
 
-const GradientBackground = styled(Box)`
+const GradientBackground = styled(Box)(
+  ({ theme }) => `
   position: sticky;
   width: 300px;
   height: 100vh;
   top: 0;
   left: 0;
-  background: linear-gradient(50deg, #ecfffd, #dfefff);
+  background: #ffffff;
   overflow-y: auto;
   z-index: 99;
   transition: 0.5s;
+  ${theme.breakpoints.down('md')} {
+    border: none;
+  }
+  border-right: 1px dashed #d6d6d6;
   &:hover {
     ::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.1);
@@ -294,15 +307,16 @@ const GradientBackground = styled(Box)`
     width: 40%;
     left: -100%;
   }
-`
+`,
+)
 
 const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   margin: '5px 0',
   '.MuiListItemIcon-root': {
-    color: '#636363',
+    color: theme.palette.text.primaryChannel,
   },
-  '.MuiTypography-body1': {
-    color: '#636363',
+  '.MuiTypography-body2': {
+    color: theme.palette.text.primaryChannel,
   },
   '&.active': {
     background: '',
@@ -319,7 +333,7 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
     '.MuiListItemIcon-root': {
       color: theme.palette.primary.main,
     },
-    '.MuiTypography-body1': {
+    '.MuiTypography-body2': {
       color: theme.palette.primary.main,
     },
   },

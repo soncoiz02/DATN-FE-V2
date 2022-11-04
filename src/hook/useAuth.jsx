@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useCookies } from 'react-cookie'
+import { useNavigate } from 'react-router-dom'
 
 const useAuth = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
+  const navigate = useNavigate()
   const logout = () => {
     removeCookie('token', { path: '/' })
     removeCookie('user', { path: '/' })
+    navigate('/')
     setIsLogin(false)
     setUserInfo(null)
   }

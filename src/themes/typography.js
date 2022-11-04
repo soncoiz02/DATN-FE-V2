@@ -17,7 +17,7 @@ const FONT_MEDIUM = 500
 const FONT_REGULAR = 400
 
 const typography = {
-  fontFamily: "'Mulish', sans-serif",
+  fontFamily: "'Nunito', sans-serif",
   h1: {
     fontWeight: FONT_BOLD,
     ...responsiveFontSizes({ sm: 30, md: 40, lg: 50 }),
