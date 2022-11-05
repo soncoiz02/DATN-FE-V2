@@ -7,9 +7,16 @@ import MainButton from '../../components/MainButton'
 import RHFProvider from '../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../components/ReactHookForm/RHFTextField'
 import * as yup from 'yup'
+import useAuth from '../../hook/useAuth'
+import userApis from '../../api/user'
+import { useState } from 'react'
+import ModalGetVerifyCode from './ModalGetVerifyCode'
 
 const Changepassword = () => {
-  const onSubmit = (values) => {}
+  const { token, logout } = useAuth()
+  const [openModal, setOpenModal] = useState(false)
+  const [passwordData, setPasswordData] = useState('')
+
   const changePasswordSchema = yup.object().shape({
     currentPassword: yup.string().trim().required('Vui lòng nhập mật khẩu hiện tại'),
     newPassword: yup
@@ -34,41 +41,63 @@ const Changepassword = () => {
     },
     resolver: yupResolver(changePasswordSchema),
   })
-  const { handleSubmit } = methods
+  const { handleSubmit, setError } = methods
+
+  const onSubmit = (values) => {
+    setPasswordData({ ...values })
+    setOpenModal(true)
+  }
+
+  const handleChangePassword = async (passwordData) => {
+    try {
+      const data = await userApis.changePassword(passwordData, token)
+      if (data.success) {
+        logout()
+      }
+    } catch (error) {
+      const errrorMessage = error.response.data.message
+      setError('currentPassword', { message: errrorMessage }, { shouldFocus: true })
+    }
+  }
+
   return (
-    <Container maxWidth='sm'>
-      <GlassBox mt={5}>
-        <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Grid>
-            <Grid style={{ width: '350px' }} m='auto'>
-              <Typography variant='h3' mt={2} mb={2}>
-                Mật khẩu cũ
-              </Typography>
-              <RHFTextField name='currentPassword' type='password' label='Nhập mật khẩu cũ' />
-            </Grid>
-            <Grid mt={4} style={{ width: '350px' }} m='auto'>
-              <Typography variant='h3' mt={2} mb={2}>
-                {' '}
-                Mật khẩu mới
-              </Typography>
-              <RHFTextField name='newPassword' type='password' label='Nhập mật khẩu mới' />
-            </Grid>
-            <Grid mt={4} style={{ width: '350px' }} m='auto'>
-              <Typography variant='h3' mt={2} mb={2}>
-                Nhập lại mật khẩu
-              </Typography>
-              <RHFTextField name='newPassword' type='password' label='Nhập lại mật khẩu' />
-            </Grid>
-            <Grid mt={3}>
-              <Stack>
-                <MainButton sx={{ m: 'auto' }} type='submit' colorType='primary'>
-                  Cập Nhật
-                </MainButton>
-              </Stack>
-            </Grid>
+    <Container maxWidth='sm' sx={{ py: '30px' }}>
+      <RHFProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <Grid>
+          <Grid style={{ width: '350px' }} m='auto'>
+            <Typography variant='h3' mt={2} mb={2}>
+              Mật khẩu hiện tại
+            </Typography>
+            <RHFTextField name='currentPassword' type='password' label='Nhập mật khẩu hiện tại' />
           </Grid>
-        </RHFProvider>
-      </GlassBox>
+          <Grid mt={4} style={{ width: '350px' }} m='auto'>
+            <Typography variant='h3' mt={2} mb={2}>
+              Mật khẩu mới
+            </Typography>
+            <RHFTextField name='newPassword' type='password' label='Nhập mật khẩu mới' />
+          </Grid>
+          <Grid mt={4} style={{ width: '350px' }} m='auto'>
+            <Typography variant='h3' mt={2} mb={2}>
+              Nhập lại mật khẩu
+            </Typography>
+            <RHFTextField name='newPasswordRepeated' type='password' label='Nhập lại mật khẩu' />
+          </Grid>
+          <Grid mt={3}>
+            <Stack>
+              <MainButton sx={{ m: 'auto' }} type='submit' colorType='primary'>
+                Cập Nhật
+              </MainButton>
+            </Stack>
+          </Grid>
+        </Grid>
+      </RHFProvider>
+      {openModal && (
+        <ModalGetVerifyCode
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          changePassword={() => handleChangePassword(passwordData)}
+        />
+      )}
     </Container>
   )
 }
