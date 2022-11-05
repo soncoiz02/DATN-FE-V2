@@ -28,6 +28,18 @@ const userApis = {
       `/staffInTimeSlotAllService/${storeId}?timeStart=${timeStart}&date=${date}`,
     )
   },
+  changePassword(newPassword, token) {
+    return axiosClient.put(
+      '/change-password',
+      { password: newPassword },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    )
+  },
+  getVerifyCode(email) {
+    return axiosClient.post('/get-verify-code', email)
+  },
 }
 
 export default userApis

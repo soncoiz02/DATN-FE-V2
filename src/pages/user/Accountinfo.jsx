@@ -135,7 +135,12 @@ const Accountinfo = () => {
               sx={{ width: 200, height: 200 }}
             ></Avatar>
 
-            <MainButton sx={{ m: 'auto' }} colorType='primary' component='label'>
+            <MainButton
+              sx={{ m: 'auto' }}
+              colorType='primary'
+              component='label'
+              disabled={isLoading}
+            >
               <input
                 hidden
                 accept='image/*'
@@ -155,28 +160,28 @@ const Accountinfo = () => {
                 <Typography variant='h4' mb={1}>
                   Họ và tên
                 </Typography>
-                <RHFTextField name='name' />
+                <RHFTextField name='name' disabled={isLoading} />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Số điện thoại
                 </Typography>
-                <RHFTextField name='phone' />
+                <RHFTextField name='phone' disabled={isLoading} />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Email
                 </Typography>
-                <RHFTextField name='email' />
+                <RHFTextField name='email' disabled={isLoading} />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant='h4' mb={1}>
                   Ngày sinh
                 </Typography>
-                <RHFDatePicker name='birthday' />
+                <RHFDatePicker name='birthday' disabled={isLoading} />
               </Grid>
 
-              <Grid item mt={3} xs={12}>
+              <Grid item mt={5} xs={12}>
                 <Stack>
                   {isLoading ? (
                     <LoadingButton
