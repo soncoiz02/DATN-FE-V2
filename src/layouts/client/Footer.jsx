@@ -122,17 +122,6 @@ const Footer = () => {
           </Grid>
         </Container>
       </Box>
-      <Box
-        sx={{
-          backgroundColor: '#2D2D2D',
-          padding: '10px 0',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant='subtitle2' sx={{ color: '#DADADA' }}>
-          @All right copy 2022
-        </Typography>
-      </Box>
     </>
   )
 }
@@ -160,8 +149,6 @@ const MainText = styled(Typography)`
   font-size: 16px;
   line-height: 26px;
   color: #dadada;
-  @media (max-width: 768px) {
-  }
 `
 const SubtitleFooter = styled(Typography)`
   color: #ff6073;
@@ -169,8 +156,6 @@ const SubtitleFooter = styled(Typography)`
   line-height: 13px;
   letter-spacing: 3px;
   font-weight: lighter;
-  @media (max-width: 768px) {
-  }
 `
 
 export default Footer
