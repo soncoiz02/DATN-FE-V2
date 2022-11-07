@@ -107,7 +107,9 @@ const Calendar = () => {
     }
 
     const disablePayment = (status) => {
-      return status !== statusId.done || status === statusId.paid
+      return (
+        status !== statusId.done || status === statusId.paid || userInfo?.roleId.name === 'Staff'
+      )
     }
 
     const disableStart = (status) => {
@@ -115,11 +117,18 @@ const Calendar = () => {
     }
 
     const disableAccepted = (status) => {
-      return status === statusId.accepted || status === statusId.done || status === statusId.doing
+      return (
+        status === statusId.accepted ||
+        status === statusId.done ||
+        status === statusId.doing ||
+        userInfo?.roleId.name === 'Staff'
+      )
     }
 
     const disableCancel = (status) => {
-      return status === statusId.doing || status === statusId.cancel
+      return (
+        status === statusId.doing || status === statusId.cancel || userInfo?.roleId.name === 'Staff'
+      )
     }
 
     const disableEdit = (status) => {
@@ -127,7 +136,8 @@ const Calendar = () => {
         status === statusId.done ||
         status === statusId.paid ||
         status === statusId.doing ||
-        status === statusId.cancel
+        status === statusId.cancel ||
+        userInfo?.roleId.name === 'Staff'
       )
     }
 
@@ -282,7 +292,7 @@ const Calendar = () => {
       }
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
-      handleGetListOrder()
+      socket.emit('change-status')
     } catch (error) {
       console.log(error)
     }
@@ -298,7 +308,7 @@ const Calendar = () => {
       }
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
-      handleGetListOrder()
+      socket.emit('change-status')
     } catch (error) {
       console.log(error)
     }
@@ -306,7 +316,7 @@ const Calendar = () => {
   const updateOrderStatusToDone = async () => {
     try {
       await calendarApi.updateOrderStatusToDone(orderId)
-      handleGetListOrder()
+      socket.emit('change-status')
     } catch (error) {
       console.log(error)
     }
@@ -373,6 +383,9 @@ const Calendar = () => {
         if (data === userInfo.storeId) {
           handleGetListOrder()
         }
+      })
+      socket.on('receive-status-change', () => {
+        handleGetListOrder()
       })
     })
   }, [socket])
