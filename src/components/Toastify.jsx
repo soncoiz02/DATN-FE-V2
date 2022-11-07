@@ -31,7 +31,7 @@ const CustomToast = styled(ToastContainer)`
 `
 
 const Toastify = () => {
-  return <CustomToast position='top-right' autoClose={2000} pauseOnHover limit={2} />
+  return <CustomToast position='top-right' autoClose={3000} pauseOnHover limit={2} />
 }
 
 export default Toastify

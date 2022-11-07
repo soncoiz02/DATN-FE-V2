@@ -157,6 +157,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
             <GlassBox opacity={1} sx={{ padding: '15px' }}>
               <Stack direction='row' gap={2}>
                 <Avatar
+                  src={userInfo.avt}
                   sx={{
                     width: { xs: '35px', sm: '50px' },
                     height: { xs: '35px', sm: '50px' },
@@ -176,10 +177,9 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
           </Box>
           <Stack gap={2}>
             {VERTICAL_ITEMS.map((item) => (
-              <>
+              <div key={item.key}>
                 {item.role.includes(userInfo?.roleId.name) && (
                   <List
-                    key={item.key}
                     subheader={
                       <Typography
                         variant='h4'
@@ -263,7 +263,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
                     ))}
                   </List>
                 )}
-              </>
+              </div>
             ))}
           </Stack>
         </Stack>
