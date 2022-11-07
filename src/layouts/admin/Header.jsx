@@ -62,7 +62,16 @@ const Header = ({ onOpenMenu }) => {
       socket.emit('set-client-id', socket.id)
     })
     socket.on('receive-notify', (data) => {
-      toast.dark(data.content)
+      const { newStoreNotify, newStaffNotify } = data
+      if (userInfo.roleId.name === 'Admin') {
+        toast.dark(newStoreNotify.content)
+      } else if (userInfo.roleId.name === 'Staff') {
+        newStaffNotify.forEach((item) => {
+          if (item.userId === userInfo?._id) {
+            toast.dark(item.content)
+          }
+        })
+      }
       audio.current.play()
     })
   }, [socket])
@@ -85,7 +94,7 @@ const Header = ({ onOpenMenu }) => {
           </IconButton>
           <Stack direction='row' gap={3} alignItems='center'>
             <Notification />
-            <Avatar onClick={handleClick} sx={{ cursor: 'pointer' }} />
+            <Avatar src={userInfo.avt} onClick={handleClick} sx={{ cursor: 'pointer' }} />
             <CustomMenu anchorEl={anchorEl} open={open} onClose={handleClose}>
               <ListItem sx={{ pointerEvents: 'none', outline: 'none' }}>
                 <Stack>

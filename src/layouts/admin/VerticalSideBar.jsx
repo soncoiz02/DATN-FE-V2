@@ -35,6 +35,7 @@ const VERTICAL_ITEMS = [
   {
     key: 'main',
     header: 'Chung',
+    role: ['Admin', 'Staff'],
     items: [
       {
         key: 'dashboard',
@@ -60,12 +61,6 @@ const VERTICAL_ITEMS = [
         ],
       },
       {
-        key: 'chat',
-        title: 'Tin nhắn',
-        icon: <Chat />,
-        path: '/admin/chat',
-      },
-      {
         key: 'store',
         title: 'Thông tin cửa hàng',
         icon: <Store />,
@@ -76,6 +71,7 @@ const VERTICAL_ITEMS = [
   {
     key: 'management',
     header: 'Quản lý',
+    role: ['Admin'],
     items: [
       {
         key: 'category-management',
@@ -112,6 +108,7 @@ const VERTICAL_ITEMS = [
   {
     key: 'statistic',
     header: 'Thống kê',
+    role: ['Admin'],
     items: [
       {
         key: 'revenue-statistic',
@@ -141,6 +138,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   const [activeMainTitle, setActiveMainTitle] = useState()
   const { pathname } = useLocation()
   const { userInfo } = useAuth()
+
   return (
     <>
       {openMenu && (
@@ -159,6 +157,7 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
             <GlassBox opacity={1} sx={{ padding: '15px' }}>
               <Stack direction='row' gap={2}>
                 <Avatar
+                  src={userInfo.avt}
                   sx={{
                     width: { xs: '35px', sm: '50px' },
                     height: { xs: '35px', sm: '50px' },
@@ -178,88 +177,93 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
           </Box>
           <Stack gap={2}>
             {VERTICAL_ITEMS.map((item) => (
-              <List
-                key={item.key}
-                subheader={
-                  <Typography
-                    variant='h4'
-                    sx={{
-                      color: theme.palette.text.primaryChannel,
-                      textTransform: 'uppercase',
-                      padding: '0 15px',
-                      mb: 1,
-                    }}
-                  >
-                    {item.header}
-                  </Typography>
-                }
-              >
-                {item.items.map((subItem) => (
-                  <div key={subItem.key}>
-                    {subItem.children ? (
-                      <>
-                        <CustomListItemButton
-                          className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
-                          onClick={() => setChildOpenedIndex(childOpenedIndex ? null : subItem.key)}
-                        >
-                          <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                          <Typography variant='body2'>{subItem.title}</Typography>
-                          {childOpenedIndex === subItem.key ? (
-                            <ExpandLess sx={{ ml: 'auto' }} />
-                          ) : (
-                            <ExpandMore sx={{ ml: 'auto' }} />
-                          )}
-                        </CustomListItemButton>
-                        <Collapse
-                          in={childOpenedIndex === subItem.key}
-                          timeout='auto'
-                          unmountOnExit
-                        >
-                          <List component='div' disablePadding>
-                            {subItem.children.map((child) => (
-                              <ListItemButton
-                                sx={{ pl: 4 }}
-                                component={Link}
-                                to={child.path}
-                                onClick={() => {
-                                  setActiveMainTitle(subItem.key)
-                                  onCloseMenu()
-                                }}
-                                key={child.key}
-                              >
-                                <Typography
-                                  variant='body2'
-                                  color={
-                                    pathname.includes(child.path)
-                                      ? 'primary'
-                                      : 'text.primaryChannel'
-                                  }
-                                >
-                                  {child.title}
-                                </Typography>
-                              </ListItemButton>
-                            ))}
-                          </List>
-                        </Collapse>
-                      </>
-                    ) : (
-                      <CustomListItemButton
-                        key={subItem.key}
-                        to={subItem.path}
-                        component={NavLink}
-                        onClick={() => {
-                          setChildOpenedIndex(null)
-                          setActiveMainTitle(null)
-                          onCloseMenu()
+              <div key={item.key}>
+                {item.role.includes(userInfo?.roleId.name) && (
+                  <List
+                    subheader={
+                      <Typography
+                        variant='h4'
+                        sx={{
+                          color: theme.palette.text.primaryChannel,
+                          textTransform: 'uppercase',
+                          padding: '0 15px',
+                          mb: 1,
                         }}
                       >
-                        <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                        <Typography variant='body2'>{subItem.title}</Typography>
-                      </CustomListItemButton>
-                    )}
-                  </div>
-                ))}
-              </List>
+                        {item.header}
+                      </Typography>
+                    }
+                  >
+                    {item.items.map((subItem) => (
+                      <div key={subItem.key}>
+                        {subItem.children ? (
+                          <>
+                            <CustomListItemButton
+                              className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
+                              onClick={() =>
+                                setChildOpenedIndex(childOpenedIndex ? null : subItem.key)
+                              }
+                            >
+                              <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                              <Typography variant='body2'>{subItem.title}</Typography>
+                              {childOpenedIndex === subItem.key ? (
+                                <ExpandLess sx={{ ml: 'auto' }} />
+                              ) : (
+                                <ExpandMore sx={{ ml: 'auto' }} />
+                              )}
+                            </CustomListItemButton>
+                            <Collapse
+                              in={childOpenedIndex === subItem.key}
+                              timeout='auto'
+                              unmountOnExit
+                            >
+                              <List component='div' disablePadding>
+                                {subItem.children.map((child) => (
+                                  <ListItemButton
+                                    sx={{ pl: 4 }}
+                                    component={Link}
+                                    to={child.path}
+                                    onClick={() => {
+                                      setActiveMainTitle(subItem.key)
+                                      onCloseMenu()
+                                    }}
+                                    key={child.key}
+                                  >
+                                    <Typography
+                                      variant='body2'
+                                      color={
+                                        pathname.includes(child.path)
+                                          ? 'primary'
+                                          : 'text.primaryChannel'
+                                      }
+                                    >
+                                      {child.title}
+                                    </Typography>
+                                  </ListItemButton>
+                                ))}
+                              </List>
+                            </Collapse>
+                          </>
+                        ) : (
+                          <CustomListItemButton
+                            key={subItem.key}
+                            to={subItem.path}
+                            component={NavLink}
+                            onClick={() => {
+                              setChildOpenedIndex(null)
+                              setActiveMainTitle(null)
+                              onCloseMenu()
+                            }}
+                          >
+                            <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                            <Typography variant='body2'>{subItem.title}</Typography>
+                          </CustomListItemButton>
+                        )}
+                      </div>
+                    ))}
+                  </List>
+                )}
+              </div>
             ))}
           </Stack>
         </Stack>
