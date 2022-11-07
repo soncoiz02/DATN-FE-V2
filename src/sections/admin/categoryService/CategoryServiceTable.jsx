@@ -11,6 +11,7 @@ import {
   InputBase,
   useTheme,
   Switch,
+  MenuItem,
 } from '@mui/material'
 import { Delete, ModeEditOutline, Search } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
@@ -19,11 +20,14 @@ import MainButton from '../../../components/MainButton'
 import ModalRegisterForm from '../../../sections/admin/categoryService/ModalRegisterForm'
 import { useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import DeleteCategory from './DeleteCategory'
 
 const CategoryServicesTable = () => {
   const [rows, setRows] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalRegister, setOpenModalRegister] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState('')
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [registerId, setRegisterId] = useState()
@@ -64,17 +68,24 @@ const CategoryServicesTable = () => {
       renderCell: (params) => {
         return (
           <Stack direction='row' gap={2}>
-            <IconButton>
+            <MenuItem
+              onClick={() => {
+                setRegisterId(params.id)
+                setDialogTitle('Bạn có chắc muốn xóa danh mục này không?')
+                setOpenModalDelete(true)
+              }}
+              disabled={params.row.isUsed === true}
+            >
               <Delete color='primary' />
-            </IconButton>
-            <IconButton
+            </MenuItem>
+            <MenuItem
               onClick={() => {
                 setRegisterId(params.id)
                 setOpenModal(true)
               }}
             >
               <ModeEditOutline color='secondary' />
-            </IconButton>
+            </MenuItem>
           </Stack>
         )
       },
@@ -189,6 +200,16 @@ const CategoryServicesTable = () => {
         <ModalRegisterForm
           openModalRegister={openModalRegister}
           onCloseModal={() => setOpenModalRegister(false)}
+          confirm={handleGetCateforyServicesRegister}
+        />
+      )}
+      {openModalDelete && (
+        <DeleteCategory
+          openModalDelete={openModalDelete}
+          onCloseModal={() => setOpenModalDelete(false)}
+          registerId={registerId}
+          resetCategory={() => setRegisterId(null)}
+          title={dialogTitle}
           confirm={handleGetCateforyServicesRegister}
         />
       )}
