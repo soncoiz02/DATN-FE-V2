@@ -92,9 +92,6 @@ const Calendar = () => {
       const thatDay = new Date(date)
       return today > thatDay
     }
-    const isDone = (status) => {
-      return status === statusId.done
-    }
 
     const isPay = (status) => {
       return status === statusId.paid
@@ -123,6 +120,15 @@ const Calendar = () => {
 
     const disableCancel = (status) => {
       return status === statusId.doing || status === statusId.cancel
+    }
+
+    const disableEdit = (status) => {
+      return (
+        status === statusId.done ||
+        status === statusId.paid ||
+        status === statusId.doing ||
+        status === statusId.cancel
+      )
     }
 
     return (
@@ -190,6 +196,7 @@ const Calendar = () => {
                 </Stack>
               </MenuItem>
               <MenuItem
+                onClick={() => handleCancel(appointmentData.id, 'cancel')}
                 disabled={
                   disableCancel(appointmentData.status) || isPast(appointmentData.startDate)
                 }
@@ -211,7 +218,7 @@ const Calendar = () => {
                 setOpenModal(true)
               }}
               size='large'
-              disabled={isPast(appointmentData.startDate) || isDone(appointmentData.status)}
+              disabled={isPast(appointmentData.startDate) || disableEdit(appointmentData.status)}
             >
               <Edit />
             </IconButton>
@@ -264,6 +271,22 @@ const Calendar = () => {
   }
 
   // async function
+
+  const handleCancel = async (orderId, statusType) => {
+    try {
+      const detailStatus = statuses.find((status) => status.type === statusType)
+      const activityLog = {
+        userId: userInfo._id,
+        orderId,
+        content: `Đã hủy lịch đặt`,
+      }
+      await calendarApi.changeStatus(orderId, statusType)
+      await calendarApi.addUpdateActivity(activityLog)
+      handleGetListOrder()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleChangeStatus = async (orderId, statusType) => {
     try {

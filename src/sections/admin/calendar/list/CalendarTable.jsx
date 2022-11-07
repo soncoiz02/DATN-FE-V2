@@ -30,15 +30,19 @@ const CalendarTable = () => {
       },
     },
     {
-      field: 'serviceId',
+      field: 'servicesRegistered',
       headerName: 'Dịch vụ',
       flex: 1,
       renderCell: (params) => {
         const cellData = params.formattedValue
         return (
-          <Stack gap={1} direction='row' alignItems='center'>
-            <Avatar variant='rounded' src={cellData.image} />
-            <Typography variant='body2'>{cellData.name}</Typography>
+          <Stack>
+            {cellData.map((item) => (
+              <Stack gap={1} direction='row' alignItems='center'>
+                <Avatar variant='rounded' src={item.service.image} />
+                <Typography variant='body2'>{item.service.name}</Typography>
+              </Stack>
+            ))}
           </Stack>
         )
       },
@@ -65,7 +69,7 @@ const CalendarTable = () => {
     },
     {
       field: 'action',
-      headerName: '',
+      headerName: 'Hành động',
       flex: isMobile ? 0 : 1,
       renderCell: (params) => {
         return (
