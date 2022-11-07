@@ -124,7 +124,7 @@ const New = () => {
               Đăng ký để không bỏ lỡ bất kỳ thông báo nào về ưu đãi cũng như các thông tin về dịch
               vụ của chúng tôi
             </WellComeSmallText>
-            <ButtonCustom>Đặt lịch ngay</ButtonCustom>
+            <ButtonCustom>Đăng ký ngay</ButtonCustom>
           </ItemComeUs>
         </Container>
       </Box>
