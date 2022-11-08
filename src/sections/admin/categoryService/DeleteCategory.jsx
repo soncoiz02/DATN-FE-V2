@@ -2,7 +2,7 @@ import { Container, Modal, Stack, Typography } from '@mui/material'
 import React from 'react'
 import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
-import categoryApi from '../../../api/voucher'
+import categoryApi from '../../../api/category'
 
 const DeleteCategory = ({ openModalDelete, onCloseModal, registerId, title, confirm }) => {
   const deleteItem = async (id) => {
