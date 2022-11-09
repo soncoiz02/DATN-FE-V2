@@ -7,14 +7,15 @@ const Introducetion = () => {
     <Box
       sx={{
         background: '#FFBC97',
-        padding: '70px 0',
+        padding: { md: '70px 0', xs: '50px 0' },
       }}
     >
-      <Container maxWidth='xl' sx={{ padding: '0' }}>
+      <Container maxWidth='xl'>
         <Grid container spacing={2}>
           <Grid
             item
-            xs={7}
+            xs={12}
+            md={7}
             sx={{
               paddingLeft: '0',
             }}
@@ -23,7 +24,8 @@ const Introducetion = () => {
           </Grid>
           <Grid
             item
-            xs={5}
+            xs={12}
+            md={5}
             sx={{
               paddingLeft: '0',
             }}
@@ -34,7 +36,7 @@ const Introducetion = () => {
                 paddingTop: '0px',
                 width: '100%',
                 height: '100%',
-                padding: '50px',
+                padding: { lg: '50px', md: '40px', sm: '30px', xs: '25px' },
               }}
             >
               <TitleIntroduce>TRẢI NGHIỆM DỊCH VỤ</TitleIntroduce>
@@ -46,7 +48,7 @@ const Introducetion = () => {
                 }}
               />
               <DescriptTion>
-                CHÀO MỪNG BẠN ĐẾN VỚI BEAUTY PARADAISE <br />
+                CHÀO MỪNG BẠN ĐẾN VỚI BEAUTY PARADAISE
                 <br />
                 Với các bài massage ứng dụng khí công và day ấn huyệt, đặc biệt là massage đầu có 1
                 không 2 tại Việt Nam, được nghiên cứu bởi chuyên gia trên 25 năm kinh nghiệm trong
@@ -69,9 +71,6 @@ const StyleBackground = styled('img')`
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
-  @media (max-width: 768px) {
-    height: 150px;
-  }
 `
 
 const TitleIntroduce = styled(Typography)`
@@ -80,9 +79,15 @@ const TitleIntroduce = styled(Typography)`
   font-weight: 400;
   color: #ff6073;
   text-transform: uppercase;
-  margin: 0 0 20px 0;
+  margin-bottom: 20px;
+  @media (max-width: 1024px) {
+    line-height: 28px;
+    font-size: 28px;
+    margin-bottom: 15px;
+  }
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 20px;
+    font-size: 20px;
   }
 `
 
@@ -92,8 +97,13 @@ const DescriptTion = styled(Typography)`
   font-weight: 400;
   color: #464646;
   margin: 0 0 20px 0;
+  @media (max-width: 1024px) {
+    line-height: 27px;
+    font-size: 17px;
+  }
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 15px;
+    line-height: 25px;
   }
 `
 

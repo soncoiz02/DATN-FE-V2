@@ -7,7 +7,7 @@ import GlassBox from '../../components/GlassBox'
 const User = () => {
   const [tabValue, setTabValue] = useState(0)
   return (
-    <Container>
+    <Container sx={{ mb: '30vh' }}>
       <GlassBox opacity={0.8} mt={4}>
         <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
           <Tab

@@ -181,14 +181,23 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       registerData.endDate = endDate
     }
 
-    const notifyData = {
+    const storeNotifyData = {
       storeId: serviceInfo.categoryId.storeId,
       userId: userInfo._id,
       content: `${userInfo.name} đã đăng ký dịch vụ ${serviceInfo.name} vào lúc ${formatDateToHour(
         startDate,
       )} ngày ${dateFormat(formValues.date)}`,
     }
-    handleRegisterService(registerData, notifyData)
+
+    const staffNotifyData = {
+      storeId: serviceInfo.categoryId.storeId,
+      userId: userInfo._id,
+      content: `Bạn có lịch vào lúc ${formatDateToHour(startDate)} ngày ${dateFormat(
+        formValues.date,
+      )}`,
+    }
+
+    handleRegisterService(registerData, storeNotifyData)
   }
 
   const checkTimeSlotByStaff = (index) => {
@@ -239,9 +248,25 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
 
   // async function
 
-  const handleRegisterService = async (registerData, notifyData) => {
+  const handleRegisterService = async (registerData, storeNotifyData) => {
     try {
-      await serviceApi.registerService(registerData)
+      const responseData = await serviceApi.registerService(registerData)
+
+      const staffNotifyData = responseData.servicesRegistered.map((item) => {
+        return {
+          storeId: serviceInfo.categoryId.storeId,
+          userId: item.staff,
+          content: `Bạn có lịch vào lúc ${formatDateToHour(item.timeStart)} ngày ${dateFormat(
+            item.timeStart,
+          )}`,
+        }
+      })
+
+      const notifyData = {
+        storeNotifyData,
+        staffNotifyData,
+      }
+
       socket.emit('send-notify', { storeId: serviceInfo.categoryId.storeId, notifyData })
       handleCloseModal()
     } catch (error) {

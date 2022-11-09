@@ -48,7 +48,8 @@ function Login() {
     try {
       const data = await authApi.login(loginData)
       login(data.token, data.user)
-      if (data.user.roleId.name === 'Admin') return navigate('/admin/dashboard')
+      if (data.user.roleId.name === 'Admin' || data.user.roleId.name === 'Staff')
+        return navigate('/admin/dashboard')
       navigate('/')
     } catch (error) {
       const errorMessage = error.response?.data.message

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, Container, Stack } from '@mui/material'
+import { Box, Typography, Container, Stack, Grid } from '@mui/material'
 import styled from 'styled-components'
 
 const Produce = () => {
@@ -8,6 +8,7 @@ const Produce = () => {
       component='div'
       sx={{
         backgroundImage: 'url(https://an-spa.vn/frontend/img/background/bg_grey_dichvu.jpg)',
+        padding: { md: '70px 0', xs: '50px 0' },
       }}
     >
       <Container
@@ -18,33 +19,40 @@ const Produce = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '70px 0',
           textAlign: 'center',
         }}
       >
         <Box>
-          <Stack sx={{ marginBottom: '60px' }}>
+          <Stack sx={{ marginBottom: { xs: '15px', sm: '30px' } }}>
             <Typography variant='enText'>Achievement</Typography>
             <Typography variant='viText'>Các thành tựu đạt được</Typography>
           </Stack>
-          <Stack direction='row' spacing={30}>
-            <Box>
-              <NumProduce>12</NumProduce>
-              <DesProduce>CHUYÊN GIA</DesProduce>
-            </Box>
-            <Box>
-              <NumProduce>500+</NumProduce>
-              <DesProduce>KHÁCH HÀNG</DesProduce>
-            </Box>
-            <Box>
-              <NumProduce>62</NumProduce>
-              <DesProduce>ĐIỀU TRỊ</DesProduce>
-            </Box>
-            <Box>
-              <NumProduce>18+</NumProduce>
-              <DesProduce>SỐ NĂM KINH NGHIỆM</DesProduce>
-            </Box>
-          </Stack>
+          <Grid container rowSpacing={{ xs: 2, md: 0 }} columnSpacing={{ xs: 1, sm: 3, md: 12 }}>
+            <CustomGrid container item xs={6} md={3}>
+              <Box>
+                <NumProduce>12</NumProduce>
+                <DesProduce>CHUYÊN GIA</DesProduce>
+              </Box>
+            </CustomGrid>
+            <CustomGrid container item xs={6} md={3}>
+              <Box>
+                <NumProduce>500+</NumProduce>
+                <DesProduce>KHÁCH HÀNG</DesProduce>
+              </Box>
+            </CustomGrid>
+            <CustomGrid container item xs={6} md={3}>
+              <Box>
+                <NumProduce>62</NumProduce>
+                <DesProduce>ĐIỀU TRỊ</DesProduce>
+              </Box>
+            </CustomGrid>
+            <CustomGrid container item xs={6} md={3}>
+              <Box>
+                <NumProduce>18+</NumProduce>
+                <DesProduce>SỐ NĂM KINH NGHIỆM</DesProduce>
+              </Box>
+            </CustomGrid>
+          </Grid>
         </Box>
       </Container>
     </Box>
@@ -53,10 +61,13 @@ const Produce = () => {
 
 const NumProduce = styled(Typography)`
   font-size: 50px;
-  font-weight: 400;
+  font-weight: 500;
   color: #ff6073;
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 40px;
+  }
+  @media (max-width: 425px) {
+    font-size: 35px;
   }
 `
 const DesProduce = styled(Typography)`
@@ -67,8 +78,17 @@ const DesProduce = styled(Typography)`
   font-weight: lighter;
   margin-top: 10px;
   @media (max-width: 768px) {
-    font-size: 12px;
+    letter-spacing: 2px;
+    margin-top: 0px;
+    font-size: 13px;
   }
+  @media (max-width: 425px) {
+    letter-spacing: 1px;
+  }
+`
+const CustomGrid = styled(Grid)`
+  display: flex;
+  justify-content: center;
 `
 
 export default Produce

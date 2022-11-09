@@ -5,7 +5,8 @@ import calendarApi from '../../../../api/calendar'
 import DataGridCustom from '../../../../components/DataGridCustom'
 import GlassBox from '../../../../components/GlassBox'
 import { getStatusColor } from '../../../../utils/aboutColor'
-import { dateFormat } from '../../../../utils/dateFormat'
+import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
+import FilterForm from './FilterForm'
 import ModalInfo from './ModalInfo'
 
 const CalendarTable = () => {
@@ -14,6 +15,14 @@ const CalendarTable = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [registerId, setRegisterId] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [queryParams, setQueryParams] = useState({
+    page: 1,
+    limit: 10,
+  })
+
+  const [rowCount, setRowCount] = useState(0)
 
   const columns = [
     {
@@ -25,33 +34,43 @@ const CalendarTable = () => {
       field: 'infoUser',
       headerName: 'Người đặt',
       width: isMobile ? 130 : 180,
-      valueGetter: (params) => {
-        return `${params.value.name} + ${params.value.phone}`
-      },
-    },
-    {
-      field: 'serviceId',
-      headerName: 'Dịch vụ',
-      flex: 1,
       renderCell: (params) => {
         const cellData = params.formattedValue
         return (
-          <Stack gap={1} direction='row' alignItems='center'>
-            <Avatar variant='rounded' src={cellData.image} />
+          <Stack>
             <Typography variant='body2'>{cellData.name}</Typography>
+            <Typography variant='body2'>{cellData.phone}</Typography>
           </Stack>
         )
       },
     },
     {
-      field: 'time',
+      field: 'servicesRegistered',
+      headerName: 'Dịch vụ',
+      flex: 1,
+      renderCell: (params) => {
+        const cellData = params.formattedValue
+        return (
+          <Stack>
+            {cellData.map((item) => (
+              <Stack gap={1} direction='row' alignItems='center'>
+                <Avatar variant='rounded' src={item.service.image} />
+                <Typography variant='body2'>{item.service.name}</Typography>
+              </Stack>
+            ))}
+          </Stack>
+        )
+      },
+    },
+    {
+      field: 'startDate',
       headerName: 'Thời gian',
       flex: isMobile ? 0 : 1,
       valueGetter: (params) => {
         const cellData = params.value
-        const date = dateFormat(new Date(cellData.startDate))
-        const timeStart = new Date(cellData.startDate).getHours()
-        return `${timeStart > 9 ? timeStart + ':00' : `0${timeStart}:00`}-${date}`
+        return `${formatDateToHour(cellData.startDate)}-${formatDateToHour(
+          cellData.endDate,
+        )} | ${dateFormat(cellData.startDate)}`
       },
     },
     {
@@ -62,10 +81,11 @@ const CalendarTable = () => {
         const cellData = params.formattedValue
         return <Chip label={cellData.name} color={getStatusColor(cellData.type)} />
       },
+      sortable: false,
     },
     {
       field: 'action',
-      headerName: '',
+      headerName: 'Hành động',
       flex: isMobile ? 0 : 1,
       renderCell: (params) => {
         return (
@@ -86,29 +106,63 @@ const CalendarTable = () => {
 
   const handleGetServicesRegister = async () => {
     try {
-      const data = await calendarApi.getListOrder()
-      const rowData = data.map((item, index) => ({
+      const data = await calendarApi.getListOrder(queryParams)
+      setRowCount(data.total)
+      const rowData = data.orders.map((item, index) => ({
         ...item,
         index: index + 1,
         id: item._id,
-        time: {
+        startDate: {
           startDate: item.startDate,
           endDate: item.endDate,
         },
       }))
       setRows(rowData)
+      setIsLoading(false)
     } catch (error) {
       console.log(error)
     }
   }
 
+  const handlePageChange = (page) => {
+    setIsLoading(true)
+    setQueryParams({ ...queryParams, page: page + 1 })
+  }
+
+  const handleSortModelChange = (sortModel) => {
+    setIsLoading(true)
+    if (sortModel.length === 0) return handleGetServicesRegister()
+    if (sortModel[0].field === 'infoUser') {
+      return setQueryParams({
+        ...queryParams,
+        sortField: 'infoUser.name',
+        sortOrder: sortModel[0].sort,
+      })
+    }
+    setQueryParams({ ...queryParams, sortField: sortModel[0].field, sortOrder: sortModel[0].sort })
+  }
+
   useEffect(() => {
     handleGetServicesRegister()
-  }, [])
+  }, [queryParams])
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
-      <DataGridCustom rows={rows} columns={columns} />
+      <FilterForm setQueryParams={setQueryParams} onLoading={() => setIsLoading(true)} />
+      <DataGridCustom
+        loading={isLoading}
+        rows={rows}
+        columns={columns}
+        pageSize={queryParams.limit}
+        page={queryParams.page - 1}
+        paginationMode='server'
+        pagination
+        rowsPerPageOptions={[queryParams.limit]}
+        onPageChange={(page) => handlePageChange(page)}
+        rowCount={rowCount}
+        sortingMode='server'
+        onSortModelChange={handleSortModelChange}
+      />
       {openModal && (
         <ModalInfo
           openModal={openModal}

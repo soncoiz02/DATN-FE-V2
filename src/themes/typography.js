@@ -71,7 +71,7 @@ const typography = {
     textTransform: 'uppercase',
   },
   viText: {
-    ...responsiveFontSizes({ sm: 25, md: 32, lg: 40 }),
+    ...responsiveFontSizes({ sm: 25, md: 30, lg: 40 }),
     fontWeight: FONT_BOLD,
     lineHeight: '40px',
     marginTop: '10px',

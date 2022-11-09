@@ -24,16 +24,20 @@ const socket = getSocket()
 
 const Notification = () => {
   const [anchor, setAnchor] = useState(null)
+  const { userInfo, token } = useAuth()
   const open = Boolean(anchor)
 
   const [listNotify, setListNotify] = useState([])
 
-  const { userInfo } = useAuth()
-
   const handleGetNotify = async () => {
     try {
-      const data = await notifyApi.getStoreNotify(userInfo.storeId)
-      setListNotify(data)
+      if (userInfo?.roleId.name === 'Admin') {
+        const data = await notifyApi.getStoreNotify(userInfo.storeId)
+        setListNotify(data)
+      } else if (userInfo?.roleId.name === 'Staff') {
+        const data = await notifyApi.getStaffNotify(token)
+        setListNotify(data)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -47,7 +51,7 @@ const Notification = () => {
   useEffect(() => {
     handleGetNotify()
     socket.on('receive-new-notify', () => {
-      console.log('dsadsa')
+      console.log('dsasa')
       handleGetNotify()
     })
   }, [socket])
@@ -66,7 +70,7 @@ const Notification = () => {
         </IconButton>
         <Popper open={open} anchorEl={anchor} placement='top-end' sx={{ zIndex: 1500 }}>
           <NotifyWrapper>
-            {listNotify &&
+            {listNotify.length > 0 ? (
               listNotify.map((notify) => (
                 <div key={notify._id}>
                   <NotifyItem onClick={() => handleIsRead(notify._id, notify.status)}>
@@ -88,7 +92,12 @@ const Notification = () => {
                   </NotifyItem>
                   <Divider />
                 </div>
-              ))}
+              ))
+            ) : (
+              <Typography variant='body2' sx={{ p: 2 }} textAlign='center'>
+                Bạn không có thông báo nào
+              </Typography>
+            )}
           </NotifyWrapper>
         </Popper>
       </Box>

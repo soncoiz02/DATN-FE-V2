@@ -92,9 +92,6 @@ const Calendar = () => {
       const thatDay = new Date(date)
       return today > thatDay
     }
-    const isDone = (status) => {
-      return status === statusId.done
-    }
 
     const isPay = (status) => {
       return status === statusId.paid
@@ -110,7 +107,9 @@ const Calendar = () => {
     }
 
     const disablePayment = (status) => {
-      return status !== statusId.done || status === statusId.paid
+      return (
+        status !== statusId.done || status === statusId.paid || userInfo?.roleId.name === 'Staff'
+      )
     }
 
     const disableStart = (status) => {
@@ -118,11 +117,28 @@ const Calendar = () => {
     }
 
     const disableAccepted = (status) => {
-      return status === statusId.accepted || status === statusId.done || status === statusId.doing
+      return (
+        status === statusId.accepted ||
+        status === statusId.done ||
+        status === statusId.doing ||
+        userInfo?.roleId.name === 'Staff'
+      )
     }
 
     const disableCancel = (status) => {
-      return status === statusId.doing || status === statusId.cancel
+      return (
+        status === statusId.doing || status === statusId.cancel || userInfo?.roleId.name === 'Staff'
+      )
+    }
+
+    const disableEdit = (status) => {
+      return (
+        status === statusId.done ||
+        status === statusId.paid ||
+        status === statusId.doing ||
+        status === statusId.cancel ||
+        userInfo?.roleId.name === 'Staff'
+      )
     }
 
     return (
@@ -190,6 +206,7 @@ const Calendar = () => {
                 </Stack>
               </MenuItem>
               <MenuItem
+                onClick={() => handleCancel(appointmentData.id, 'cancel')}
                 disabled={
                   disableCancel(appointmentData.status) || isPast(appointmentData.startDate)
                 }
@@ -211,7 +228,7 @@ const Calendar = () => {
                 setOpenModal(true)
               }}
               size='large'
-              disabled={isPast(appointmentData.startDate) || isDone(appointmentData.status)}
+              disabled={isPast(appointmentData.startDate) || disableEdit(appointmentData.status)}
             >
               <Edit />
             </IconButton>
@@ -265,6 +282,22 @@ const Calendar = () => {
 
   // async function
 
+  const handleCancel = async (orderId, statusType) => {
+    try {
+      const detailStatus = statuses.find((status) => status.type === statusType)
+      const activityLog = {
+        userId: userInfo._id,
+        orderId,
+        content: `Đã hủy lịch đặt`,
+      }
+      await calendarApi.changeStatus(orderId, statusType)
+      await calendarApi.addUpdateActivity(activityLog)
+      socket.emit('change-status')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleChangeStatus = async (orderId, statusType) => {
     try {
       const detailStatus = statuses.find((status) => status.type === statusType)
@@ -275,7 +308,7 @@ const Calendar = () => {
       }
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
-      handleGetListOrder()
+      socket.emit('change-status')
     } catch (error) {
       console.log(error)
     }
@@ -283,7 +316,7 @@ const Calendar = () => {
   const updateOrderStatusToDone = async () => {
     try {
       await calendarApi.updateOrderStatusToDone(orderId)
-      handleGetListOrder()
+      socket.emit('change-status')
     } catch (error) {
       console.log(error)
     }
@@ -350,6 +383,9 @@ const Calendar = () => {
         if (data === userInfo.storeId) {
           handleGetListOrder()
         }
+      })
+      socket.on('receive-status-change', () => {
+        handleGetListOrder()
       })
     })
   }, [socket])
