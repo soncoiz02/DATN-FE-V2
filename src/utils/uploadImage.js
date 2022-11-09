@@ -11,7 +11,6 @@ export const uploadImage = async (image) => {
   )
   return data.url
 }
-
 export const uploadAvatarImage = async (imageFile) => {
   try {
     const formData = new FormData()
