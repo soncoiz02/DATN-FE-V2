@@ -11,10 +11,12 @@ export const RHFAutoComplete = ({ name, options, ...other }) => {
       name={name}
       render={({ field: { value, ref, onChange, ...field }, fieldState: { error } }) => (
         <Autocomplete
-          value={value}
-          onChange={(_, data) => onChange(data?.id || '')}
+          {...other}
+          value={value || null}
+          onChange={(_, data) => onChange(data)}
           options={options}
-          getOptionLabel={(option) => option.label}
+          getOptionLabel={(option) => option.label || ''}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           disablePortal
           renderInput={(params) => (
             <TextField
@@ -41,6 +43,7 @@ export const RHFAutoCompleteRenderImg = ({ name, options, ...other }) => {
       name={name}
       render={({ field: { value, ref, onChange, ...field }, fieldState: { error } }) => (
         <Autocomplete
+          {...other}
           value={value || null}
           onChange={(_, data) => onChange(data)}
           options={options}
@@ -57,7 +60,7 @@ export const RHFAutoCompleteRenderImg = ({ name, options, ...other }) => {
                 srcSet={`${option.image} 2x`}
                 alt=''
               />
-              {option.label} - {formatPrice(option.price)}
+              {option.label} {option.price ? `- ${formatPrice(option.price)}` : null}
             </Box>
           )}
           renderInput={(params) => (

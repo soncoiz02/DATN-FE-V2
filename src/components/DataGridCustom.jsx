@@ -2,14 +2,13 @@ import { styled } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import React from 'react'
 
-const DataGridCustom = ({ rows, columns }) => {
+const DataGridCustom = ({ rows, columns, ...other }) => {
   return (
     <CustomDataGird
       rows={rows}
       columns={columns}
-      pageSize={20}
-      autoPageSize={false}
       disableSelectionOnClick
+      {...other}
       localeText={{
         errorOverlayDefaultLabel: 'Đã có lỗi xảy ra',
         noResultsOverlayLabel: 'Không có dữ liệu',

@@ -1,4 +1,5 @@
 import axiosClient from './axiosClient'
+import queryString from 'query-string'
 
 export const statusId = {
   done: '632bc757dc2a7f68a3f383e9',
@@ -10,8 +11,9 @@ export const statusId = {
 }
 
 const calendarApi = {
-  getListOrder() {
-    return axiosClient.get('/order')
+  getListOrder(params) {
+    const queryParam = queryString.stringify(params)
+    return axiosClient.get(`/filter-order?${queryParam}`)
   },
   getListStatus() {
     return axiosClient.get('/order-status')
