@@ -1,8 +1,8 @@
 import axiosClient from './axiosClient'
 
 const categoryApi = {
-  getAll() {
-    return axiosClient.get('/category')
+  getAll(key) {
+    return axiosClient.get(`/category${key && '?client=true'}`)
   },
   getOne(id) {
     return axiosClient.get(`/category/${id}`)
