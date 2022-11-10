@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Loading from '../components/Loading'
+import ServicePage from '../pages/client/service'
 
 const AdminLayout = lazy(() => import('../layouts/admin/AdminLayout'))
 const AuthLayout = lazy(() => import('../layouts/auth/AuthLayout'))
@@ -40,13 +41,10 @@ const Router = () => {
             <Route path='account-info' element={<Accountinfo />} />
             <Route path='change-password' element={<Changepassword />} />
           </Route>
-          <Route path='store/:id' element={<DetailStore />}>
-            <Route path='info' element={<TabInfo />} />
-            <Route path='services' element={<TabServices />} />
-            <Route path='post' element={<TabPost />} />
-            <Route path='rate' element={<TabRate />} />
+          <Route path='service'>
+            <Route index element={<ServicePage />} />
+            <Route path=':id' element={<DetailService />} />
           </Route>
-          <Route path='service/:id' element={<DetailService />} />
           <Route path='service-register-history' element={<ServiceRegister />} />
         </Route>
         <Route path='auth' element={<AuthLayout />}>

@@ -50,8 +50,8 @@ const Header = ({ openMenu }) => {
             <StyledLink variant='h5' underline='none' component={NavLink} to='/'>
               Trang chủ
             </StyledLink>
-            <StyledLink variant='h5' underline='none' component={NavLink} to='/store'>
-              Cửa hàng
+            <StyledLink variant='h5' underline='none' component={NavLink} to='/service'>
+              Dịch vụ
             </StyledLink>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/about'>
               Về chúng tôi
