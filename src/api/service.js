@@ -40,6 +40,9 @@ const serviceApi = {
   getTimeSlotCheckByStaff(serviceId, date) {
     return axiosClient.get(`/getOrderByStaffCategory?serviceId=${serviceId}&date=${date}`)
   },
+  getByCate(cateId) {
+    return axiosClient.get(`/service-by-cate?cateId=${cateId}`)
+  },
 }
 
 export default serviceApi
