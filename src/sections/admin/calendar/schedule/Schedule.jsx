@@ -55,7 +55,7 @@ import { formatDateToHour } from '../../../../utils/dateFormat'
 
 const socket = getSocket()
 
-const Calendar = () => {
+const Calendar = ({ appointments }) => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [resources, setResources] = useState()
   const [orderId, setOrderId] = useState(null)
@@ -71,7 +71,6 @@ const Calendar = () => {
   })
 
   const theme = useTheme()
-  const appointments = useSelector((state) => state.serviceRegister.listFiltered)
   const statuses = useSelector((state) => state.order.status)
   const dispatch = useDispatch()
 
