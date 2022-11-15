@@ -5,7 +5,7 @@ const CustomerReview = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC99',
+        background: '#fff',
         padding: '70px 0',
         margin: '0 0 30px',
       }}
@@ -129,11 +129,9 @@ const DescriptTion1 = styled(Typography)`
 `
 const NameSpa = styled(Typography)`
   font-size: 30px;
-  font-family: Display;
-  font-style: italic;
   line-height: 30px;
   justify-content: center;
-  font-weight: 400;
+  font-weight: 700;
   color: #ff6073;
   text-transform: uppercase;
   margin: 0 0 20px 0;

@@ -6,7 +6,7 @@ const Intro = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC97',
+        background: '#FFF0F5',
         padding: '50px 0',
         margin: '0 0 30px',
       }}

@@ -18,7 +18,7 @@ const Contact = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC99',
+        background: '#FFF0F5',
         padding: '70px 0',
         margin: '0 0 30px',
       }}
@@ -130,7 +130,7 @@ const Des3 = styled(Typography)`
 const ButtonCustom = styled(Button)({
   boxShadow: 'none',
   marginTop: '40px',
-  marginLeft: '200px',
+  marginLeft: '215px',
   textTransform: 'none',
   fontSize: '16px',
   padding: '10px 20px',
