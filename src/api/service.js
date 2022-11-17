@@ -43,6 +43,9 @@ const serviceApi = {
   getByCate(cateId) {
     return axiosClient.get(`/service-by-cate?cateId=${cateId}`)
   },
+  getBestRated() {
+    return axiosClient.get('/service-rating-best')
+  },
 }
 
 export default serviceApi
