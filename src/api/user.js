@@ -40,6 +40,9 @@ const userApis = {
   getVerifyCode(email) {
     return axiosClient.post('/get-verify-code', email)
   },
+  getUserOrder() {
+    return axiosClient.get('/user/listOrdered')
+  },
 }
 
 export default userApis
