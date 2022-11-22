@@ -6,8 +6,8 @@ const Intro = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC97',
-        padding: '70px 0',
+        background: '#FFF0F5',
+        padding: '50px 0',
         margin: '0 0 30px',
       }}
     >
@@ -17,7 +17,7 @@ const Intro = () => {
             item
             xs={3}
             sx={{
-              paddingLeft: '0',
+              paddingLeft: '20px',
             }}
           >
             <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/parallax-10.jpg' />
@@ -26,25 +26,23 @@ const Intro = () => {
             item
             xs={3}
             sx={{
-              paddingLeft: '0',
+              paddingLeft: '20px',
             }}
           >
             <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/parallax-9.jpg' />
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={2}
             sx={{
-              paddingLeft: '0',
+              paddingLeft: '20px',
             }}
           >
             <Stack
               sx={{
-                backgroundColor: '#fff',
-                paddingTop: '0px',
-                width: '100%',
+                paddingLeft: '60px',
+                width: '600px',
                 height: '100%',
-                padding: '60px',
               }}
             >
               <TitleIntroduce>Beauty Paradise</TitleIntroduce>
@@ -88,13 +86,8 @@ const StyleBackground = styled('img')`
 
 const TitleIntroduce = styled(Typography)`
   font-size: 30px;
-  @font-face {
-    src: url(font/KolkerBrush-Regular.ttf);
-  }
-  font-family: Display;
-  font-style: italic;
   line-height: 30px;
-  font-weight: 400;
+  font-weight: 600;
   color: #ff6073;
   text-transform: uppercase;
   margin: 0 0 20px 0;
@@ -106,7 +99,7 @@ const TitleIntroduce = styled(Typography)`
 const DescriptTion = styled(Typography)`
   font-size: 16px;
   line-height: 35px;
-  font-weight: 400;
+  font-weight: 600;
   color: #464646;
   margin: 0 0 20px 0;
   @media (max-width: 768px) {
