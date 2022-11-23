@@ -1,4 +1,4 @@
-import { Close } from '@mui/icons-material'
+import { Bookmark, Close } from '@mui/icons-material'
 import { Box, Container, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -11,13 +11,22 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import * as yup from 'yup'
 import MainButton from '../../../../../components/MainButton'
-import { RHFAutoCompleteRenderImg } from '../../../../../components/ReactHookForm/RHFAutoComplete'
+import {
+  RHFAutoComplete,
+  RHFAutoCompleteRenderImg,
+} from '../../../../../components/ReactHookForm/RHFAutoComplete'
 import RHFDatePicker from '../../../../../components/ReactHookForm/RHFDatePicker'
 import RHFTextField from '../../../../../components/ReactHookForm/RHFTextField'
 import useAuth from '../../../../../hook/useAuth'
-import { convertNumberToHour, convertTimeToNumber } from '../../../../../utils/dateFormat'
+import {
+  convertNumberToHour,
+  convertTimeToNumber,
+  formatDateToHour,
+} from '../../../../../utils/dateFormat'
 import phoneRegExp from '../../../../../utils/phoneRegExp'
 import AssignStaff from './AssignStaff'
+import formatPrice from '../../../../../utils/formatPrice'
+import OtherService from './OtherService'
 
 const defaultFormValue = {
   name: '',
@@ -56,6 +65,12 @@ const ModalEditOrder = ({
 
   const [currentStatus, setCurrentStatus] = useState()
 
+  const [nextTimeSlot, setNextTimeSlot] = useState(0)
+  const [otherService, setOtherService] = useState()
+  const [otherStaff, setOtherStaff] = useState()
+
+  const [isLoading, setIsLoading] = useState(false)
+
   const allService = useSelector((state) => state.order.services)
 
   const { userInfo } = useAuth()
@@ -88,7 +103,12 @@ const ModalEditOrder = ({
   const { handleSubmit, reset } = methods
 
   const onSubmit = (values) => {
+    setIsLoading(true)
     setFormValues(values)
+    setOtherService(null)
+    setOtherStaff(null)
+    setCurrentStaff(null)
+    setCheckedData(null)
     handleGetDetailService(values.service.id)
     handleGetRegisteredServiceByUser(values.phone, values.date)
     handleGetTimeSlotCheckByStaff(values.date, values.service.id)
@@ -150,6 +170,7 @@ const ModalEditOrder = ({
       label: service.name,
       image: service.image,
       price: service.price,
+      category: service.categoryId,
     }))
     setServiceOptions(serviceOptions)
   }
@@ -178,11 +199,39 @@ const ModalEditOrder = ({
 
     const updateData = {
       infoUser,
-      serviceId: service._id,
-      staff: staff,
+      servicesRegistered: [
+        {
+          service: service._id,
+          timeStart: startDate,
+          timeEnd: endDate,
+          staff: staff,
+        },
+      ],
       status: status,
       startDate,
       endDate,
+    }
+
+    if (otherService) {
+      const otherServiceDetail = allService.find((item) => item._id === otherService.id)
+      const timeStart = convertNumberToHour(nextTimeSlot, 'getTime')
+      const timeEnd = convertNumberToHour(
+        checkedData + (otherServiceDetail.duration + 15) / 60,
+        'getTime',
+      )
+
+      const startDate = new Date(new Date(date).setHours(timeStart.hour, timeStart.minute, 0))
+      const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
+
+      const otherServiceData = {
+        service: otherService.id,
+        staff: otherStaff.id,
+        timeStart: startDate,
+        timeEnd: endDate,
+      }
+
+      updateData.servicesRegistered.push(otherServiceData)
+      updateData.endDate = endDate
     }
 
     const activity = {
@@ -193,6 +242,13 @@ const ModalEditOrder = ({
 
     updateOrder(updateData)
     handleAddUpdateActivity(activity)
+  }
+
+  const handleChangeTimeSlot = (index, time) => {
+    const detailService = allService.find((item) => item._id === formValues.service.id)
+    setCheckedIndex(index)
+    setCheckedData(time)
+    setNextTimeSlot(time + (detailService.duration + 15) / 60)
   }
 
   // async function
@@ -221,11 +277,39 @@ const ModalEditOrder = ({
           phone: formValues.phone,
           email: formValues.email,
         },
-        serviceId: formValues.service.id,
+        servicesRegistered: [
+          {
+            service: formValues.service.id,
+            timeStart: startDate,
+            timeEnd: endDate,
+          },
+        ],
         startDate,
         endDate,
         userId: userInfo._id,
         status: '632bc736dc2a7f68a3f383e7',
+      }
+
+      if (otherService) {
+        const otherServiceDetail = allService.find((item) => item._id === otherService.id)
+
+        const timeStart = convertNumberToHour(nextTimeSlot, 'getTime')
+        const timeEnd = convertNumberToHour(
+          nextTimeSlot + (otherServiceDetail.duration + 15) / 60,
+          'getTime',
+        )
+
+        const startDate = new Date(new Date(date).setHours(timeStart.hour, timeStart.minute, 0))
+        const endDate = new Date(new Date(date).setHours(timeEnd.hour, timeEnd.minute, 0))
+
+        const otherServiceData = {
+          service: otherService.id,
+          timeStart: startDate,
+          timeEnd: endDate,
+        }
+
+        registerData.servicesRegistered.push(otherServiceData)
+        registerData.endDate = endDate
       }
 
       await serviceApi.registerService(registerData)
@@ -309,6 +393,26 @@ const ModalEditOrder = ({
       setCurrentStaff(currentStaff)
       setCurrentStatus(currentStatus)
 
+      if (data.servicesRegistered[1]) {
+        const timeSlot = convertTimeToNumber(data.servicesRegistered[1].timeStart)
+        const otherService = data.servicesRegistered[1].service
+        const otherStaff = data.servicesRegistered[1].staff
+        setNextTimeSlot(timeSlot)
+        setOtherService({
+          id: otherService._id,
+          label: otherService.name,
+          image: otherService.name,
+          price: otherService.price,
+          isDisable: false,
+          category: otherService.categoryId._id,
+        })
+        setOtherStaff({
+          id: otherStaff._id,
+          label: otherStaff.name,
+          image: otherStaff.avt,
+        })
+      }
+
       handleGetTimeSlotCheckByStaff(
         new Date(data.startDate),
         data.servicesRegistered[0].service._id,
@@ -357,10 +461,27 @@ const ModalEditOrder = ({
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   {serviceOptions && (
-                    <RHFAutoCompleteRenderImg
+                    <RHFAutoComplete
                       name='service'
                       options={serviceOptions}
                       label='Dịch vụ'
+                      renderOption={(props, option) => (
+                        <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                          <img
+                            loading='lazy'
+                            height='70'
+                            width='70'
+                            src={option.image}
+                            srcSet={`${option.image} 2x`}
+                            alt=''
+                          />
+                          {option.label} {option.price ? `- ${formatPrice(option.price)}` : null}
+                          {currentOrder &&
+                            option.id === currentOrder.servicesRegistered[0].service._id && (
+                              <Bookmark color='warning' sx={{ ml: 'auto' }} />
+                            )}
+                        </Box>
+                      )}
                     />
                   )}
                 </Grid>
@@ -397,10 +518,7 @@ const ModalEditOrder = ({
                         name='time'
                         id={`time-range-${index}`}
                         value={time}
-                        onChange={() => {
-                          setCheckedIndex(index)
-                          setCheckedData(time)
-                        }}
+                        onChange={() => handleChangeTimeSlot(index, time)}
                       />
                       <MainButton
                         sx={{
@@ -425,16 +543,39 @@ const ModalEditOrder = ({
                 </Stack>
               </Stack>
             )}
-            {currentOrder && (
+            {checkedData && currentOrder && (
               <AssignStaff
                 staffValue={currentStaff}
                 setStaffValue={setCurrentStaff}
-                categoryId={currentOrder.servicesRegistered[0].service.categoryId._id}
-                serviceId={formValues?.service.id || currentOrder.servicesRegistered[0].service._id}
+                categoryId={
+                  currentOrder?.servicesRegistered[0].service.categoryId._id ||
+                  formValues.service.category
+                }
+                serviceId={
+                  formValues?.service.id || currentOrder?.servicesRegistered[0].service._id
+                }
                 timeSlot={checkedData}
+                currentStaff={currentOrder ? currentOrder.servicesRegistered[0].staff : null}
                 date={
                   formValues?.date.toISOString() || new Date(currentOrder.startDate).toISOString()
                 }
+              />
+            )}
+            {checkedData && (
+              <OtherService
+                nextTimeSlot={nextTimeSlot}
+                date={formValues?.date ? formValues.date : currentOrder.startDate}
+                currentOtherService={currentOrder?.servicesRegistered[1].service}
+                currentOtherStaff={currentOrder?.servicesRegistered[1].staff}
+                currentService={
+                  formValues?.service
+                    ? formValues.service.id
+                    : currentOrder?.servicesRegistered[0].service._id
+                }
+                otherStaff={otherStaff}
+                otherService={otherService}
+                setOtherService={setOtherService}
+                setOtherStaff={setOtherStaff}
               />
             )}
             <Stack direction='row' alignItems='center' justifyContent='flex-end' gap={1}>

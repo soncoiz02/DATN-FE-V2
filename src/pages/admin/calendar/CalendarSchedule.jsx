@@ -1,20 +1,22 @@
 import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link as RouterLink } from 'react-router-dom'
 import calendarApi from '../../../api/calendar'
 import MainButton from '../../../components/MainButton'
+import useAuth from '../../../hook/useAuth'
 import { getFullList } from '../../../redux/slice/serviceRegisterSlice'
 import ModalEditOrder from '../../../sections/admin/calendar/schedule/modal-form/ModalEditOrder'
 import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
 
 const CalendarManagement = () => {
+  const { userInfo } = useAuth()
   const [openModal, setOpenModal] = useState(false)
-  const dispatch = useDispatch()
+  const [appointments, setAppointments] = useState([])
 
   const handleGetListOrder = async () => {
     try {
-      const data = await calendarApi.getFutureOrder('633e5ddff1be5d928b97c813')
+      const data = await calendarApi.getFutureOrder(userInfo.storeId)
       const appointments = data.map((item) => {
         return {
           id: item._id,
@@ -22,16 +24,19 @@ const CalendarManagement = () => {
           endDate: new Date(item.endDate),
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
-          service: item.service._id,
-          staff: item.staff,
+          servicesRegistered: item.servicesRegistered,
         }
       })
 
-      dispatch(getFullList(appointments))
+      setAppointments(appointments)
     } catch (error) {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    handleGetListOrder()
+  }, [])
 
   return (
     <Stack gap={2}>
@@ -61,7 +66,9 @@ const CalendarManagement = () => {
           <Typography variant='h6'>Thêm +</Typography>
         </MainButton>
       </Stack>
-      <Calendar onOpenModal={() => setOpenModal(true)} />
+      {appointments && (
+        <Calendar appointments={appointments} onOpenModal={() => setOpenModal(true)} />
+      )}
       {openModal && (
         <ModalEditOrder
           openModal={openModal}

@@ -1,10 +1,19 @@
+import { Bookmark } from '@mui/icons-material'
 import { Autocomplete, Box, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import userApis from '../../../../../api/user'
 
-const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, serviceId }) => {
+const AssignStaff = ({
+  currentStaff,
+  staffValue,
+  setStaffValue,
+  categoryId,
+  timeSlot,
+  date,
+  serviceId,
+}) => {
   const [staffOptions, setStaffOptions] = useState()
   const [staffInTimeSlot, setStaffInTimeSlot] = useState()
 
@@ -63,6 +72,9 @@ const AssignStaff = ({ staffValue, setStaffValue, categoryId, timeSlot, date, se
                 alt=''
               />
               {option.label}
+              {currentStaff && option.id === currentStaff._id && (
+                <Bookmark color='warning' sx={{ ml: 'auto' }} />
+              )}
             </Box>
           )}
           fullWidth
