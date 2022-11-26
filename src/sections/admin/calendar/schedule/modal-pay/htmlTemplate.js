@@ -29,9 +29,7 @@ export const getHtmlTemplate = (info) => {
             <td>
               <div>
                 <div style="border-radius: 50%; width: 100px; height: 100px; overflow: hidden; margin: 0 auto;">
-                    <img src="${
-                      storeInfo.avt
-                    }" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                    <img src="https://res.cloudinary.com/deqhqs09b/image/upload/v1667559552/hq5qjqy4esmdfyvxxkqr.png" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
                 </div>
               </div>
             </td>
@@ -51,14 +49,14 @@ export const getHtmlTemplate = (info) => {
                 <tr>
                   <td>
                     <h2 style="text-align: center;">
-                    ${storeInfo.name}
+                    Beauty Paradise
                     </h2>
                     <h3 style="text-align: center;">
                       Cảm ơn vì bạn đã sử dụng dịch vụ
                     </h3>
                     <p>Hi, ${user.name}</p>
                     <p>
-                      Lời đầu tiên, chúng tôi ${storeInfo.name} xin gửi lời cám ơn chân
+                      Lời đầu tiên, chúng tôi Beauty Paradise xin gửi lời cám ơn chân
                       thành và sâu sắc nhất đến Quý khách hàng đã tin tưởng
                       lựa chọn và sử dụng dịch vụ của chúng tôi trong thời
                       gian vừa qua. Đây là một món quà vô giá đối với chúng
@@ -175,8 +173,7 @@ export const getHtmlTemplate = (info) => {
                       <tr>
                         <td class="content-cell" align="center">
                           <p style="font-size: 14px;">
-                            ${storeInfo.name}
-                            <br />${storeInfo.address}
+                            Beauty Paradise
                           </p>
                         </td>
                       </tr>

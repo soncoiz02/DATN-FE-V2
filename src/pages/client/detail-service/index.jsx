@@ -1,4 +1,4 @@
-import { Box, Stack, styled, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Container, Stack, styled, Tab, Tabs, Typography } from '@mui/material'
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
@@ -31,30 +31,32 @@ const DetailService = () => {
   }, [id])
 
   return (
-    <Stack gap={4}>
-      {serviceInfo && (
-        <>
-          <ServiceInfo onOpenModal={() => setOpenModal(true)} serviceInfo={serviceInfo} />
-          <GlassBox opacity={0.8}>
-            <Stack gap={3}>
-              <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
-                <Tab label='Tổng quan' id='tab-0' aria-controls='tab-panel-0' />
-                <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
-              </CustomTab>
-              <DescriptionTab value={tabValue} index={0} serviceInfo={serviceInfo} />
-              <RatedTab serviceId={serviceInfo._id} value={tabValue} index={1} />
-            </Stack>
-          </GlassBox>
-          {openModal && (
-            <ModalRegisterService
-              serviceInfo={serviceInfo}
-              openModal={openModal}
-              onCloseModal={() => setOpenModal(false)}
-            />
-          )}
-        </>
-      )}
-    </Stack>
+    <Container maxWidth='xl' sx={{ py: 5 }}>
+      <Stack gap={4}>
+        {serviceInfo && (
+          <>
+            <ServiceInfo onOpenModal={() => setOpenModal(true)} serviceInfo={serviceInfo} />
+            <GlassBox opacity={0.8}>
+              <Stack gap={3}>
+                <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
+                  <Tab label='Tổng quan' id='tab-0' aria-controls='tab-panel-0' />
+                  <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
+                </CustomTab>
+                <DescriptionTab value={tabValue} index={0} serviceInfo={serviceInfo} />
+                <RatedTab serviceId={serviceInfo._id} value={tabValue} index={1} />
+              </Stack>
+            </GlassBox>
+            {openModal && (
+              <ModalRegisterService
+                serviceInfo={serviceInfo}
+                openModal={openModal}
+                onCloseModal={() => setOpenModal(false)}
+              />
+            )}
+          </>
+        )}
+      </Stack>
+    </Container>
   )
 }
 

@@ -51,11 +51,11 @@ import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
 import { statusId } from '../../../../api/calendar'
-import { formatDateToHour } from '../../../../utils/dateFormat'
+import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
 
 const socket = getSocket()
 
-const Calendar = ({ appointments }) => {
+const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [resources, setResources] = useState()
   const [orderId, setOrderId] = useState(null)
@@ -72,6 +72,7 @@ const Calendar = ({ appointments }) => {
 
   const theme = useTheme()
   const statuses = useSelector((state) => state.order.status)
+  const appointments = useSelector((state) => state.serviceRegister.list)
   const dispatch = useDispatch()
 
   const { userInfo } = useAuth()
@@ -292,6 +293,15 @@ const Calendar = ({ appointments }) => {
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
       socket.emit('change-status')
+      const detailOrder = appointments.find((item) => item.id === orderId)
+      const data = {
+        content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+          detailOrder.startDate,
+        )} ngày ${dateFormat(detailOrder.startDate)} đã bị hủy`,
+        userId: detailOrder.customer,
+        storeId: userInfo.storeId,
+      }
+      socket.emit('send-notify-to-user', data)
     } catch (error) {
       console.log(error)
     }
@@ -303,11 +313,36 @@ const Calendar = ({ appointments }) => {
       const activityLog = {
         userId: userInfo._id,
         orderId,
-        content: `Cập nhật trạng thái thành ${detailStatus.name}`,
+        content:
+          statusType === 'accepted'
+            ? `Đã xác nhận đơn của bạn`
+            : `Cập nhật trạng thái thành ${detailStatus.name}`,
       }
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
       socket.emit('change-status')
+      const detailOrder = appointments.find((item) => item.id === orderId)
+      if (statusType === 'accepted') {
+        const data = {
+          content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+            detailOrder.startDate,
+          )} ngày ${dateFormat(detailOrder.startDate)} đã được xác nhận`,
+          userId: detailOrder.customer,
+          storeId: userInfo.storeId,
+        }
+        socket.emit('send-notify-to-user', data)
+      }
+      if (statusType === 'paid') {
+        console.log(statusType)
+        const data = {
+          content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+            detailOrder.startDate,
+          )} ngày ${dateFormat(detailOrder.startDate)} đã được thanh toán`,
+          userId: detailOrder.customer,
+          storeId: userInfo.storeId,
+        }
+        socket.emit('send-notify-to-user', data)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -332,6 +367,7 @@ const Calendar = ({ appointments }) => {
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
           servicesRegistered: item.servicesRegistered,
+          customer: item.userId,
         }
       })
 

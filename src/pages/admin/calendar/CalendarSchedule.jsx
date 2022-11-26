@@ -12,7 +12,7 @@ import Calendar from '../../../sections/admin/calendar/schedule/Schedule'
 const CalendarManagement = () => {
   const { userInfo } = useAuth()
   const [openModal, setOpenModal] = useState(false)
-  const [appointments, setAppointments] = useState([])
+  const dispatch = useDispatch()
 
   const handleGetListOrder = async () => {
     try {
@@ -25,18 +25,14 @@ const CalendarManagement = () => {
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
           servicesRegistered: item.servicesRegistered,
+          customer: item.userId,
         }
       })
-
-      setAppointments(appointments)
+      dispatch(getFullList(appointments))
     } catch (error) {
       console.log(error)
     }
   }
-
-  useEffect(() => {
-    handleGetListOrder()
-  }, [])
 
   return (
     <Stack gap={2}>
@@ -66,9 +62,7 @@ const CalendarManagement = () => {
           <Typography variant='h6'>Thêm +</Typography>
         </MainButton>
       </Stack>
-      {appointments && (
-        <Calendar appointments={appointments} onOpenModal={() => setOpenModal(true)} />
-      )}
+      <Calendar onOpenModal={() => setOpenModal(true)} />
       {openModal && (
         <ModalEditOrder
           openModal={openModal}
