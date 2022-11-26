@@ -4,7 +4,7 @@ import SlideHeader from '../../../sections/client/home/SlideHeader'
 import Introducetion from '../../../sections/client/home/Introducetion'
 import Produce from '../../../sections/client/home/Produce'
 import ListService from '../../../sections/client/home/ListService'
-import New from '../../../sections/client/home/New'
+import ServiceRated from '../../../sections/client/home/ServiceRated'
 
 const HomePage = () => {
   return (
@@ -13,7 +13,7 @@ const HomePage = () => {
       <Introducetion />
       <ListService />
       <Produce />
-      <New />
+      <ServiceRated />
     </Box>
   )
 }
