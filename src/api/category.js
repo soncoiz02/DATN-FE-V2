@@ -2,7 +2,7 @@ import axiosClient from './axiosClient'
 
 const categoryApi = {
   getAll(key) {
-    return axiosClient.get(`/category${key && '?client=true'}`)
+    return axiosClient.get(`/category${key ? '?client=true' : ''}`)
   },
   getOne(id) {
     return axiosClient.get(`/category/${id}`)

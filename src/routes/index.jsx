@@ -1,6 +1,9 @@
-import React, { Suspense, lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Loading from '../components/Loading'
+import Authentication from '../guards/Authentication'
+import CheckAuth from '../guards/CheckAuth'
+import CheckStaff from '../guards/CheckStaff'
 import AboutPage from '../pages/client/about'
 import ServicePage from '../pages/client/service'
 
@@ -19,27 +22,36 @@ const Voucher = lazy(() => import('../pages/admin/voucher/VoucherList'))
 const Login = lazy(() => import('../pages/auth/Login'))
 const Register = lazy(() => import('../pages/auth/Register'))
 const DetailService = lazy(() => import('../pages/client/detail-service'))
-const DetailStore = lazy(() => import('../pages/client/detail-store'))
 const HomePage = lazy(() => import('../pages/client/home'))
 const ServiceRegister = lazy(() => import('../pages/client/service-register-history'))
 const Store = lazy(() => import('../pages/client/store'))
 const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
 const Changepassword = lazy(() => import('../pages/user/Changepassword'))
 const AccountSetting = lazy(() => import('../pages/user/index'))
-const TabInfo = lazy(() => import('../sections/client/detail-store/TabsItem/TabInfo'))
-const TabPost = lazy(() => import('../sections/client/detail-store/TabsItem/TabPost'))
-const TabRate = lazy(() => import('../sections/client/detail-store/TabsItem/TabRate'))
-const TabServices = lazy(() => import('../sections/client/detail-store/TabsItem/TabServices'))
 
 const Router = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path='/' element={<ClientLayout />}>
+        <Route
+          path='/'
+          element={
+            <CheckAuth>
+              <ClientLayout />
+            </CheckAuth>
+          }
+        >
           <Route index element={<HomePage />} />
           <Route path='store' element={<Store />} />
           <Route path='about' element={<AboutPage />} />
-          <Route path='account-setting' element={<AccountSetting />}>
+          <Route
+            path='account-setting'
+            element={
+              <Authentication>
+                <AccountSetting />
+              </Authentication>
+            }
+          >
             <Route path='account-info' element={<Accountinfo />} />
             <Route path='change-password' element={<Changepassword />} />
           </Route>
@@ -47,22 +59,58 @@ const Router = () => {
             <Route index element={<ServicePage />} />
             <Route path=':id' element={<DetailService />} />
           </Route>
-          <Route path='service-register-history' element={<ServiceRegister />} />
+          <Route
+            path='service-register-history'
+            element={
+              <Authentication>
+                <ServiceRegister />
+              </Authentication>
+            }
+          />
         </Route>
         <Route path='auth' element={<AuthLayout />}>
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
         </Route>
-        <Route path='/admin' element={<AdminLayout />}>
+        <Route
+          path='/admin'
+          element={
+            <Authentication>
+              <AdminLayout />
+            </Authentication>
+          }
+        >
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='services-statistic' element={<ServiceStatistic />} />
           <Route path='calendar-schedule' element={<CalendarManagement />} />
           <Route path='calendar-list' element={<CalendarList />} />
-          <Route path='services-management' element={<ServiceList />} />
-          <Route path='services-management/add' element={<ServiceAdd />} />
-          <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
-          <Route path='category-management' element={<CategoryServices />} />
-          <Route path='voucher-management' element={<Voucher />} />
+          <Route
+            path='services-management'
+            element={
+              <CheckStaff>
+                <ServiceList />
+              </CheckStaff>
+            }
+          >
+            <Route path='add' element={<ServiceAdd />} />
+            <Route path='edit/:id' element={<ServiceUpdate />} />
+          </Route>
+          <Route
+            path='category-management'
+            element={
+              <CheckStaff>
+                <CategoryServices />
+              </CheckStaff>
+            }
+          />
+          <Route
+            path='voucher-management'
+            element={
+              <CheckStaff>
+                <Voucher />
+              </CheckStaff>
+            }
+          />
         </Route>
       </Routes>
     </Suspense>
