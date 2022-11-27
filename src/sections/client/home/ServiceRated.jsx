@@ -17,7 +17,7 @@ const ServiceRated = () => {
 
   useEffect(() => {
     handleGetListServiceRated()
-  })
+  }, [])
 
   return (
     <>
