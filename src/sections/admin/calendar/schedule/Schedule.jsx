@@ -52,6 +52,7 @@ import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
 import { statusId } from '../../../../api/calendar'
 import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
+import FilterForm from '../list/FilterForm'
 
 const socket = getSocket()
 
@@ -76,6 +77,9 @@ const Calendar = () => {
   const dispatch = useDispatch()
 
   const { userInfo } = useAuth()
+
+  const [queryParams, setQueryParams] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   // component
 
@@ -315,7 +319,7 @@ const Calendar = () => {
         orderId,
         content:
           statusType === 'accepted'
-            ? `Đã xác nhận đơn của bạn`
+            ? `Đã xác nhận đơn`
             : `Cập nhật trạng thái thành ${detailStatus.name}`,
       }
       await calendarApi.changeStatus(orderId, statusType)
@@ -356,9 +360,9 @@ const Calendar = () => {
     }
   }
 
-  const handleGetListOrder = async () => {
+  const handleGetListOrder = async (queryParams) => {
     try {
-      const data = await calendarApi.getFutureOrder(userInfo.storeId)
+      const data = await calendarApi.getFutureOrder(queryParams)
       const appointments = data.map((item) => {
         return {
           id: item._id,
@@ -408,9 +412,12 @@ const Calendar = () => {
   }
 
   useEffect(() => {
-    handleGetListOrder()
     handleGetResources()
   }, [])
+
+  useEffect(() => {
+    handleGetListOrder(queryParams)
+  }, [queryParams])
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -427,12 +434,17 @@ const Calendar = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>
-      <Stack gap={3} width={{ xs: '400px', sm: 'auto' }}>
+      <Stack gap={3}>
+        <FilterForm
+          currentParams={queryParams}
+          setQueryParams={setQueryParams}
+          onLoading={() => setIsLoading(true)}
+        />
         <Scheduler data={appointments} locale='vi-VN' height={800}>
           <ViewState
             currentDate={currentDate}
             onCurrentDateChange={currentDateChange}
-            defaultCurrentViewName='Tháng'
+            defaultCurrentViewName='Tuần'
           />
           <DayView startDayHour={8} endDayHour={21} name='Ngày' />
           <WeekView startDayHour={8} endDayHour={21} name='Tuần' />

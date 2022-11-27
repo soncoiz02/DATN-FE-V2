@@ -21,6 +21,9 @@ import MainButton from './MainButton'
 import { Close, Send } from '@mui/icons-material'
 import serviceApi from '../api/service'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import getSocket from '../utils/socket'
+import useAuth from '../hook/useAuth'
 
 const ratedValues = [
   {
@@ -50,10 +53,13 @@ const ratedValues = [
   },
 ]
 
+const socket = getSocket()
+
 const ModalRated = ({ openModal, onCloseModal }) => {
   const [isCheckedIndex, setIsCheckedIndex] = useState(-1)
   const [ratedNumber, setRatedNumber] = useState(0)
   const [ratedComment, setRatedComment] = useState('')
+  const { userInfo } = useAuth()
 
   const serviceId = useParams().id
 
@@ -69,8 +75,9 @@ const ModalRated = ({ openModal, onCloseModal }) => {
   const handleAddRated = async (data) => {
     try {
       await serviceApi.addRated(data)
+      toast.dark('Đánh giá thành công')
+      socket.emit('rated-service')
       onCloseModal()
-      alert('Success')
     } catch (error) {
       console.log(error)
     }
@@ -82,7 +89,7 @@ const ModalRated = ({ openModal, onCloseModal }) => {
       serviceId,
       content: ratedComment,
       rate: ratedNumber,
-      userId: '6322bbb9ef9027cb23921688',
+      userId: userInfo._id,
     }
 
     handleAddRated(ratedData)

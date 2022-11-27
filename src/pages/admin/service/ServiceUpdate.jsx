@@ -10,9 +10,15 @@ const ServiceUpdate = () => {
         <Link underline='none' color='GrayText' component={RouterLink} to='/admin/dashboard'>
           Dashboard
         </Link>
-        <Typography variant='body1' color='GrayText'>
+        <Link
+          underline='none'
+          variant='body1'
+          color='GrayText'
+          component={RouterLink}
+          to='/admin/services-management'
+        >
           Dịch vụ
-        </Typography>
+        </Link>
         <Typography variant='body1' color='primary'>
           Chỉnh sửa
         </Typography>
