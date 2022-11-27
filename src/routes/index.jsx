@@ -84,16 +84,31 @@ const Router = () => {
           <Route path='services-statistic' element={<ServiceStatistic />} />
           <Route path='calendar-schedule' element={<CalendarManagement />} />
           <Route path='calendar-list' element={<CalendarList />} />
-          <Route
-            path='services-management'
-            element={
-              <CheckStaff>
-                <ServiceList />
-              </CheckStaff>
-            }
-          >
-            <Route path='add' element={<ServiceAdd />} />
-            <Route path='edit/:id' element={<ServiceUpdate />} />
+          <Route path='services-management'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <ServiceList />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='add'
+              element={
+                <CheckStaff>
+                  <ServiceAdd />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='edit/:id'
+              element={
+                <CheckStaff>
+                  <ServiceUpdate />
+                </CheckStaff>
+              }
+            />
           </Route>
           <Route
             path='category-management'

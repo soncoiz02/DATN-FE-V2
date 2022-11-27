@@ -565,8 +565,8 @@ const ModalEditOrder = ({
               <OtherService
                 nextTimeSlot={nextTimeSlot}
                 date={formValues?.date ? formValues.date : currentOrder.startDate}
-                currentOtherService={currentOrder?.servicesRegistered[1].service}
-                currentOtherStaff={currentOrder?.servicesRegistered[1].staff}
+                currentOtherService={currentOrder?.servicesRegistered[1]?.service}
+                currentOtherStaff={currentOrder?.servicesRegistered[1]?.staff}
                 currentService={
                   formValues?.service
                     ? formValues.service.id

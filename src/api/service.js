@@ -46,6 +46,23 @@ const serviceApi = {
   getBestRated() {
     return axiosClient.get('/service-rating-best')
   },
+  getUserRated(token, serviceId) {
+    return axiosClient.get(`user-rated?serviceId=${serviceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
+  getServiceUsedByUser(token, serviceId) {
+    return axiosClient.get(`service-used-by-user?serviceId=${serviceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
+  getServicePerPage(page) {
+    return axiosClient.get(`services?page=${page}`)
+  },
 }
 
 export default serviceApi

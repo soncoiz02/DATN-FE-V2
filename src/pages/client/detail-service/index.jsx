@@ -39,7 +39,7 @@ const DetailService = () => {
             <GlassBox opacity={0.8}>
               <Stack gap={3}>
                 <CustomTab value={tabValue} onChange={(e, value) => setTabValue(value)}>
-                  <Tab label='Tổng quan' id='tab-0' aria-controls='tab-panel-0' />
+                  <Tab label='Giới thiệu' id='tab-0' aria-controls='tab-panel-0' />
                   <Tab label='Đánh giá' id='tab-1' aria-controls='tab-panel-1' />
                 </CustomTab>
                 <DescriptionTab value={tabValue} index={0} serviceInfo={serviceInfo} />
