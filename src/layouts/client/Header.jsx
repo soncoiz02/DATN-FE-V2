@@ -1,47 +1,170 @@
-import { Menu } from '@mui/icons-material'
-import { Container, IconButton, Link, Stack, styled, Typography } from '@mui/material'
+import { Assignment, Logout, Menu, Notifications, Person, Sms } from '@mui/icons-material'
+import {
+  Avatar,
+  Box,
+  ClickAwayListener,
+  Container,
+  IconButton,
+  Link,
+  Popper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
+import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
+import Notification from '../../components/Notification'
+import useAuth from '../../hook/useAuth'
+import Logo from '../../assets/img/logo.png'
+import getSocket from '../../utils/socket'
+import { toast } from 'react-toastify'
+
+const socket = getSocket()
 
 const Header = ({ openMenu }) => {
+  const headerRef = useRef(null)
+  const { isLogin, logout, userInfo } = useAuth()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  window.onscroll = () => {
+    if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
+      headerRef.current.classList.add('active')
+    } else {
+      headerRef.current.classList.remove('active')
+    }
+  }
+
+  const handleOpenPopper = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
+  }
+
+  useEffect(() => {
+    socket.on('receive-user-notify', (data) => {
+      if (userInfo?._id === data.userId) {
+        toast.dark(data.content)
+      }
+    })
+  }, [socket])
+
   return (
-    <HeaderWrapper>
+    <HeaderWrapper ref={headerRef}>
       <Container maxWidth='xl' sx={{ height: '100%', pt: 1, pb: 1 }}>
-        <Stack direction='row' justifyContent='space-between' alignItems='center'>
-          <Typography variant='h2'>Logo</Typography>
+        <Stack
+          direction='row'
+          sx={{ height: '100%' }}
+          justifyContent='space-between'
+          alignItems='center'
+        >
+          <Stack direction='row' alignItems='center' gap={1}>
+            <Avatar src={Logo} sx={{ width: '50px', height: '50px' }} />
+            <Typography variant='h2' color='primary'>
+              Beauty Paradise
+            </Typography>
+          </Stack>
           <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/'>
               Trang chủ
             </StyledLink>
-            <StyledLink variant='h5' underline='none' component={NavLink} to='/store'>
-              Cửa hàng
+            <StyledLink variant='h5' underline='none' component={NavLink} to='/service'>
+              Dịch vụ
             </StyledLink>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/about'>
               Về chúng tôi
             </StyledLink>
           </Stack>
-          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-            <MainButton colorType='neutral' component={RouterLink} to='/login'>
-              Đăng ký
-            </MainButton>
-            <MainButton colorType='primary' component={RouterLink} to='/login'>
-              Đăng nhập
-            </MainButton>
-          </Stack>
-          <IconButton
-            color='primary'
-            sx={{ display: { xs: 'flex', sm: 'none' } }}
-            onClick={openMenu}
-          >
-            <Menu />
-          </IconButton>
+          {!isLogin ? (
+            <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+              <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
+                Đăng ký
+              </MainButton>
+              <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
+                Đăng nhập
+              </MainButton>
+            </Stack>
+          ) : (
+            <Stack direction='row' gap={1} alignItems='center'>
+              <Notification />
+              <IconButton
+                color='primary'
+                sx={{ display: { xs: 'flex', md: 'none' } }}
+                onClick={openMenu}
+              >
+                <Menu />
+              </IconButton>
+              <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+                <Box>
+                  <UserInfo onClick={handleOpenPopper} sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <Avatar src={userInfo.avt} />
+                    <Typography variant='h6' color='white'>
+                      {userInfo.name}
+                    </Typography>
+                  </UserInfo>
+                  <Popper open={open} anchorEl={anchorEl} sx={{ zIndex: 150 }}>
+                    <GlassBox opacity={0.8} sx={{ padding: '10px', borderRadius: '10px' }}>
+                      <CustomLink
+                        underline='none'
+                        component={RouterLink}
+                        to='/account-setting/account-info'
+                      >
+                        <Person />
+                        <Typography variant='body1'>Cài đặt tài khoản</Typography>
+                      </CustomLink>
+                      <CustomLink
+                        underline='none'
+                        component={RouterLink}
+                        to='service-register-history'
+                      >
+                        <Assignment />
+                        <Typography variant='body1'>Dịch vụ đăng ký</Typography>
+                      </CustomLink>
+                      <CustomLink underline='none' onClick={() => logout()}>
+                        <Logout />
+                        <Typography variant='body1'>Đăng xuất</Typography>
+                      </CustomLink>
+                    </GlassBox>
+                  </Popper>
+                </Box>
+              </ClickAwayListener>
+            </Stack>
+          )}
         </Stack>
       </Container>
     </HeaderWrapper>
   )
 }
+
+export const CustomLink = styled(Link)(
+  ({ theme }) => `
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+  padding: 5px 0;
+  color: ${theme.palette.text.primary};
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    color: ${theme.palette.primary.main};
+  }
+`,
+)
+
+export const UserInfo = styled(Box)(
+  ({ theme }) => `
+  padding: 5px 20px 5px 5px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+  background: ${theme.palette.primary.main};
+  cursor: pointer;
+`,
+)
+
 const HeaderWrapper = styled('div')`
   position: fixed;
   top: 0;
@@ -49,6 +172,15 @@ const HeaderWrapper = styled('div')`
   width: 100%;
   height: 60px;
   background: transparent;
+  z-index: 50;
+  transition: 0.3s;
+
+  &.active {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 70px;
+  }
 `
 
 export const StyledLink = styled(Link)(

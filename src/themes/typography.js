@@ -17,7 +17,7 @@ const FONT_MEDIUM = 500
 const FONT_REGULAR = 400
 
 const typography = {
-  fontFamily: "'Mulish', sans-serif",
+  fontFamily: "'Nunito', sans-serif",
   h1: {
     fontWeight: FONT_BOLD,
     ...responsiveFontSizes({ sm: 30, md: 40, lg: 50 }),
@@ -53,7 +53,7 @@ const typography = {
   button: {
     fontWeight: FONT_BOLD,
     textTransform: 'normal',
-    ...responsiveFontSizes({ sm: 14, md: 16, lg: 18 }),
+    ...responsiveFontSizes({ sm: 16, md: 18, lg: 20 }),
   },
   subtitle1: {
     fontWeight: FONT_BOLD,
@@ -62,6 +62,19 @@ const typography = {
   subtitle2: {
     fontWeight: FONT_REGULAR,
     ...responsiveFontSizes({ sm: 12, md: 14, lg: 16 }),
+  },
+  enText: {
+    ...responsiveFontSizes({ sm: 14, md: 15, lg: 17 }),
+    lineHeight: '17px',
+    letterSpacing: '3px',
+    color: '#a3a3a3',
+    textTransform: 'uppercase',
+  },
+  viText: {
+    ...responsiveFontSizes({ sm: 25, md: 30, lg: 40 }),
+    fontWeight: FONT_BOLD,
+    lineHeight: '40px',
+    marginTop: '10px',
   },
 }
 

@@ -2,33 +2,40 @@ import {
   CalendarMonth,
   Category,
   Chat,
+  ExpandLess,
+  ExpandMore,
   Home,
   Paid,
   PeopleAlt,
   RateReview,
   Store,
   WorkspacePremium,
+  Loyalty,
 } from '@mui/icons-material'
 import {
   Avatar,
   Backdrop,
   Box,
+  Collapse,
   List,
   ListItemButton,
   ListItemIcon,
+  ListItemText,
   Stack,
   styled,
   Typography,
   useTheme,
 } from '@mui/material'
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
+import useAuth from '../../hook/useAuth'
 
 const VERTICAL_ITEMS = [
   {
     key: 'main',
     header: 'Chung',
+    role: ['Admin', 'Staff'],
     items: [
       {
         key: 'dashboard',
@@ -40,13 +47,18 @@ const VERTICAL_ITEMS = [
         key: 'calendar',
         title: 'Lịch đặt',
         icon: <CalendarMonth />,
-        path: '/admin/calendar',
-      },
-      {
-        key: 'chat',
-        title: 'Tin nhắn',
-        icon: <Chat />,
-        path: '/admin/chat',
+        children: [
+          {
+            key: 'schedule',
+            title: 'Bảng lịch',
+            path: '/admin/calendar-schedule',
+          },
+          {
+            key: 'list',
+            title: 'Danh sách',
+            path: '/admin/calendar-list',
+          },
+        ],
       },
       {
         key: 'store',
@@ -59,6 +71,7 @@ const VERTICAL_ITEMS = [
   {
     key: 'management',
     header: 'Quản lý',
+    role: ['Admin'],
     items: [
       {
         key: 'category-management',
@@ -84,11 +97,18 @@ const VERTICAL_ITEMS = [
         icon: <RateReview />,
         path: '/admin/rated-management',
       },
+      {
+        key: 'voucher-management',
+        title: 'Voucher',
+        icon: <Loyalty />,
+        path: '/admin/voucher-management',
+      },
     ],
   },
   {
     key: 'statistic',
     header: 'Thống kê',
+    role: ['Admin'],
     items: [
       {
         key: 'revenue-statistic',
@@ -114,36 +134,42 @@ const VERTICAL_ITEMS = [
 
 const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   const theme = useTheme()
+  const [childOpenedIndex, setChildOpenedIndex] = useState()
+  const [activeMainTitle, setActiveMainTitle] = useState()
+  const { pathname } = useLocation()
+  const { userInfo } = useAuth()
 
   return (
     <>
       {openMenu && (
         <Backdrop
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', md: 'none' },
             zIndex: 99,
           }}
           open={true}
           onClick={onCloseMenu}
         ></Backdrop>
       )}
-      <GradientBackground sx={{ left: { xs: openMenu ? 0 : '-100%', sx: 0 } }}>
+      <GradientBackground sx={{ left: { xs: openMenu ? 0 : '-100%', md: 0 } }}>
         <Stack gap={{ xs: 2, sm: 3 }}>
           <Box sx={{ padding: { xs: '15px', sm: '30px 15px' } }}>
-            <GlassBox opacity={0.8} sx={{ padding: '15px' }}>
+            <GlassBox opacity={1} sx={{ padding: '15px' }}>
               <Stack direction='row' gap={2}>
                 <Avatar
+                  src={userInfo.avt}
                   sx={{
                     width: { xs: '35px', sm: '50px' },
                     height: { xs: '35px', sm: '50px' },
                   }}
                 />
                 <Stack>
-                  <Typography variant='h3' sx={{ color: theme.palette.text.secondary }}>
-                    Trần Bảo Sơn
+                  <Typography variant='h3' sx={{ color: theme.palette.text.primary }}>
+                    {userInfo?.name}
                   </Typography>
-                  <Typography variant='body2' sx={{ color: theme.palette.text.secondary }}>
-                    Admin
+                  <Typography variant='body2' sx={{ color: theme.palette.text.primaryChannel }}>
+                    {userInfo?.roleId.name === 'Admin' && 'Quản trị viên'}
+                    {userInfo?.roleId.name === 'Staff' && 'Nhân viên'}
                   </Typography>
                 </Stack>
               </Stack>
@@ -151,29 +177,93 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
           </Box>
           <Stack gap={2}>
             {VERTICAL_ITEMS.map((item) => (
-              <List
-                key={item.key}
-                subheader={
-                  <Typography
-                    variant='h5'
-                    sx={{
-                      color: theme.palette.text.primaryChanel,
-                      textTransform: 'uppercase',
-                      padding: '0 15px',
-                      mb: { xs: 1, sm: 2 },
-                    }}
+              <div key={item.key}>
+                {item.role.includes(userInfo?.roleId.name) && (
+                  <List
+                    subheader={
+                      <Typography
+                        variant='h4'
+                        sx={{
+                          color: theme.palette.text.primaryChannel,
+                          textTransform: 'uppercase',
+                          padding: '0 15px',
+                          mb: 1,
+                        }}
+                      >
+                        {item.header}
+                      </Typography>
+                    }
                   >
-                    {item.header}
-                  </Typography>
-                }
-              >
-                {item.items.map((subItem) => (
-                  <CustomListItemButton key={subItem.key} to={subItem.path} component={NavLink}>
-                    <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
-                    <Typography variant='body2'>{subItem.title}</Typography>
-                  </CustomListItemButton>
-                ))}
-              </List>
+                    {item.items.map((subItem) => (
+                      <div key={subItem.key}>
+                        {subItem.children ? (
+                          <>
+                            <CustomListItemButton
+                              className={`${activeMainTitle === subItem.key ? 'active' : ''}`}
+                              onClick={() =>
+                                setChildOpenedIndex(childOpenedIndex ? null : subItem.key)
+                              }
+                            >
+                              <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                              <Typography variant='body2'>{subItem.title}</Typography>
+                              {childOpenedIndex === subItem.key ? (
+                                <ExpandLess sx={{ ml: 'auto' }} />
+                              ) : (
+                                <ExpandMore sx={{ ml: 'auto' }} />
+                              )}
+                            </CustomListItemButton>
+                            <Collapse
+                              in={childOpenedIndex === subItem.key}
+                              timeout='auto'
+                              unmountOnExit
+                            >
+                              <List component='div' disablePadding>
+                                {subItem.children.map((child) => (
+                                  <ListItemButton
+                                    sx={{ pl: 4 }}
+                                    component={Link}
+                                    to={child.path}
+                                    onClick={() => {
+                                      setActiveMainTitle(subItem.key)
+                                      onCloseMenu()
+                                    }}
+                                    key={child.key}
+                                  >
+                                    <Typography
+                                      variant='body2'
+                                      color={
+                                        pathname.includes(child.path)
+                                          ? 'primary'
+                                          : 'text.primaryChannel'
+                                      }
+                                    >
+                                      {child.title}
+                                    </Typography>
+                                  </ListItemButton>
+                                ))}
+                              </List>
+                            </Collapse>
+                          </>
+                        ) : (
+                          <CustomListItemButton
+                            key={subItem.key}
+                            to={subItem.path}
+                            component={NavLink}
+                            onClick={() => {
+                              setChildOpenedIndex(null)
+                              setActiveMainTitle(null)
+                              onCloseMenu()
+                            }}
+                          >
+                            <ListItemIcon sx={{ minWidth: '35px' }}>{subItem.icon}</ListItemIcon>
+                            <Typography variant='body2'>{subItem.title}</Typography>
+                          </CustomListItemButton>
+                        )}
+                      </div>
+                    ))}
+                  </List>
+                )}
+              </div>
             ))}
           </Stack>
         </Stack>
@@ -182,16 +272,21 @@ const VerticalSideBar = ({ openMenu, onCloseMenu }) => {
   )
 }
 
-const GradientBackground = styled(Box)`
+const GradientBackground = styled(Box)(
+  ({ theme }) => `
   position: sticky;
   width: 300px;
   height: 100vh;
   top: 0;
   left: 0;
-  background: linear-gradient(50deg, #ecfffd, #dfefff);
+  background: #ffffff;
   overflow-y: auto;
   z-index: 99;
   transition: 0.5s;
+  ${theme.breakpoints.down('md')} {
+    border: none;
+  }
+  border-right: 1px dashed #d6d6d6;
   &:hover {
     ::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.1);
@@ -210,18 +305,25 @@ const GradientBackground = styled(Box)`
     width: 70%;
     left: -100%;
   }
-`
+
+  @media screen and (max-width: 1024px) and (min-width: 768px) {
+    position: fixed;
+    width: 40%;
+    left: -100%;
+  }
+`,
+)
 
 const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   margin: '5px 0',
   '.MuiListItemIcon-root': {
-    color: '#939393',
+    color: theme.palette.text.primaryChannel,
   },
   '.MuiTypography-body2': {
-    color: '#939393',
+    color: theme.palette.text.primaryChannel,
   },
-  '&.Mui-selected': {
-    background: 'none',
+  '&.active': {
+    background: '',
     '&:before': {
       content: '""',
       position: 'absolute',
@@ -235,7 +337,7 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
     '.MuiListItemIcon-root': {
       color: theme.palette.primary.main,
     },
-    '.MuiTypography-body1': {
+    '.MuiTypography-body2': {
       color: theme.palette.primary.main,
     },
   },
