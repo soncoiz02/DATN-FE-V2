@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Typography, Container, Grid, Paper, Stack, Rating, Button } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Paper,
+  Stack,
+  Rating,
+  Button,
+  Avatar,
+} from '@mui/material'
 import styled from 'styled-components'
 import serviceApi from '../../../api/service'
 
@@ -45,22 +55,20 @@ const ServiceRated = () => {
               <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 2 }}>
                 {listServiceRated &&
                   listServiceRated.map((item) => (
-                    <Grid container item xs={6} sm={6} md={3}>
+                    <Grid container item xs={12} sm={6} md={3}>
                       <ItemMostRate>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
+                        <Stack
+                          direction={{ xs: 'column', md: 'row' }}
+                          alignItems={{ xs: 'center', md: 'flex-start' }}
                         >
                           <ImgRate>
-                            <img src={item.userId.avt} alt='' />
+                            <Avatar src={item.userId.avt} sx={{ width: '50px', height: '50px' }} />
                           </ImgRate>
                           <Box sx={{ marginLeft: '10px' }}>
-                            <NameRate>{item.userId.name}</NameRate>
-                            <Rating value={+item.rate.avg} precision={0.5} readOnly />
+                            <NameRate textAlign='center'>{item.userId.name}</NameRate>
+                            <Rating value={+item.rate} precision={0.5} readOnly />
                           </Box>
-                        </Box>
+                        </Stack>
                         <DesRate>{item.content}</DesRate>
                       </ItemMostRate>
                     </Grid>
