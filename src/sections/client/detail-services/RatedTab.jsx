@@ -15,6 +15,7 @@ import {
 import { yellow } from '@mui/material/colors'
 import React, { useEffect, useState } from 'react'
 import serviceApi from '../../../api/service'
+import MainButton from '../../../components/MainButton'
 import ModalRated from '../../../components/ModalRated'
 import useAuth from '../../../hook/useAuth'
 import calculateDayLeft from '../../../utils/calculateDayLeft'
@@ -28,11 +29,18 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
   const [serviceRated, setServiceRated] = useState()
   const [userRated, setUserRated] = useState(false)
   const [haveUsedService, setHaveUsedService] = useState(false)
+  const [page, setPage] = useState(1)
+  const [listRated, setListRated] = useState([])
 
-  const handleGetServiceRated = async (id) => {
+  const handleGetServiceRated = async (id, page) => {
     try {
-      const data = await serviceApi.getRated(id)
-      setServiceRated(data)
+      const data = await serviceApi.getServiceRatedPerPage(page, id)
+      setServiceRated({
+        total: data.total,
+        avg: data.avg,
+        detailRated: data.detailRated,
+      })
+      setListRated([...listRated, ...data.listRated])
     } catch (error) {
       console.log(error)
     }
@@ -57,16 +65,19 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
   }
 
   useEffect(() => {
-    if (serviceId) handleGetServiceRated(serviceId)
     if (token) {
       getUserRated()
       getServiceUsedByUser()
     }
-  }, [serviceId])
+  }, [])
+
+  useEffect(() => {
+    if (serviceId) handleGetServiceRated(serviceId, page)
+  }, [serviceId, page])
 
   useEffect(() => {
     socket.on('receive-new-rated', () => {
-      handleGetServiceRated(serviceId)
+      handleGetServiceRated(serviceId, page)
       if (token) {
         getUserRated()
         getServiceUsedByUser()
@@ -101,7 +112,7 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
                   <Typography variant='body1'>Đánh giá trung bình</Typography>
                   <Stack direction='row' gap={1} alignItems='center'>
                     <Stack direction='row' alignItems='center'>
-                      <PrimaryColorText>{serviceRated.avgRated}</PrimaryColorText>
+                      <PrimaryColorText>{+serviceRated.avg.toFixed(1)}</PrimaryColorText>
                       <Typography variant='subtitile1'>/5.0</Typography>
                     </Stack>
                     <Star sx={{ color: yellow[600], fontSize: '30px' }} />
@@ -146,7 +157,7 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
               </Stack>
               <List sx={{ width: '100%' }}>
                 <Stack gap={3}>
-                  {serviceRated.list.map((item) => (
+                  {listRated?.map((item) => (
                     <Stack direction='row' gap={3} key={item._id}>
                       <ListItemAvatar>
                         <Avatar src={item.userId.avt} sx={{ width: '50px', height: '50px' }} />
@@ -166,6 +177,15 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
                   ))}
                 </Stack>
               </List>
+              {listRated?.length < serviceRated.total && (
+                <MainButton
+                  onClick={() => setPage(page + 1)}
+                  sx={{ alignSelf: 'center', px: 3 }}
+                  colorType='primary'
+                >
+                  Xem thêm
+                </MainButton>
+              )}
             </>
           )}
         </Stack>
@@ -184,7 +204,7 @@ const PrimaryColorText = styled('span')(({ theme }) => ({
   },
 }))
 
-const CustomProgress = styled(LinearProgress)({
+export const CustomProgress = styled(LinearProgress)({
   height: '8px',
   borderRadius: '50px',
   '.MuiLinearProgress-bar': {

@@ -1,16 +1,13 @@
 import {
   CalendarMonth,
   Category,
-  Chat,
   ExpandLess,
   ExpandMore,
   Home,
+  Loyalty,
   Paid,
   PeopleAlt,
-  RateReview,
-  Store,
   WorkspacePremium,
-  Loyalty,
 } from '@mui/icons-material'
 import {
   Avatar,
@@ -20,7 +17,6 @@ import {
   List,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
   Stack,
   styled,
   Typography,
@@ -60,12 +56,6 @@ const VERTICAL_ITEMS = [
           },
         ],
       },
-      {
-        key: 'store',
-        title: 'Thông tin cửa hàng',
-        icon: <Store />,
-        path: '/admin/store',
-      },
     ],
   },
   {
@@ -90,12 +80,6 @@ const VERTICAL_ITEMS = [
         title: 'Người dùng',
         icon: <PeopleAlt />,
         path: '/admin/users-management',
-      },
-      {
-        key: 'rated-management',
-        title: 'Đánh giá',
-        icon: <RateReview />,
-        path: '/admin/rated-management',
       },
       {
         key: 'voucher-management',

@@ -128,6 +128,7 @@ const ServiceForm = () => {
   const handleGetOneService = async (id) => {
     try {
       const data = await serviceApi.getOne(id)
+      console.log(data)
       setDescription(data.desc)
       setImg(data.image)
       reset({
@@ -139,7 +140,7 @@ const ServiceForm = () => {
     }
   }
 
-  const handleGetServices = async () => {
+  const handleGetCategory = async () => {
     try {
       const data = await categoryApi.getAll()
       const options = data.map((category) => ({ id: category._id, label: category.name }))
@@ -164,9 +165,8 @@ const ServiceForm = () => {
   useEffect(() => {
     if (id) {
       handleGetOneService(id)
-    } else {
-      handleGetServices()
     }
+    handleGetCategory()
   }, [id])
 
   return (
@@ -265,8 +265,15 @@ const ServiceForm = () => {
               </Grid>
 
               <Grid item xs={12} marginTop={{ xs: '80px', sm: '60px', lg: '60px' }}>
-                <Stack>
-                  <MainButton sx={{ ml: 'auto' }} type='submit' colorType='primary'>
+                <Stack direction='row' gap={2} justifyContent='flex-end'>
+                  <MainButton
+                    type='button'
+                    colorType='neutral'
+                    onClick={() => navigate('/admin/services-management')}
+                  >
+                    Hủy
+                  </MainButton>
+                  <MainButton type='submit' colorType='primary'>
                     Xác nhận
                   </MainButton>
                 </Stack>

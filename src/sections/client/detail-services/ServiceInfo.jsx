@@ -21,7 +21,7 @@ const ServiceInfo = ({ onOpenModal, serviceInfo }) => {
               {serviceInfo.name}
             </Typography>
             <Stack direction='row' gap={1}>
-              <Rating value={serviceInfo.rated.avg} readOnly />
+              <Rating value={+serviceInfo.rated.avg} readOnly />
               <Typography variant='subtitle2'>({serviceInfo.rated.total} đánh giá)</Typography>
             </Stack>
             <Typography variant='h3' color='primary'>
