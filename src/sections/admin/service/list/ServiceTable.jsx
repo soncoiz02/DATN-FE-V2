@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { MoreVert, Edit, Delete, Search, FilterAlt } from '@mui/icons-material'
+import { MoreVert, Edit, Delete, Search, FilterAlt, RateReview } from '@mui/icons-material'
 import DataGridCustom from '../../../../components/DataGridCustom'
 import GlassBox from '../../../../components/GlassBox'
 import serviceApi from '../../../../api/service'
@@ -105,6 +105,12 @@ const ServiceTable = () => {
             </IconButton>
             <Popper open={open} anchorEl={anchorEl} placement='left-start'>
               <GlassBox sx={{ padding: '3px', borderRadius: '10px', bgcolor: 'white' }}>
+                <MenuItem component={Link} to={`${idService}/rated`}>
+                  <RateReview fontSize='small' />
+                  <Typography variant='body1' sx={{ padding: '0 5px' }}>
+                    Đánh giá
+                  </Typography>
+                </MenuItem>
                 <MenuItem component={Link} to={`edit/${idService}`}>
                   <Edit fontSize='small' />
                   <Typography variant='body1' sx={{ padding: '0 5px' }}>
@@ -128,7 +134,6 @@ const ServiceTable = () => {
   const handleGetService = async (pageNum) => {
     try {
       const data = await serviceApi.getServicePerPage(pageNum)
-      console.log(data)
       const rowData = data.data.map((item, index) => ({
         ...item,
         index: index + 1,

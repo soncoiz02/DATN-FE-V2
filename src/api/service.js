@@ -63,6 +63,9 @@ const serviceApi = {
   getServicePerPage(page) {
     return axiosClient.get(`services?page=${page}`)
   },
+  getServiceRatedPerPage(page, serviceId) {
+    return axiosClient.get(`service-rated-per-page/${serviceId}?page=${page}`)
+  },
 }
 
 export default serviceApi

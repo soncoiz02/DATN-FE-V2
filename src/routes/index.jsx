@@ -28,6 +28,7 @@ const Store = lazy(() => import('../pages/client/store'))
 const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
 const Changepassword = lazy(() => import('../pages/user/Changepassword'))
 const AccountSetting = lazy(() => import('../pages/user/index'))
+const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
 
 const Router = () => {
   return (
@@ -98,6 +99,14 @@ const Router = () => {
               element={
                 <CheckStaff>
                   <ServiceAdd />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path=':id/rated'
+              element={
+                <CheckStaff>
+                  <ServiceRated />
                 </CheckStaff>
               }
             />

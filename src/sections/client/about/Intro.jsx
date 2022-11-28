@@ -121,7 +121,6 @@ const Linnk = styled(Link)({
   justifyContent: 'flex-start',
   width: 'fit-content',
   transition: 'all .3s',
-  display: 'inline-block',
   '&:hover': {
     backgroundColor: '#FF6073',
     borderColor: '#FF6073',
