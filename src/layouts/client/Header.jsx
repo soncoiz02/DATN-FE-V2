@@ -60,12 +60,15 @@ const Header = ({ openMenu }) => {
           alignItems='center'
         >
           <Stack direction='row' alignItems='center' gap={1}>
-            <Avatar src={Logo} sx={{ width: '50px', height: '50px' }} />
-            <Typography variant='h2' color='primary'>
+            <Avatar
+              src={Logo}
+              sx={{ width: { xs: '35px', md: '50px' }, height: { xs: '35px', md: '50px' } }}
+            />
+            <Typography variant='h3' color='primary'>
               Beauty Paradise
             </Typography>
           </Stack>
-          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/'>
               Trang chủ
             </StyledLink>
@@ -77,14 +80,23 @@ const Header = ({ openMenu }) => {
             </StyledLink>
           </Stack>
           {!isLogin ? (
-            <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-              <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
-                Đăng ký
-              </MainButton>
-              <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
-                Đăng nhập
-              </MainButton>
-            </Stack>
+            <>
+              <IconButton
+                color='primary'
+                sx={{ display: { xs: 'flex', md: 'none' } }}
+                onClick={openMenu}
+              >
+                <Menu />
+              </IconButton>
+              <Stack direction='row' gap={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
+                  Đăng ký
+                </MainButton>
+                <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
+                  Đăng nhập
+                </MainButton>
+              </Stack>
+            </>
           ) : (
             <Stack direction='row' gap={1} alignItems='center'>
               <Notification />
