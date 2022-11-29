@@ -48,6 +48,9 @@ const userApis = {
       }),
     })
   },
+  createStaff(data) {
+    return axiosClient.post('staff', data)
+  },
 }
 
 export default userApis

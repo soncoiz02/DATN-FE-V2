@@ -77,7 +77,7 @@ const ListStaff = () => {
     },
     {
       field: 'position',
-      headerName: 'Chức vụ',
+      headerName: 'Vị trí',
       flex: 1,
       valueGetter: (params) => {
         return `Nhân viên "${params.value}"`
@@ -134,6 +134,7 @@ const ListStaff = () => {
   }
 
   const handleCancelFilter = () => {
+    if (!params) return
     setLoading(true)
     reset()
     setParams(null)
@@ -142,7 +143,6 @@ const ListStaff = () => {
   const handleGetStaff = async (page, params) => {
     try {
       const data = await userApis.getStaffPerPage(page, params)
-      console.log(data.data)
       const staffs = data.data.map((item, index) => ({
         id: item._id,
         no: index + 1,
@@ -164,10 +164,12 @@ const ListStaff = () => {
   const handleGetCategory = async () => {
     try {
       const data = await categoryApi.getAll()
-      const cateOpts = data.map((item) => ({
-        label: item.name,
-        value: item._id,
-      }))
+      const cateOpts = data
+        .filter((item) => item._id !== '63518497a3ca43d2916000cc' && item.status !== 0)
+        .map((item) => ({
+          label: `Nhân viên "${item.name}"`,
+          value: item._id,
+        }))
       setCategoryOpts(cateOpts)
     } catch (error) {
       console.log(error)
