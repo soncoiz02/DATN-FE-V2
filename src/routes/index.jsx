@@ -4,6 +4,7 @@ import Loading from '../components/Loading'
 import Authentication from '../guards/Authentication'
 import CheckAuth from '../guards/CheckAuth'
 import CheckStaff from '../guards/CheckStaff'
+import StaffForm from '../pages/admin/staff/StaffForm'
 import AboutPage from '../pages/client/about'
 import ServicePage from '../pages/client/service'
 
@@ -29,6 +30,7 @@ const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
 const Changepassword = lazy(() => import('../pages/user/Changepassword'))
 const AccountSetting = lazy(() => import('../pages/user/index'))
 const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
+const StaffManagement = lazy(() => import('../pages/admin/staff'))
 
 const Router = () => {
   return (
@@ -127,6 +129,32 @@ const Router = () => {
               </CheckStaff>
             }
           />
+          <Route path='staff'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <StaffManagement />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='add'
+              element={
+                <CheckStaff>
+                  <StaffForm />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path=':id/edit'
+              element={
+                <CheckStaff>
+                  <StaffForm />
+                </CheckStaff>
+              }
+            />
+          </Route>
           <Route
             path='voucher-management'
             element={
