@@ -1,4 +1,5 @@
 import axiosClient from './axiosClient'
+import queryString from 'query-string'
 
 const userApis = {
   listUser() {
@@ -39,6 +40,16 @@ const userApis = {
   },
   getVerifyCode(email) {
     return axiosClient.post('/get-verify-code', email)
+  },
+  getStaffPerPage(page, params) {
+    return axiosClient.get(`/staff-per-page?page=${page}`, {
+      ...(params && {
+        params,
+      }),
+    })
+  },
+  createStaff(data) {
+    return axiosClient.post('staff', data)
   },
 }
 

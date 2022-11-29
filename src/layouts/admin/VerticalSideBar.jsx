@@ -82,6 +82,12 @@ const VERTICAL_ITEMS = [
         path: '/admin/users-management',
       },
       {
+        key: 'staff',
+        title: 'Nhân viên',
+        icon: <PeopleAlt />,
+        path: '/admin/staff',
+      },
+      {
         key: 'voucher-management',
         title: 'Voucher',
         icon: <Loyalty />,

@@ -30,11 +30,12 @@ const ServiceRated = () => {
     try {
       const data = await serviceApi.getServiceRatedPerPage(page, serviceId)
       setServiceRated({
+        service: data.service,
         total: data.total,
         avg: data.avg,
         detailRated: data.detailRated,
       })
-      setListRated([...listRated, data.listRated])
+      setListRated([...listRated, ...data.listRated])
     } catch (error) {
       console.log(error)
     }
