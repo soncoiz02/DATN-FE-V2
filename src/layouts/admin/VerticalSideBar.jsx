@@ -102,21 +102,15 @@ const VERTICAL_ITEMS = [
     items: [
       {
         key: 'revenue-statistic',
-        title: 'Doanh thu',
+        title: 'Chung',
         icon: <Paid />,
-        path: '/admin/revenue-statistic',
+        path: '/admin/statistic',
       },
       {
         key: 'users-statistic',
         title: 'Người dùng',
-        icon: <WorkspacePremium />,
-        path: '/admin/users-statistic',
-      },
-      {
-        key: 'services-statistic',
-        title: 'Dịch vụ',
         icon: <PeopleAlt />,
-        path: '/admin/services-statistic',
+        path: '/admin/users-statistic',
       },
     ],
   },

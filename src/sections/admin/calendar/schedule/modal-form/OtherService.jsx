@@ -105,7 +105,7 @@ const OtherService = ({
                     alt=''
                   />
                   {option.label} {option.price ? `- ${formatPrice(option.price)}` : null}
-                  {currentOtherService && option.id === currentOtherService._id && (
+                  {currentOtherService && option.id === currentOtherService?._id && (
                     <Bookmark color='warning' sx={{ ml: 'auto' }} />
                   )}
                 </Box>

@@ -5,6 +5,7 @@ import Authentication from '../guards/Authentication'
 import CheckAuth from '../guards/CheckAuth'
 import CheckStaff from '../guards/CheckStaff'
 import StaffForm from '../pages/admin/staff/StaffForm'
+import RevenueStatistic from '../pages/admin/statistic/revenue'
 import AboutPage from '../pages/client/about'
 import ServicePage from '../pages/client/service'
 
@@ -163,6 +164,16 @@ const Router = () => {
               </CheckStaff>
             }
           />
+          <Route path='statistic'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <RevenueStatistic />
+                </CheckStaff>
+              }
+            />
+          </Route>
         </Route>
       </Routes>
     </Suspense>

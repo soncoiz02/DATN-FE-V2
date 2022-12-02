@@ -6,3 +6,19 @@ export const getStatusColor = (type) => {
   if (type === 'paid') return 'success'
   return 'default'
 }
+
+export const getRandomColor = () => {
+  const listColor = [
+    '#54BAB9',
+    '#F675A8',
+    '#F29393',
+    '#AAC4FF',
+    '#B6E2A1',
+    '#E97777',
+    '#C1EFFF',
+    '#CDF0EA',
+    '#FFF89A',
+  ]
+  const randomColor = listColor[Math.floor(Math.random() * listColor.length)]
+  return randomColor
+}
