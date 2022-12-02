@@ -16,8 +16,8 @@ import {
 import { MoreVert, Edit, Delete, Search, FilterAlt } from '@mui/icons-material'
 import DataGridCustom from '../../../components/DataGridCustom'
 import GlassBox from '../../../components/GlassBox'
-import formatPrice from '../../../utils/formatPrice'
 import userApis from '../../../api/user'
+import { dateFormat } from '../../../utils/dateFormat'
 
 const UserList = () => {
   const [rows, setRows] = useState([])
@@ -42,55 +42,44 @@ const UserList = () => {
     {
       field: 'serviceId',
       headerName: 'Người dùng',
-      width: isMobile ? 130 : 180,
+      flex: isMobile ? 0 : 1,
       renderCell: (params) => {
-        // const cellData = params.row
         return (
           <Stack gap={1} direction='row' alignItems='center'>
-            <Avatar variant='rounded' src={params.row.avt} />
-            <Typography variant='body2'>{params.row.name}</Typography>
+            <Avatar variant='rounded' src={params.row.user.avt} />
+            <Typography variant='body2'>{params.row.user.name}</Typography>
           </Stack>
         )
       },
     },
     {
-      field: 'categoryId',
+      field: 'phone',
       headerName: 'Số điện thoại',
       width: isMobile ? 120 : 140,
       renderCell: (params) => {
-        return <Typography variant='body2'>{params.row.phone}</Typography>
+        return <Typography variant='body2'>{params.row.user.phone}</Typography>
       },
     },
 
     {
-      field: 'totalStaff',
-      headerName: 'Dịch vụ sử dụng',
+      field: 'birthday',
+      headerName: 'Ngày sinh nhật',
+      width: isMobile ? 120 : 140,
+      renderCell: (params) => {
+        return <Typography variant='body2'>{dateFormat(params.row.user.birthday)}</Typography>
+      },
+    },
+
+    {
+      field: 'email',
+      headerName: 'Email',
+      width: isMobile ? 120 : 140,
       flex: isMobile ? 0 : 1,
       renderCell: (params) => {
-        return `Massage Mông`
+        return <Typography variant='body2'>{params.row.user.email}</Typography>
       },
     },
 
-    {
-      field: 'price',
-      headerName: 'Giá tiền',
-      flex: isMobile ? 0 : 1,
-      valueGetter: (params) => {
-        return `500.000`
-      },
-    },
-
-    // {
-    //   field: 'status',
-    //   headerName: 'Trạng thái',
-    //   width: isMobile ? 120 : 160,
-    //   renderCell: (params) => {
-    //     const cellData = params.row.status
-    //     if (cellData === 1) return <Chip label='Đang hoạt động' color='success' />
-    //     if (cellData === 0) return <Chip label='Chưa hoạt động' color='warning' />
-    //     return
-    //   },
-    // },
     {
       field: 'action',
       headerName: '',
@@ -106,7 +95,7 @@ const UserList = () => {
                 <MenuItem component={Link} to={`edit/${idService}`}>
                   <Edit fontSize='small' />
                   <Typography variant='body1' sx={{ padding: '0 5px' }}>
-                    Chỉnh sửa
+                    Xem chi tiết
                   </Typography>
                 </MenuItem>
                 <MenuItem anchorEl={anchorEl}>
@@ -129,9 +118,10 @@ const UserList = () => {
       const rowData = data.map((item, index) => ({
         ...item,
         index: index + 1,
-        id: item._id,
+        id: item.user._id,
       }))
       setRows(rowData)
+      console.log(rowData)
     } catch (error) {
       console.log(error)
     }
