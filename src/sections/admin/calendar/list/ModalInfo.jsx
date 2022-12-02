@@ -121,6 +121,11 @@ const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
                       <Stack>
                         <Typography variant='h4'>{item.userId.name}</Typography>
                         <Typography variant='body2'>{item.content}</Typography>
+                        {item.createdAt && (
+                          <Typography variant='body2'>{`${formatDateToHour(
+                            item.createdAt,
+                          )} - ${dateFormat(item.createdAt)}`}</Typography>
+                        )}
                       </Stack>
                     </Stack>
                   ))}

@@ -112,11 +112,13 @@ const StatisticRevenue = () => {
 
   const onSubmit = (values) => {
     handleGetStatisticBy(values.type.type)
+    handleGetRevenueBy(values.type.type)
   }
 
   const handleCancel = () => {
     handleGetStartAndEndDate()
     handleGetStatisticBy(currentType)
+    handleGetRevenueBy(currentType)
   }
 
   const handleGetCategory = async () => {

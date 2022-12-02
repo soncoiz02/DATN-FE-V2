@@ -61,7 +61,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
     const emailOption = {
       from: userInfo.email,
       to: detailOrder.infoUser.email,
-      subject: `${storeInfo.name} gửi bạn hóa đơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.`,
+      subject: `Beauty Paradise gửi bạn hóa đơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.`,
       html: htmlTemplate,
     }
 
@@ -79,6 +79,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
         storeId: userInfo.storeId,
       }
       socket.emit('send-notify-to-user', notifyData)
+      socket.emit('change-status')
       getListOrder()
       handleCloseModal()
     } catch (error) {

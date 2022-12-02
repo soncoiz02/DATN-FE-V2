@@ -21,12 +21,14 @@ import useAuth from '../../../../../hook/useAuth'
 import {
   convertNumberToHour,
   convertTimeToNumber,
+  dateFormat,
   formatDateToHour,
 } from '../../../../../utils/dateFormat'
 import phoneRegExp from '../../../../../utils/phoneRegExp'
 import AssignStaff from './AssignStaff'
 import formatPrice from '../../../../../utils/formatPrice'
 import OtherService from './OtherService'
+import getSocket from '../../../../../utils/socket'
 
 const defaultFormValue = {
   name: '',
@@ -43,6 +45,8 @@ const defaultFormValue = {
   status: '',
 }
 
+const socket = getSocket()
+
 const ModalEditOrder = ({
   openModal,
   onCloseModal,
@@ -56,7 +60,7 @@ const ModalEditOrder = ({
   const [serviceOptions, setServiceOptions] = useState(null)
   const [checkedIndex, setCheckedIndex] = useState(-1)
   const [timeSlot, setTimeSlot] = useState()
-  const [checkedData, setCheckedData] = useState()
+  const [checkedData, setCheckedData] = useState(0)
   const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
   const [timeSlotCheckByStaff, setTimeSlotCheckByStaff] = useState([])
   const [formValues, setFormValues] = useState()
@@ -100,7 +104,11 @@ const ModalEditOrder = ({
     defaultValues: defaultFormValue,
     resolver: yupResolver(formSchema),
   })
-  const { handleSubmit, reset } = methods
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitted, isDirty, isValid },
+  } = methods
 
   const onSubmit = (values) => {
     setIsLoading(true)
@@ -182,12 +190,16 @@ const ModalEditOrder = ({
 
   const handleUpdateOrder = () => {
     const date = formValues?.date || currentOrder.startDate
+
     const infoUser = formValues
       ? { name: formValues.name, phone: formValues.phone, email: formValues.email }
       : currentOrder.infoUser
-    const service =
-      allService.find((service) => service._id === formValues?.service?.id) ||
-      currentOrder.serviceId
+
+    const service = allService.find(
+      (service) =>
+        service._id === (formValues?.service?.id || currentOrder.servicesRegistered[0].service._id),
+    )
+
     const timeStart = convertNumberToHour(checkedData, 'getTime')
     const timeEnd = convertNumberToHour(checkedData + (service.duration + 15) / 60, 'getTime')
 
@@ -240,12 +252,27 @@ const ModalEditOrder = ({
       userId: userInfo._id,
     }
 
+    const data = {
+      content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+        currentOrder.startDate,
+      )} ngày ${dateFormat(currentOrder.startDate)} đã được chỉnh sửa`,
+      userId: currentOrder.userId,
+      storeId: userInfo.storeId,
+    }
+    socket.emit('send-notify-to-user', data)
+
     updateOrder(updateData)
     handleAddUpdateActivity(activity)
   }
 
   const handleChangeTimeSlot = (index, time) => {
-    const detailService = allService.find((item) => item._id === formValues.service.id)
+    const detailService = allService.find(
+      (item) =>
+        item._id === (formValues?.service.id || currentOrder.servicesRegistered[0].service._id),
+    )
+    setOtherService(null)
+    setOtherStaff(null)
+    setCurrentStaff(null)
     setCheckedIndex(index)
     setCheckedData(time)
     setNextTimeSlot(time + (detailService.duration + 15) / 60)
@@ -425,6 +452,9 @@ const ModalEditOrder = ({
 
   useEffect(() => {
     handleGetServiceOptions()
+  }, [])
+
+  useEffect(() => {
     if (orderId) handleGetDetailOrder(orderId)
   }, [orderId])
 
@@ -567,7 +597,7 @@ const ModalEditOrder = ({
                 date={formValues?.date ? formValues.date : currentOrder.startDate}
                 currentOtherService={currentOrder?.servicesRegistered[1]?.service}
                 currentOtherStaff={currentOrder?.servicesRegistered[1]?.staff}
-                currentService={
+                currentServiceId={
                   formValues?.service
                     ? formValues.service.id
                     : currentOrder?.servicesRegistered[0].service._id
@@ -582,12 +612,23 @@ const ModalEditOrder = ({
               <MainButton colorType='neutral' onClick={handleCloseModal}>
                 Hủy
               </MainButton>
-              <MainButton
-                colorType='primary'
-                onClick={orderId ? handleUpdateOrder : handleCreateOrder}
-              >
-                {orderId ? 'Cập nhật' : 'Tạo mới'}
-              </MainButton>
+              {orderId ? (
+                <MainButton
+                  colorType='primary'
+                  onClick={handleUpdateOrder}
+                  disabled={!checkedData || !currentStaff?.id}
+                >
+                  Cập nhật
+                </MainButton>
+              ) : (
+                <MainButton
+                  colorType='primary'
+                  onClick={handleCreateOrder}
+                  disabled={!isSubmitted || !checkedData}
+                >
+                  Tạo mới
+                </MainButton>
+              )}
             </Stack>
           </Stack>
         </GlassBox>

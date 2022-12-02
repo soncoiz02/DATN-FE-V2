@@ -117,7 +117,13 @@ const Calendar = () => {
     }
 
     const disableStart = (status) => {
-      return status !== statusId.accepted
+      let haveStaff = true
+
+      if (userInfo.roleId.name === 'Staff') {
+        haveStaff = appointmentData.servicesRegistered[0].staff._id === userInfo._id
+      }
+
+      return status !== statusId.accepted || !haveStaff
     }
 
     const disableAccepted = (status) => {
@@ -444,7 +450,7 @@ const Calendar = () => {
           <ViewState
             currentDate={currentDate}
             onCurrentDateChange={currentDateChange}
-            defaultCurrentViewName='Tuần'
+            defaultCurrentViewName='Tháng'
           />
           <DayView startDayHour={8} endDayHour={21} name='Ngày' />
           <WeekView startDayHour={8} endDayHour={21} name='Tuần' />
