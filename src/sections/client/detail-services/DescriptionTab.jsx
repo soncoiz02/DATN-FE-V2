@@ -1,5 +1,6 @@
-import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Stack, styled, Typography } from '@mui/material'
 import React from 'react'
+import parse from 'html-react-parser'
 
 const DescriptionTab = ({ index, value, serviceInfo, ...other }) => {
   return (
@@ -13,7 +14,7 @@ const DescriptionTab = ({ index, value, serviceInfo, ...other }) => {
       {value === index && (
         <Stack gap={3}>
           <Stack gap={2}>
-            <Typography variant='h5'>{serviceInfo.desc}</Typography>
+            <Typography variant='h5'>{parse(serviceInfo.desc)}</Typography>
           </Stack>
         </Stack>
       )}

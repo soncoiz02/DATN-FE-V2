@@ -15,10 +15,10 @@ const ListService = () => {
     try {
       if (searchParams.get('cate')) {
         const data = await serviceApi.getByCate(searchParams.get('cate'))
-        return setListService(data)
+        return setListService(data.filter((item) => item.status))
       }
       const data = await serviceApi.getAll()
-      setListService(data)
+      setListService(data.filter((item) => item.status))
     } catch (error) {
       console.log(error)
     }
@@ -41,7 +41,7 @@ const ListService = () => {
                 <Typography
                   variant='h3'
                   component={Link}
-                  to={`/service/${item._id}`}
+                  to={`/service/${item.slug}`}
                   sx={{ textDecoration: 'none' }}
                   color='primary'
                 >
