@@ -45,11 +45,19 @@ const MobileMenu = ({ closeMenu, openMenu }) => {
             </Stack>
           ) : (
             <Stack sx={{ mt: 'auto' }}>
-              <CustomLink underline='none'>
+              <CustomLink
+                underline='none'
+                component={RouterLink}
+                to='/account-setting/account-info'
+              >
                 <Person />
                 <Typography variant='body1'>Cài đặt tài khoản</Typography>
               </CustomLink>
-              <CustomLink underline='none'>
+              <CustomLink
+                underline='none'
+                component={RouterLink}
+                to='/service-register-history?page=1'
+              >
                 <Assignment />
                 <Typography variant='body1'>Dịch vụ đăng ký</Typography>
               </CustomLink>

@@ -5,9 +5,7 @@ import React from 'react'
 const TextHead = () => {
   return (
     <Box paddingTop={{ sm: '24px', xs: '16px' }}>
-      <Typography variant='h2' sx={{ color: grey[700] }}>
-        DỊCH VỤ BẠN ĐÃ ĐẶT
-      </Typography>
+      <Typography variant='h2'>Dịch vụ đã đặt</Typography>
     </Box>
   )
 }

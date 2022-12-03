@@ -128,7 +128,7 @@ const Header = ({ openMenu }) => {
                       <CustomLink
                         underline='none'
                         component={RouterLink}
-                        to='service-register-history'
+                        to='service-register-history?page=1'
                       >
                         <Assignment />
                         <Typography variant='body1'>Dịch vụ đăng ký</Typography>

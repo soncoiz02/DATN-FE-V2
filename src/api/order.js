@@ -10,6 +10,19 @@ const orderApi = {
   getByStatus(type) {
     return axiosClient.get(`/filterByStatus?status=${type}`)
   },
+  getUserOrder(token, page, status) {
+    return axiosClient.get(`/get-user-order`, {
+      params: {
+        page,
+        ...(status && {
+          status,
+        }),
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
 }
 
 export default orderApi
