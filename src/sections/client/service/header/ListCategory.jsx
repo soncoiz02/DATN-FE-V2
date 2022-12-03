@@ -40,9 +40,9 @@ const ListCategory = () => {
         listCategory.map((item) => (
           <CategoryLink
             underline='none'
-            className={searchParams.get('cate') === item._id ? 'active' : null}
+            className={searchParams.get('cate') === item.slug ? 'active' : null}
             component={RouterLink}
-            to={`/service?cate=${item._id}`}
+            to={`/service?cate=${item.slug}`}
           >
             {item.name}
           </CategoryLink>

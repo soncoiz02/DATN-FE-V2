@@ -67,18 +67,34 @@ const ServiceForm = () => {
 
   const { handleSubmit, reset } = methods
 
+  const handleCalculateTimeSlot = (duration) => {
+    const start = 8
+    const end = 22
+
+    const listTimeSlot = []
+
+    for (let i = start; i < end; i++) {
+      const timeSlot = i + (15 + duration) / 60
+      if (end - timeSlot < duration / 60) continue
+      listTimeSlot.push(timeSlot)
+    }
+
+    return listTimeSlot
+  }
+
   const onSubmit = async (values) => {
+    const timeSlot = handleCalculateTimeSlot(+values.duration)
     if (imgUpload) {
       const imgURL = await uploadImage(imgUpload)
       setImgUpload(null)
       setImg('')
       if (id) {
-        console.log(id)
         return handleUpdateService(id, {
           ...values,
           categoryId: values.category,
           image: imgURL,
           desc: description,
+          timeSlot,
         })
       } else {
         return handleAddService({
@@ -86,6 +102,7 @@ const ServiceForm = () => {
           categoryId: values.category,
           image: imgURL,
           desc: description,
+          timeSlot,
         })
       }
     } else {
@@ -95,6 +112,7 @@ const ServiceForm = () => {
           ...values,
           categoryId: values.category,
           desc: description,
+          timeSlot,
         })
       } else {
         alert('Bạn vui lòng chọn ảnh dịch vụ')

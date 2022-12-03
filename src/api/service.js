@@ -7,6 +7,9 @@ const serviceApi = {
   getOne(id) {
     return axiosClient.get(`/service/${id}`)
   },
+  getBySlug(slug) {
+    return axiosClient.get(`/service-slug/${slug}`)
+  },
   create(data) {
     return axiosClient.post('/service', data)
   },
@@ -41,7 +44,7 @@ const serviceApi = {
     return axiosClient.get(`/getOrderByStaffCategory?serviceId=${serviceId}&date=${date}`)
   },
   getByCate(cateId) {
-    return axiosClient.get(`/service-by-cate?cateId=${cateId}`)
+    return axiosClient.get(`/service-by-cate?cateSlug=${cateId}`)
   },
   getBestRated() {
     return axiosClient.get('/service-rating-best')

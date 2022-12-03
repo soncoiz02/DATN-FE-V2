@@ -7,6 +7,9 @@ const categoryApi = {
   getOne(id) {
     return axiosClient.get(`/category/${id}`)
   },
+  getBySlug(slug) {
+    return axiosClient.get(`/category-slug/${slug}`)
+  },
   create(data) {
     return axiosClient.post('/category', data)
   },
