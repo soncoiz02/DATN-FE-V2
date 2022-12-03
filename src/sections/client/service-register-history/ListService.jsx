@@ -1,51 +1,105 @@
-import React, { useState, useEffect } from 'react'
-import { Avatar, Grid, Stack, Box, Typography, useTheme, styled } from '@mui/material'
-import GlassBox from '../../../components/GlassBox'
-import { useSearchParams } from 'react-router-dom'
+import {
+  Cancel,
+  CheckCircle,
+  CreditScore,
+  Delete,
+  Done,
+  DoubleArrow,
+  HourglassBottom,
+  Workspaces,
+} from '@mui/icons-material'
+import {
+  Avatar,
+  Box,
+  Chip,
+  CircularProgress,
+  ClickAwayListener,
+  Grid,
+  IconButton,
+  MenuItem,
+  Pagination,
+  Paper,
+  Popper,
+  Stack,
+  styled,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import calendarApi from '../../../api/calendar'
 import orderApi from '../../../api/order'
+import GlassBox from '../../../components/GlassBox'
+import useAuth from '../../../hook/useAuth'
+import { getStatusColor } from '../../../utils/aboutColor'
 import { dateFormat } from '../../../utils/dateFormat'
-import ModalInfo from './ModalInfo'
-import { useSelector } from 'react-redux'
 
 const ListService = () => {
-  const theme = useTheme()
-  const [openModal, setOpenModal] = useState(false)
-
   const [order, setOrder] = useState([])
-  const [orderId, setOrderId] = useState()
+  const [loading, setLoading] = useState(true)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [totalOrder, setTotalOrder] = useState(0)
+  const [listStatus, setListStatus] = useState([])
 
-  const serviceBySort = useSelector((state) => state.serviceRegister.listFiltered)
-  console.log(serviceBySort)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const openPopper = Boolean(anchorEl)
 
-  const getOrder = async () => {
+  const handleOpenPopper = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
+  }
+
+  const navigate = useNavigate()
+  const page = searchParams.get('page')
+  const statusType = searchParams.get('status')
+
+  const { userInfo, token } = useAuth()
+
+  const getOrder = async (page, statusType) => {
     try {
-      const data = await orderApi.getAll()
-      setOrder(data)
+      let status = null
+      if (statusType) {
+        status = listStatus.find((item) => item.type === statusType)._id
+      }
+      const data = await orderApi.getUserOrder(token, page, status)
+      setOrder(data.data)
+      setTotalOrder(Math.ceil(data.total / data.limit))
+      setLoading(false)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const [searchParams] = useSearchParams({})
+  const handleChangePage = (event, value) => {
+    navigate(`/service-register-history?page=${value}${statusType ? `&status=${statusType}` : ''}`)
+    setLoading(true)
+    window.scrollTo(0, 0)
+  }
 
-  const status = searchParams.get('status')
-
-  const getServiceByStatus = async (type) => {
+  const handleGetStatus = async () => {
     try {
-      const data = await orderApi.getByStatus(type)
-      setOrder(data)
+      const listIcon = [
+        <HourglassBottom color='warning' fontSize='small' />,
+        <Done color='success' fontSize='small' />,
+        <Cancel color='error' fontSize='small' />,
+        <CheckCircle color='info' fontSize='small' />,
+        <CreditScore color='secondary' fontSize='small' />,
+        <DoubleArrow color='error' fontSize='small' />,
+      ]
+      const data = await calendarApi.getListStatus()
+      setListStatus(data.map((item, index) => ({ ...item, icon: listIcon[index] })))
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    if (status) {
-      getServiceByStatus(status)
-    } else {
-      getOrder()
-    }
-  }, [status])
+    handleGetStatus()
+  }, [])
+
+  useEffect(() => {
+    getOrder(page, statusType)
+  }, [page, statusType])
 
   const renderDateFormated = (data) => {
     const date = new Date(data)
@@ -64,59 +118,108 @@ const ListService = () => {
     return `${hours > 9 ? hours : '0' + hours}:00 - ${dateFormated}`
   }
 
+  const filterByStatus = (type) => {
+    navigate(`/service-register-history?page=1&status=${type}`)
+  }
+
   return (
-    <>
-      <Grid container spacing={{ xs: 2, lg: 3 }}>
-        {order.map((item) => (
-          <Grid item xs={12} sm={6} md={4}>
-            <GlassBox
-              onClick={() => {
-                setOrderId(item._id)
-                setOpenModal(true)
-              }}
-            >
-              <Stack direction='row' justifyContent='space-start'>
-                <Avatar
-                  sx={{ height: '100', width: '100' }}
-                  alt='Image-service'
-                  src={item.serviceId.image}
-                />
-                <Stack
-                  sx={{ ml: '10px' }}
-                  direction='column'
-                  justifyContent='center'
-                  alignItems='flex-start'
-                  spacing={0}
-                >
-                  <Typography variant='h3' color={theme.palette.text.secondary}>
-                    {item.serviceId.name}
-                  </Typography>
+    <Stack gap={3} sx={{ py: 3 }}>
+      <Stack direction='row' justifyContent='flex-end'>
+        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+          <Box>
+            <Tooltip title='Trạng thái' placement='top'>
+              <IconButton
+                /* eslint-disable-next-line no-alert */
+                onClick={handleOpenPopper}
+                size='large'
+              >
+                <Workspaces />
+              </IconButton>
+            </Tooltip>
+            <Popper open={openPopper} anchorEl={anchorEl} placement='top' sx={{ zIndex: 1500 }}>
+              <Paper>
+                <Stack>
+                  {listStatus.map((item) => (
+                    <MenuItem onClick={() => filterByStatus(item.type)}>
+                      <Stack direction='row' gap={1} alignItems='center'>
+                        {item.icon}
+                        <Typography variant='body2'>{item.name}</Typography>
+                      </Stack>
+                    </MenuItem>
+                  ))}
+                  <MenuItem
+                    onClick={() => {
+                      if (!statusType) return
+                      navigate('/service-register-history?page=1')
+                    }}
+                  >
+                    <Stack Stack direction='row' gap={1} alignItems='center'>
+                      <Delete color='error' />
+                      <Typography variant='body2'>Hủy lọc</Typography>
+                    </Stack>
+                  </MenuItem>
                 </Stack>
-              </Stack>
-              <Box>
-                <Typography variant='body1'>Họ tên: {item.infoUser.name}</Typography>
-                <Typography variant='body1'>Số điện thoại: {item.infoUser.phone}</Typography>
-                <Typography variant='body1'>
-                  Thời gian: {renderDateFormated(item.startDate)}
-                </Typography>
-              </Box>
-              <Stack direction='row' justifyContent='flex-end'>
-                <Typography variant='body1' color={theme.palette.secondary.main}>
-                  {item.status.name}
-                </Typography>
-              </Stack>
-            </GlassBox>
-          </Grid>
-        ))}
-      </Grid>
-      {openModal && (
-        <ModalInfo
-          openModal={openModal}
-          orderId={orderId}
-          onCloseModal={() => setOpenModal(false)}
-        />
+              </Paper>
+            </Popper>
+          </Box>
+        </ClickAwayListener>
+      </Stack>
+      {loading ? (
+        <Stack justifyContent='center' alignItems='center' sx={{ height: '80vh' }}>
+          <CircularProgress />
+        </Stack>
+      ) : (
+        <Grid container spacing={{ xs: 2, lg: 3 }}>
+          {order.map((item) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              sx={{ cursor: 'pointer' }}
+              onClick={() => navigate(`/service-register-history/${item._id}`)}
+            >
+              <GlassBox sx={{ '&:hover': { background: '#ffa0a018' }, p: 3 }}>
+                <Stack direction='row' justifyContent='space-start'>
+                  <Avatar
+                    sx={{ height: '100', width: '100' }}
+                    alt='Image-service'
+                    src={item.servicesRegistered[0].service.image}
+                  />
+                  <Stack
+                    sx={{ ml: '10px' }}
+                    direction='column'
+                    justifyContent='center'
+                    alignItems='flex-start'
+                    spacing={0}
+                  >
+                    <Typography variant='h3' color='text.secondary'>
+                      {item.servicesRegistered[0].service.name}
+                    </Typography>
+                  </Stack>
+                </Stack>
+                <Box mt={1}>
+                  <Typography variant='body1'>Họ tên: {item.infoUser.name}</Typography>
+                  <Typography variant='body1'>Số điện thoại: {item.infoUser.phone}</Typography>
+                  <Typography variant='body1'>{renderDateFormated(item.startDate)}</Typography>
+                </Box>
+                <Stack direction='row' justifyContent='flex-end' mt={1.5}>
+                  <Chip label={item.status.name} color={getStatusColor(item.status.type)} />
+                </Stack>
+              </GlassBox>
+            </Grid>
+          ))}
+        </Grid>
       )}
-    </>
+      <Pagination
+        page={+page}
+        onChange={handleChangePage}
+        sx={{ alignSelf: 'flex-end' }}
+        count={totalOrder}
+        color='primary'
+        size='large'
+      />
+    </Stack>
   )
 }
 
