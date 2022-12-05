@@ -3,19 +3,25 @@ import React from 'react'
 import GlassBox from '../../../components/GlassBox'
 import MainButton from '../../../components/MainButton'
 import categoryApi from '../../../api/category'
+import { toast } from 'react-toastify'
+import { useState } from 'react'
 
 const DeleteCategory = ({ openModalDelete, onCloseModal, registerId, title, confirm }) => {
+  const [loading, setLoading] = useState(false)
   const deleteItem = async (id) => {
     try {
       await categoryApi.delete(id)
       onCloseModal()
+      toast.dark('Xóa thành công')
+      setLoading(false)
       confirm()
     } catch (error) {
-      console.log(error)
+      toast.dark('Xóa thất bại')
     }
   }
 
   const handleDelete = () => {
+    setLoading(true)
     if (registerId) return deleteItem(registerId)
     onCloseModal()
   }
@@ -39,7 +45,7 @@ const DeleteCategory = ({ openModalDelete, onCloseModal, registerId, title, conf
               <MainButton colorType='neutral' onClick={onCloseModal}>
                 Hủy
               </MainButton>
-              <MainButton colorType='primary' onClick={handleDelete}>
+              <MainButton colorType='primary' disabled={loading} onClick={handleDelete}>
                 Xác nhận
               </MainButton>
             </Stack>

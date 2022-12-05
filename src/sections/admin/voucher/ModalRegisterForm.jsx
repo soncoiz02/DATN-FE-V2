@@ -99,7 +99,7 @@ const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
         <GlassBox sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }} opacity={1}>
           <Stack gap={3}>
             <Typography variant='h2' color='text.secondary'>
-              Thêm danh mục dịch vụ
+              Thêm danh voucher
             </Typography>
             <IconButton sx={{ position: 'absolute', top: 20, right: 20 }} onClick={onCloseModal}>
               <Close />

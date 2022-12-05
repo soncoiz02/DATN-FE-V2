@@ -10,6 +10,7 @@ import RHFProvider from '../../../components/ReactHookForm/RHFProvider'
 import RHFTextField from '../../../components/ReactHookForm/RHFTextField'
 import RHFSwitch from '../../../components/ReactHookForm/RHFSwitch'
 import { Close } from '@mui/icons-material'
+import { toast } from 'react-toastify'
 
 const defaultFormValues = {
   name: '',
@@ -42,9 +43,10 @@ const EditCategoryService = ({ openModal, onCloseModal, registerId, resetCategor
       const values = await categoryApi.update(id, data)
       setFormValues(values)
       confirm()
+      toast.dark('Cập nhật thành công')
       onCloseModal()
     } catch (error) {
-      console.log(error)
+      toast.dark('Cập nhật thất bại')
     }
   }
 

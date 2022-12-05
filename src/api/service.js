@@ -17,7 +17,7 @@ const serviceApi = {
     return axiosClient.put(`/service/${id}`, data)
   },
   delete(id) {
-    return axiosClient.delete('/service')
+    return axiosClient.delete(`/service/${id}`)
   },
   getRated(id) {
     return axiosClient.get(`/service-rated?serviceId=${id}`)
