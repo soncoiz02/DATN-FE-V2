@@ -41,6 +41,10 @@ const userApis = {
   getVerifyCode(email) {
     return axiosClient.post('/get-verify-code', email)
   },
+  
+  getUserOrder() {
+    return axiosClient.get('/user/listOrdered')
+  },
   getStaffPerPage(page, params) {
     return axiosClient.get(`/staff-per-page?page=${page}`, {
       ...(params && {

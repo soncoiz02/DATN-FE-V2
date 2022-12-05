@@ -30,6 +30,11 @@ const Store = lazy(() => import('../pages/client/store'))
 const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
 const Changepassword = lazy(() => import('../pages/user/Changepassword'))
 const AccountSetting = lazy(() => import('../pages/user/index'))
+const TabInfo = lazy(() => import('../sections/client/detail-store/TabsItem/TabInfo'))
+const TabPost = lazy(() => import('../sections/client/detail-store/TabsItem/TabPost'))
+const TabRate = lazy(() => import('../sections/client/detail-store/TabsItem/TabRate'))
+const TabServices = lazy(() => import('../sections/client/detail-store/TabsItem/TabServices'))
+const UserList = lazy(() => import('../pages/admin/user/index'))
 const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
 const StaffManagement = lazy(() => import('../pages/admin/staff'))
 const DetailServiceRegistered = lazy(() =>
@@ -101,6 +106,12 @@ const Router = () => {
           <Route path='services-statistic' element={<ServiceStatistic />} />
           <Route path='calendar-schedule' element={<CalendarManagement />} />
           <Route path='calendar-list' element={<CalendarList />} />
+          <Route path='services-management' element={<ServiceList />} />
+          <Route path='services-management/add' element={<ServiceAdd />} />
+          <Route path='services-management/edit/:id' element={<ServiceUpdate />} />
+          <Route path='category-management' element={<CategoryServices />} />
+          <Route path='voucher-management' element={<Voucher />} />
+          <Route path='users-management' element={<UserList />} />
           <Route path='services-management'>
             <Route
               index
