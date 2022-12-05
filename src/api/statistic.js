@@ -30,6 +30,9 @@ const statisticApi = {
   getRevenueByMonth(year) {
     return axiosClient.get(`get-revenue-by-month?year=${year}`)
   },
+  getDashboardStatistic() {
+    return axiosClient.get(`get-dashboard-statistic`)
+  },
 }
 
 export default statisticApi

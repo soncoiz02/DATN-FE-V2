@@ -106,12 +106,6 @@ const VERTICAL_ITEMS = [
         icon: <Paid />,
         path: '/admin/statistic',
       },
-      {
-        key: 'users-statistic',
-        title: 'Người dùng',
-        icon: <PeopleAlt />,
-        path: '/admin/users-statistic',
-      },
     ],
   },
 ]
