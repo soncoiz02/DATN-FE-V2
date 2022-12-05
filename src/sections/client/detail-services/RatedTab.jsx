@@ -189,7 +189,11 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
             </>
           )}
         </Stack>
-        <ModalRated openModal={openModal} onCloseModal={() => setOpenModal(false)} />
+        <ModalRated
+          serviceId={serviceId}
+          openModal={openModal}
+          onCloseModal={() => setOpenModal(false)}
+        />
       </Box>
     </div>
   )

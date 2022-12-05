@@ -26,12 +26,12 @@ const Register = lazy(() => import('../pages/auth/Register'))
 const DetailService = lazy(() => import('../pages/client/detail-service'))
 const HomePage = lazy(() => import('../pages/client/home'))
 const ServiceRegister = lazy(() => import('../pages/client/service-register-history'))
-const Store = lazy(() => import('../pages/client/store'))
 const Accountinfo = lazy(() => import('../pages/user/Accountinfo'))
 const Changepassword = lazy(() => import('../pages/user/Changepassword'))
 const AccountSetting = lazy(() => import('../pages/user/index'))
 const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
 const StaffManagement = lazy(() => import('../pages/admin/staff'))
+const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'))
 const DetailServiceRegistered = lazy(() =>
   import('../pages/client/service-register-history/detail'),
 )
@@ -49,7 +49,6 @@ const Router = () => {
           }
         >
           <Route index element={<HomePage />} />
-          <Route path='store' element={<Store />} />
           <Route path='about' element={<AboutPage />} />
           <Route
             path='account-setting'
@@ -88,6 +87,7 @@ const Router = () => {
         <Route path='auth' element={<AuthLayout />}>
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
+          <Route path='forgot-password' element={<ForgotPassword />} />
         </Route>
         <Route
           path='/admin'

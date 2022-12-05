@@ -1,11 +1,28 @@
-import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/material'
+import { Avatar, Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/material'
 import React from 'react'
+import { useState } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
+import userApis from '../../../api/user'
 const Staff = () => {
+  const [listStaff, setListStaff] = useState([])
+
+  const handleGetListStaff = async () => {
+    try {
+      const data = await userApis.getAllStaff()
+      setListStaff(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleGetListStaff()
+  }, [])
+
   return (
     <Box
       sx={{
-        background: '#FFF0F5',
         padding: '70px 0',
         margin: '0 0 30px',
       }}
@@ -26,86 +43,19 @@ const Staff = () => {
         <Box
           sx={{
             flexGrow: 1,
-            marginTop: '60px',
+            marginTop: '30px',
           }}
         >
-          <Stack>
-            <Grid container spacing={5} justifyContent='center' alignContent='center'>
-              <Grid
-                container
-                item
-                xs={6}
-                sm={3}
-                md={3}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '500px',
-                  alignContent: 'center',
-                }}
-              >
+          <Box sx={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+            {listStaff &&
+              listStaff.map((item) => (
                 <ItemMostStaff>
-                  <ImgService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/team-4.jpg' />
-                  <NameStaff>Jane Mcallister</NameStaff>
-                  <Position padding='10px'>Chuyên gia chăm sóc da</Position>
-                  <Descriptions padding='10px'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean egestas magna at
-                    portitor.
-                  </Descriptions>
-                  <ButtonCustom>Đặt Lịch Ngay</ButtonCustom>
+                  <ImgService variant='rounded' src={item.staff.avt} />
+                  <NameStaff>{item.staff.name}</NameStaff>
+                  <Position padding='10px'>Nhân viên {item.category.name}</Position>
                 </ItemMostStaff>
-              </Grid>
-              <Grid
-                container
-                item
-                xs={6}
-                sm={3}
-                md={3}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '500px',
-                }}
-              >
-                <ItemMostStaff>
-                  <ImgService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/team-2.jpg' />
-                  <NameStaff>Mandy Johnson</NameStaff>
-                  <Position padding='10px'>Thai Massage trị liệu</Position>
-                  <Descriptions padding='10px'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean egestas magna at
-                    portitor.
-                  </Descriptions>
-                  <ButtonCustom>Đặt Lịch Ngay</ButtonCustom>
-                </ItemMostStaff>
-              </Grid>
-              <Grid
-                container
-                item
-                xs={6}
-                sm={3}
-                md={3}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '500px',
-                }}
-              >
-                <ItemMostStaff>
-                  <ImgService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/team-1.jpg' />
-                  <NameStaff>Hanna Zafron</NameStaff>
-                  <Position padding='10px'>Chuyên gia thảo dược</Position>
-                  <Descriptions padding='10px'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean egestas magna at
-                    portitor.
-                  </Descriptions>
-                  <ButtonCustom>Đặt Lịch Ngay</ButtonCustom>
-                </ItemMostStaff>
-              </Grid>
-            </Grid>
-          </Stack>
+              ))}
+          </Box>
         </Box>
       </Container>
     </Box>
@@ -124,10 +74,6 @@ const TitleIntroduce = styled(Typography)`
 `
 const TextStaff = styled(Typography)`
   font-size: 40px;
-  @font-face {
-    src: url(font/KolkerBrush-Regular.ttf);
-  }
-  font-family: Times New Roman Times;
   line-height: 40px;
   font-weight: 800;
   color: #000000;
@@ -138,14 +84,20 @@ const TextStaff = styled(Typography)`
   }
 `
 const ItemMostStaff = styled(Paper)`
+  display: inline-block;
+  width: 300px;
+  margin-right: 20px;
   box-shadow: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   @media (max-width: 768px) {
     height: 300px;
   }
 `
-const ImgService = styled('img')`
+const ImgService = styled(Avatar)`
   width: 100%;
-  height: 350px;
+  height: 250px;
   @media (max-width: 768px) {
     height: 150px;
   }
@@ -163,10 +115,8 @@ const Position = styled(Typography)`
   }
 `
 const Descriptions = styled(Typography)`
-  color: #00000;
   font-size: 12px;
   line-height: 20px;
-  font-family: Times New Roman;
   letter-spacing: 1px;
   text-transform: uppercase;
   @media (max-width: 768px) {
@@ -178,7 +128,6 @@ const NameStaff = styled(Typography)`
   font-size: 25px;
   line-height: 25px;
   font-weight: 700;
-  font-family: Times New Roman;
   margin-top: 10px;
   margin-bottom: 10px;
   @media (max-width: 768px) {

@@ -2,6 +2,7 @@ import { Box, Stack, styled } from '@mui/material'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import LoginBg from '../../assets/img/login-bg.jpg'
+import Toastify from '../../components/Toastify'
 
 const AuthLayout = () => {
   return (
@@ -12,6 +13,7 @@ const AuthLayout = () => {
           alignItems='center'
           sx={{ width: { xs: '100%', md: '55%' }, px: { xs: '15px', md: '0' } }}
         >
+          <Toastify />
           <Outlet />
         </Stack>
         <RightSide sx={{ display: { xs: 'none', md: 'block' } }}>

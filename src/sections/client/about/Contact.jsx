@@ -79,10 +79,6 @@ const Contact = () => {
               <b>1900 636 648</b>
             </p>
           </Stack>
-          <Des3>
-            (Bấm 109 - Phòng kinh doanh <br />
-            Bấm 103 - Phòng kỹ thuật)
-          </Des3>
         </Box>
       </Container>
     </Box>

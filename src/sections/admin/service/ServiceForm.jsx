@@ -20,6 +20,7 @@ import { modules, formats } from '../../../components/EditorToolbar'
 
 import { useNavigate, useParams } from 'react-router-dom'
 import { uploadImage } from '../../../utils/uploadImage'
+import { toast } from 'react-toastify'
 
 const defaultFormValues = {
   name: '',
@@ -72,9 +73,9 @@ const ServiceForm = () => {
     const end = 22
 
     const listTimeSlot = []
-
+    let timeSlot = start
     for (let i = start; i < end; i++) {
-      const timeSlot = i + (15 + duration) / 60
+      timeSlot = timeSlot + (15 + duration) / 60
       if (end - timeSlot < duration / 60) continue
       listTimeSlot.push(timeSlot)
     }
@@ -107,7 +108,6 @@ const ServiceForm = () => {
       }
     } else {
       if (id) {
-        console.log(id)
         return handleUpdateService(id, {
           ...values,
           categoryId: values.category,
@@ -123,30 +123,29 @@ const ServiceForm = () => {
   const handleAddService = async (service) => {
     try {
       const data = await serviceApi.create(service)
-      console.log(data)
+      toast.dark('Thêm mới thành công')
       setTimeout(() => {
         navigate('/admin/services-management')
       }, 2000)
     } catch (error) {
-      console.log(error)
+      toast.dark('Thêm mới thất bại')
     }
   }
 
   const handleUpdateService = async (id, service) => {
     try {
       const data = await serviceApi.update(id, service)
-      console.log(data)
+      toast.dark('Cập nhật thành công')
       setTimeout(() => {
         navigate('/admin/services-management')
       }, 2000)
     } catch (error) {
-      console.log(error)
+      toast.dark('Cập nhật thất bại')
     }
   }
   const handleGetOneService = async (id) => {
     try {
       const data = await serviceApi.getOne(id)
-      console.log(data)
       setDescription(data.desc)
       setImg(data.image)
       reset({

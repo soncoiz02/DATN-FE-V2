@@ -15,7 +15,8 @@ const Intro = () => {
         <Grid sx={{ flexGrow: 1 }} container spacing={3}>
           <Grid
             item
-            xs={3}
+            xs={12}
+            md={3}
             sx={{
               paddingLeft: '20px',
             }}
@@ -24,7 +25,8 @@ const Intro = () => {
           </Grid>
           <Grid
             item
-            xs={3}
+            xs={12}
+            md={3}
             sx={{
               paddingLeft: '20px',
             }}
@@ -33,7 +35,8 @@ const Intro = () => {
           </Grid>
           <Grid
             item
-            xs={2}
+            xs={12}
+            md={6}
             sx={{
               paddingLeft: '20px',
             }}
@@ -41,7 +44,6 @@ const Intro = () => {
             <Stack
               sx={{
                 paddingLeft: '60px',
-                width: '600px',
                 height: '100%',
               }}
             >
@@ -64,7 +66,9 @@ const Intro = () => {
                 bệnh lý. Đội ngũ của Beauty Paradaise luôn tận tâm, hết lòng vì sự hài lòng, sức
                 khoẻ và sắc đẹp của khách hàng.
               </DescriptTion>
-              <Linnk href='/'>Xem chi tiết</Linnk>
+              <Linnk underline='none' href='/'>
+                Xem chi tiết
+              </Linnk>
             </Stack>
           </Grid>
         </Grid>
@@ -79,6 +83,9 @@ const StyleBackground = styled('img')`
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
+
   @media (max-width: 768px) {
     height: 150px;
   }
@@ -108,7 +115,6 @@ const DescriptTion = styled(Typography)`
 `
 
 const Linnk = styled(Link)({
-  fontStyle: 'italic',
   boxShadow: 'none',
   fontSize: '16px',
   padding: '15px 25px',

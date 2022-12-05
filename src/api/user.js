@@ -51,6 +51,15 @@ const userApis = {
   createStaff(data) {
     return axiosClient.post('staff', data)
   },
+  getAllStaff() {
+    return axiosClient.get('/staff')
+  },
+  verifyEmail(email) {
+    return axiosClient.post('/verify-email', email)
+  },
+  resetPassword(data) {
+    return axiosClient.post('/reset-password', data)
+  },
 }
 
 export default userApis

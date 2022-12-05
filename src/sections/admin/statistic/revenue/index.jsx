@@ -64,14 +64,6 @@ const lineChartOptions = {
       display: true,
       position: 'left',
     },
-    y1: {
-      type: 'linear',
-      display: true,
-      position: 'right',
-      grid: {
-        drawOnChartArea: false,
-      },
-    },
   },
 }
 
@@ -172,7 +164,6 @@ const StatisticRevenue = () => {
         data: dataFilter[index],
         backgroundColor: color,
         borderColor: color,
-        yAxisID: 'y',
         tension: 0.5,
       }
     })

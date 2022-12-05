@@ -32,19 +32,11 @@ const ServiceRated = () => {
   return (
     <>
       <Box sx={{ padding: { md: '70px 0', xs: '50px 0' } }}>
-        <Container
-          maxWidth='xl'
-          sx={{
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
+        <Container maxWidth='xl'>
           <Box>
             <Stack
               sx={{
-                marginBottom: { lg: '60px', md: '50px', sx: '40px', xs: '20px' },
+                marginBottom: { lg: '60px', md: '50px', sm: '40px', xs: '20px' },
                 textAlign: 'center',
               }}
             >
@@ -55,7 +47,7 @@ const ServiceRated = () => {
               <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 2 }}>
                 {listServiceRated &&
                   listServiceRated.map((item) => (
-                    <Grid container item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={3}>
                       <ItemMostRate>
                         <Stack
                           direction={{ xs: 'column', md: 'row' }}
@@ -157,7 +149,7 @@ const ItemMostRate = styled(Paper)`
   padding: 20px;
   box-shadow: none;
   border-radius: 10px;
-  background-color: #ffddcb;
+  background-color: #fffbef;
   @media (max-width: 1024px) {
     padding: 20px;
   }

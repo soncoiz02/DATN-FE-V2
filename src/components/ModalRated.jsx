@@ -55,13 +55,11 @@ const ratedValues = [
 
 const socket = getSocket()
 
-const ModalRated = ({ openModal, onCloseModal }) => {
+const ModalRated = ({ openModal, onCloseModal, serviceId }) => {
   const [isCheckedIndex, setIsCheckedIndex] = useState(-1)
   const [ratedNumber, setRatedNumber] = useState(0)
   const [ratedComment, setRatedComment] = useState('')
   const { userInfo } = useAuth()
-
-  const serviceId = useParams().id
 
   const isFormDirty = () => {
     if (!ratedComment || !ratedNumber) return true
