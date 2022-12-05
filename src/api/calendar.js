@@ -33,8 +33,8 @@ const calendarApi = {
   getDetailOrder(id) {
     return axiosClient.get(`/order/${id}`)
   },
-  getFutureOrder(storeId) {
-    return axiosClient.get(`/getFutureOrderByStore/${storeId}`)
+  getFutureOrder(params) {
+    return axiosClient.get(`/getFutureOrder${params ? `?${queryString.stringify(params)}` : ''}`)
   },
   addUpdateActivity(data) {
     return axiosClient.post('/activityLog', data)

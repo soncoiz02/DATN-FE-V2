@@ -12,11 +12,17 @@ import {
   Typography,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, NavLink } from 'react-router-dom'
 import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
+import Notification from '../../components/Notification'
 import useAuth from '../../hook/useAuth'
+import Logo from '../../assets/img/logo.png'
+import getSocket from '../../utils/socket'
+import { toast } from 'react-toastify'
+
+const socket = getSocket()
 
 const Header = ({ openMenu }) => {
   const headerRef = useRef(null)
@@ -36,6 +42,14 @@ const Header = ({ openMenu }) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
+  useEffect(() => {
+    socket.on('receive-user-notify', (data) => {
+      if (userInfo?._id === data.userId) {
+        toast.dark(data.content)
+      }
+    })
+  }, [socket])
+
   return (
     <HeaderWrapper ref={headerRef}>
       <Container maxWidth='xl' sx={{ height: '100%', pt: 1, pb: 1 }}>
@@ -45,8 +59,16 @@ const Header = ({ openMenu }) => {
           justifyContent='space-between'
           alignItems='center'
         >
-          <Typography variant='h2'>Logo</Typography>
-          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+          <Stack direction='row' alignItems='center' gap={1}>
+            <Avatar
+              src={Logo}
+              sx={{ width: { xs: '35px', md: '50px' }, height: { xs: '35px', md: '50px' } }}
+            />
+            <Typography variant='h3' color='primary'>
+              Beauty Paradise
+            </Typography>
+          </Stack>
+          <Stack direction='row' gap={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
             <StyledLink variant='h5' underline='none' component={NavLink} to='/'>
               Trang chủ
             </StyledLink>
@@ -58,22 +80,26 @@ const Header = ({ openMenu }) => {
             </StyledLink>
           </Stack>
           {!isLogin ? (
-            <Stack direction='row' gap={1} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-              <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
-                Đăng ký
-              </MainButton>
-              <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
-                Đăng nhập
-              </MainButton>
-            </Stack>
+            <>
+              <IconButton
+                color='primary'
+                sx={{ display: { xs: 'flex', md: 'none' } }}
+                onClick={openMenu}
+              >
+                <Menu />
+              </IconButton>
+              <Stack direction='row' gap={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <MainButton colorType='neutral' component={RouterLink} to='/auth/register'>
+                  Đăng ký
+                </MainButton>
+                <MainButton colorType='primary' component={RouterLink} to='/auth/login'>
+                  Đăng nhập
+                </MainButton>
+              </Stack>
+            </>
           ) : (
-            <Stack direction='row'>
-              <IconButton color='primary'>
-                <Sms />
-              </IconButton>
-              <IconButton color='primary'>
-                <Notifications />
-              </IconButton>
+            <Stack direction='row' gap={1} alignItems='center'>
+              <Notification />
               <IconButton
                 color='primary'
                 sx={{ display: { xs: 'flex', md: 'none' } }}
@@ -102,7 +128,7 @@ const Header = ({ openMenu }) => {
                       <CustomLink
                         underline='none'
                         component={RouterLink}
-                        to='service-register-history'
+                        to='service-register-history?page=1'
                       >
                         <Assignment />
                         <Typography variant='body1'>Dịch vụ đăng ký</Typography>

@@ -16,14 +16,17 @@ import RHFDatePicker from '../../../../components/ReactHookForm/RHFDatePicker'
 import useAuth from '../../../../hook/useAuth'
 import { getStatusColor } from '../../../../utils/aboutColor'
 import MainButton from '../../../../components/MainButton'
+import { useLocation } from 'react-router-dom'
 
-const FilterForm = ({ setQueryParams, onLoading }) => {
+const FilterForm = ({ currentParams, setQueryParams, onLoading }) => {
   const { userInfo } = useAuth()
   const [serviceOptions, setServiceOptions] = useState([])
   const [staffOptions, setStaffOptions] = useState([])
   const [statusOptions, setStatusOptions] = useState([])
 
   const [isCollapse, setIsCollapse] = useState(false)
+
+  const { pathname } = useLocation()
 
   const methods = useForm({
     defaultValues: {
@@ -44,16 +47,17 @@ const FilterForm = ({ setQueryParams, onLoading }) => {
       ...(values.status && { status: values.status.id }),
       ...(values.search && { search: values.search }),
       ...(values.date && { date: values.date.toISOString() }),
-      page: 1,
-      limit: 10,
     }
-    setQueryParams(queryParams)
+    setQueryParams({
+      ...currentParams,
+      ...queryParams,
+    })
   }
 
   const handleResetFilter = () => {
     onLoading()
     reset()
-    setQueryParams({ page: 1, limit: 10 })
+    setQueryParams(pathname.includes('calendar-list') ? { page: 1, limit: 10 } : null)
   }
 
   const handleGetStatus = async () => {
@@ -105,7 +109,7 @@ const FilterForm = ({ setQueryParams, onLoading }) => {
   }, [])
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: { md: 3, xs: 0 } }}>
       <Stack>
         <Stack direction='row' alignItems='center' justifyContent='space-between'>
           <Typography variant='h2'>Lọc</Typography>
@@ -140,13 +144,28 @@ const FilterForm = ({ setQueryParams, onLoading }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                sm={pathname.includes('calendar-list') ? 6 : 4}
+                md={pathname.includes('calendar-list') ? 3 : 4}
+              >
                 <RHFAutoCompleteRenderImg name='service' label='Dịch vụ' options={serviceOptions} />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                sm={pathname.includes('calendar-list') ? 6 : 4}
+                md={pathname.includes('calendar-list') ? 3 : 4}
+              >
                 <RHFAutoCompleteRenderImg name='staff' label='Nhân viên' options={staffOptions} />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                sm={pathname.includes('calendar-list') ? 6 : 4}
+                md={pathname.includes('calendar-list') ? 3 : 4}
+              >
                 <RHFAutoComplete
                   name='status'
                   label='Trạng thái'
@@ -169,9 +188,11 @@ const FilterForm = ({ setQueryParams, onLoading }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <RHFDatePicker name='date' />
-              </Grid>
+              {pathname.includes('calendar-list') && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <RHFDatePicker name='date' label='Chọn ngày' />
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <Stack direction='row' justifyContent='flex-end' gap={1}>
                   <MainButton

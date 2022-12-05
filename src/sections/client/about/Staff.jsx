@@ -5,7 +5,7 @@ const Staff = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC99',
+        background: '#FFF0F5',
         padding: '70px 0',
         margin: '0 0 30px',
       }}
@@ -17,6 +17,7 @@ const Staff = () => {
           textAlign: 'center',
           justifyContent: 'center',
         }}
+        spacing={{ xs: 1, sm: 2, md: 4 }}
       >
         <Stack>
           <TitleIntroduce>Beauty Paradise</TitleIntroduce>
@@ -29,17 +30,19 @@ const Staff = () => {
           }}
         >
           <Stack>
-            <Grid container spacing={1} justifyContent='center'>
+            <Grid container spacing={5} justifyContent='center' alignContent='center'>
               <Grid
                 container
                 item
-                xs={3}
+                xs={6}
                 sm={3}
                 md={3}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  width: '500px',
+                  alignContent: 'center',
                 }}
               >
                 <ItemMostStaff>
@@ -56,19 +59,20 @@ const Staff = () => {
               <Grid
                 container
                 item
-                xs={3}
+                xs={6}
                 sm={3}
                 md={3}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  width: '500px',
                 }}
               >
                 <ItemMostStaff>
                   <ImgService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/team-2.jpg' />
                   <NameStaff>Mandy Johnson</NameStaff>
-                  <Position padding='10px'>Thai Massage</Position>
+                  <Position padding='10px'>Thai Massage trị liệu</Position>
                   <Descriptions padding='10px'>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean egestas magna at
                     portitor.
@@ -79,19 +83,20 @@ const Staff = () => {
               <Grid
                 container
                 item
-                xs={3}
+                xs={6}
                 sm={3}
                 md={3}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  width: '500px',
                 }}
               >
                 <ItemMostStaff>
                   <ImgService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/team-1.jpg' />
                   <NameStaff>Hanna Zafron</NameStaff>
-                  <Position padding='10px'>Chuyên gia Spa thảo dược</Position>
+                  <Position padding='10px'>Chuyên gia thảo dược</Position>
                   <Descriptions padding='10px'>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean egestas magna at
                     portitor.
@@ -108,13 +113,8 @@ const Staff = () => {
 }
 const TitleIntroduce = styled(Typography)`
   font-size: 30px;
-  @font-face {
-    src: url(font/KolkerBrush-Regular.ttf);
-  }
-  font-family: Display;
-  font-style: italic;
   line-height: 30px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ff6073;
   text-transform: uppercase;
   margin: 0 0 20px 0;
@@ -189,6 +189,7 @@ const ButtonCustom = styled(Button)({
   boxShadow: 'none',
   fontSize: '13px',
   padding: '10px 15px',
+  margin: '25px 25px',
   border: '1px solid',
   lineHeight: 1.5,
   borderColor: '#FF6073',

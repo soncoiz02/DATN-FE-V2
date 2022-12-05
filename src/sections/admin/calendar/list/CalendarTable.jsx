@@ -54,7 +54,6 @@ const CalendarTable = () => {
           <Stack>
             {cellData.map((item) => (
               <Stack gap={1} direction='row' alignItems='center'>
-                <Avatar variant='rounded' src={item.service.image} />
                 <Typography variant='body2'>{item.service.name}</Typography>
               </Stack>
             ))}
@@ -148,7 +147,11 @@ const CalendarTable = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
-      <FilterForm setQueryParams={setQueryParams} onLoading={() => setIsLoading(true)} />
+      <FilterForm
+        currentParams={queryParams}
+        setQueryParams={setQueryParams}
+        onLoading={() => setIsLoading(true)}
+      />
       <DataGridCustom
         loading={isLoading}
         rows={rows}

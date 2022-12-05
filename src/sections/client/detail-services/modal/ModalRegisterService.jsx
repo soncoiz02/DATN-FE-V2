@@ -49,6 +49,7 @@ import getSocket from '../../../../utils/socket'
 import { grey } from '@mui/material/colors'
 import ModalVoucher from './ModalVoucher'
 import AnotherService from './AnotherService'
+import { toast } from 'react-toastify'
 
 const registerStep = [
   {
@@ -78,7 +79,6 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   const [userServiceRegisteredTime, setUserServiceRegisteredTime] = useState([])
   const [timeSlotCheckByStaff, setTimeSlotCheckByStaff] = useState([])
 
-  const serviceId = useParams().id
   const { userInfo, isLogin } = useAuth()
 
   const [voucherAnchor, setVoucherAnchor] = useState(null)
@@ -153,7 +153,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       },
       servicesRegistered: [
         {
-          service: serviceId,
+          service: serviceInfo._id,
           timeStart: startDate,
           timeEnd: endDate,
         },
@@ -241,7 +241,7 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }
 
   const handleVerify = () => {
-    if (isLogin === false) return alert('You need to login')
+    if (isLogin === false) return toast.dark('Bạn cần phải đăng nhập để đăng ký dịch vụ này')
     if (!timeRange?.value) return setTimeRange({ error: true, value: null })
     setActiveStep(activeStep + 1)
   }
@@ -268,9 +268,10 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       }
 
       socket.emit('send-notify', { storeId: serviceInfo.categoryId.storeId, notifyData })
+      toast.dark('Đăng ký thành công')
       handleCloseModal()
     } catch (error) {
-      console.log(error)
+      toast.dark('Đăng ký thất bại')
     }
   }
 
@@ -308,11 +309,12 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
   }
 
   useEffect(() => {
-    if (isLogin)
+    if (isLogin) {
       socket.on('connect', () => {
         console.log(socket.id)
       })
-    fillUserData()
+      fillUserData()
+    }
   }, [])
 
   return (

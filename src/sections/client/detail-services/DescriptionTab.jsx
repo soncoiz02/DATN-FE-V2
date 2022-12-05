@@ -1,5 +1,6 @@
-import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Stack, styled, Typography } from '@mui/material'
 import React from 'react'
+import parse from 'html-react-parser'
 
 const DescriptionTab = ({ index, value, serviceInfo, ...other }) => {
   return (
@@ -13,22 +14,7 @@ const DescriptionTab = ({ index, value, serviceInfo, ...other }) => {
       {value === index && (
         <Stack gap={3}>
           <Stack gap={2}>
-            <TitleText variant='h3'>Giới thiệu</TitleText>
-            <Typography variant='h5'>{serviceInfo.desc}</Typography>
-          </Stack>
-          <Stack gap={2}>
-            <TitleText variant='h3'>Quy trình</TitleText>
-            <Stack gap={3}>
-              {serviceInfo.steps.map((step, index) => (
-                <Stack direction='row' gap={3} key={step._id}>
-                  <Circle>{index + 1}</Circle>
-                  <Stack sx={{ width: 'calc(100% - 64px)' }}>
-                    <Typography variant='h3'>{step.title}</Typography>
-                    <Typography variant='subtitle2'>{step.desc}</Typography>
-                  </Stack>
-                </Stack>
-              ))}
-            </Stack>
+            <Typography variant='h5'>{parse(serviceInfo.desc)}</Typography>
           </Stack>
         </Stack>
       )}

@@ -17,7 +17,10 @@ import MainButton from '../../../../../components/MainButton'
 import useAuth from '../../../../../hook/useAuth'
 import { dateFormat, formatDateToHour } from '../../../../../utils/dateFormat'
 import formatPrice from '../../../../../utils/formatPrice'
+import getSocket from '../../../../../utils/socket'
 import { getHtmlTemplate } from './htmlTemplate'
+
+const socket = getSocket()
 
 const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
   const [detailOrder, setDetailOrder] = useState()
@@ -33,7 +36,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
   const handleAcceptPay = () => {
     const storeInfo = userInfo.storeId
     const serviceUsed = detailOrder.servicesRegistered
-    const user = detailOrder.userId
+    const user = detailOrder.infoUser
 
     const htmlTemplate = getHtmlTemplate({
       storeInfo,
@@ -58,7 +61,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
     const emailOption = {
       from: userInfo.email,
       to: detailOrder.infoUser.email,
-      subject: `${storeInfo.name} gửi bạn hóa đơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.`,
+      subject: `Beauty Paradise gửi bạn hóa đơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.`,
       html: htmlTemplate,
     }
 
@@ -68,6 +71,15 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
   const handleCreateBill = async (data) => {
     try {
       await calendarApi.createBill(data)
+      const notifyData = {
+        content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+          detailOrder.startDate,
+        )} ngày ${dateFormat(detailOrder.startDate)} đã được thanh toán`,
+        userId: detailOrder.userId,
+        storeId: userInfo.storeId,
+      }
+      socket.emit('send-notify-to-user', notifyData)
+      socket.emit('change-status')
       getListOrder()
       handleCloseModal()
     } catch (error) {

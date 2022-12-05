@@ -67,18 +67,34 @@ const ServiceForm = () => {
 
   const { handleSubmit, reset } = methods
 
+  const handleCalculateTimeSlot = (duration) => {
+    const start = 8
+    const end = 22
+
+    const listTimeSlot = []
+
+    for (let i = start; i < end; i++) {
+      const timeSlot = i + (15 + duration) / 60
+      if (end - timeSlot < duration / 60) continue
+      listTimeSlot.push(timeSlot)
+    }
+
+    return listTimeSlot
+  }
+
   const onSubmit = async (values) => {
+    const timeSlot = handleCalculateTimeSlot(+values.duration)
     if (imgUpload) {
       const imgURL = await uploadImage(imgUpload)
       setImgUpload(null)
       setImg('')
       if (id) {
-        console.log(id)
         return handleUpdateService(id, {
           ...values,
           categoryId: values.category,
           image: imgURL,
           desc: description,
+          timeSlot,
         })
       } else {
         return handleAddService({
@@ -86,6 +102,7 @@ const ServiceForm = () => {
           categoryId: values.category,
           image: imgURL,
           desc: description,
+          timeSlot,
         })
       }
     } else {
@@ -95,6 +112,7 @@ const ServiceForm = () => {
           ...values,
           categoryId: values.category,
           desc: description,
+          timeSlot,
         })
       } else {
         alert('Bạn vui lòng chọn ảnh dịch vụ')
@@ -128,6 +146,7 @@ const ServiceForm = () => {
   const handleGetOneService = async (id) => {
     try {
       const data = await serviceApi.getOne(id)
+      console.log(data)
       setDescription(data.desc)
       setImg(data.image)
       reset({
@@ -139,7 +158,7 @@ const ServiceForm = () => {
     }
   }
 
-  const handleGetServices = async () => {
+  const handleGetCategory = async () => {
     try {
       const data = await categoryApi.getAll()
       const options = data.map((category) => ({ id: category._id, label: category.name }))
@@ -164,9 +183,8 @@ const ServiceForm = () => {
   useEffect(() => {
     if (id) {
       handleGetOneService(id)
-    } else {
-      handleGetServices()
     }
+    handleGetCategory()
   }, [id])
 
   return (
@@ -265,8 +283,15 @@ const ServiceForm = () => {
               </Grid>
 
               <Grid item xs={12} marginTop={{ xs: '80px', sm: '60px', lg: '60px' }}>
-                <Stack>
-                  <MainButton sx={{ ml: 'auto' }} type='submit' colorType='primary'>
+                <Stack direction='row' gap={2} justifyContent='flex-end'>
+                  <MainButton
+                    type='button'
+                    colorType='neutral'
+                    onClick={() => navigate('/admin/services-management')}
+                  >
+                    Hủy
+                  </MainButton>
+                  <MainButton type='submit' colorType='primary'>
                     Xác nhận
                   </MainButton>
                 </Stack>

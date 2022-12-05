@@ -2,6 +2,7 @@ import { Notifications } from '@mui/icons-material'
 import {
   Badge,
   Box,
+  CircularProgress,
   ClickAwayListener,
   Divider,
   IconButton,
@@ -19,6 +20,7 @@ import notifyApi from '../api/notify'
 import useAuth from '../hook/useAuth'
 import { dateFormat, formatDateToHour } from '../utils/dateFormat'
 import getSocket from '../utils/socket'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const socket = getSocket()
 
@@ -29,13 +31,26 @@ const Notification = () => {
 
   const [listNotify, setListNotify] = useState([])
 
-  const handleGetNotify = async () => {
+  const [pageNum, setPageNum] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+
+  const fetchMoreData = () => {
+    if (listNotify.data.length === listNotify.total) return setHasMore(false)
+    const newPage = pageNum + 1
+    setPageNum(newPage)
+    handleGetNotify(newPage)
+  }
+
+  const handleGetNotify = async (pageNum) => {
     try {
       if (userInfo?.roleId.name === 'Admin') {
-        const data = await notifyApi.getStoreNotify(userInfo.storeId)
+        const data = await notifyApi.getStoreNotify(userInfo.storeId, pageNum)
         setListNotify(data)
       } else if (userInfo?.roleId.name === 'Staff') {
-        const data = await notifyApi.getStaffNotify(token)
+        const data = await notifyApi.getStaffNotify(token, pageNum)
+        setListNotify(data)
+      } else {
+        const data = await notifyApi.getUserNotify(token, pageNum)
         setListNotify(data)
       }
     } catch (error) {
@@ -45,14 +60,21 @@ const Notification = () => {
 
   const handleIsRead = (notifyId, status) => {
     if (status === 1) return
-    socket.emit('update-notify-status', notifyId)
+    socket.emit(
+      'update-notify-status',
+      userInfo?.roleId.name === 'Admin' ? { notifyId, type: 'store' } : { notifyId, type: 'user' },
+    )
   }
 
   useEffect(() => {
-    handleGetNotify()
+    handleGetNotify(pageNum)
     socket.on('receive-new-notify', () => {
-      console.log('dsasa')
-      handleGetNotify()
+      handleGetNotify(pageNum)
+    })
+    socket.on('receive-user-notify', (data) => {
+      if (userInfo._id === data.userId) {
+        handleGetNotify(pageNum)
+      }
     })
   }, [socket])
 
@@ -60,44 +82,54 @@ const Notification = () => {
     <ClickAwayListener onClickAway={() => setAnchor(null)}>
       <Box>
         <IconButton onClick={(e) => setAnchor(anchor ? null : e.currentTarget)}>
-          <Badge
-            badgeContent={listNotify.filter((item) => !item.status).length}
-            color='warning'
-            max={99}
-          >
+          <Badge badgeContent={listNotify?.totalUnread} color='warning' max={99}>
             <Notifications color='primary' />
           </Badge>
         </IconButton>
         <Popper open={open} anchorEl={anchor} placement='top-end' sx={{ zIndex: 1500 }}>
           <NotifyWrapper>
-            {listNotify.length > 0 ? (
-              listNotify.map((notify) => (
-                <div key={notify._id}>
-                  <NotifyItem onClick={() => handleIsRead(notify._id, notify.status)}>
-                    <Typography variant='h4' color={!notify.status ? 'primary' : ''}>
-                      Thông báo
-                    </Typography>
-                    <Typography variant='body2' color={!notify.status ? '' : 'text.primaryChannel'}>
-                      {notify.content}
-                    </Typography>
-                    <Typography
-                      variant='body2'
-                      color={!notify.status ? '' : 'text.primaryChannel'}
-                      sx={{ alignSelf: 'flex-end' }}
-                    >
-                      {formatDateToHour(new Date(notify.createdAt))} -{' '}
-                      {dateFormat(new Date(notify.createdAt))}
-                    </Typography>
-                    {!notify.status ? <Dot /> : null}
-                  </NotifyItem>
-                  <Divider />
-                </div>
-              ))
-            ) : (
-              <Typography variant='body2' sx={{ p: 2 }} textAlign='center'>
-                Bạn không có thông báo nào
-              </Typography>
-            )}
+            <InfiniteScroll
+              dataLength={listNotify.total}
+              next={fetchMoreData}
+              loader={
+                <Typography variant='h6' sx={{ textAlign: 'center' }}>
+                  Đang tải...
+                </Typography>
+              }
+              hasMore={hasMore}
+            >
+              {listNotify.data?.length > 0 ? (
+                listNotify.data.map((notify) => (
+                  <div key={notify._id}>
+                    <NotifyItem onClick={() => handleIsRead(notify._id, notify.status)}>
+                      <Typography variant='h4' color={!notify.status ? 'primary' : ''}>
+                        Thông báo
+                      </Typography>
+                      <Typography
+                        variant='body2'
+                        color={!notify.status ? '' : 'text.primaryChannel'}
+                      >
+                        {notify.content}
+                      </Typography>
+                      <Typography
+                        variant='body2'
+                        color={!notify.status ? '' : 'text.primaryChannel'}
+                        sx={{ alignSelf: 'flex-end' }}
+                      >
+                        {formatDateToHour(new Date(notify.createdAt))} -{' '}
+                        {dateFormat(new Date(notify.createdAt))}
+                      </Typography>
+                      {!notify.status ? <Dot /> : null}
+                    </NotifyItem>
+                    <Divider />
+                  </div>
+                ))
+              ) : (
+                <Typography variant='body2' sx={{ p: 2 }} textAlign='center'>
+                  Bạn không có thông báo nào
+                </Typography>
+              )}
+            </InfiniteScroll>
           </NotifyWrapper>
         </Popper>
       </Box>

@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import Footer from './Footer'
 import Header from './Header'
 import MobileMenu from './MobileMenu'
+import Toastify from '../../components/Toastify'
 
 const ClientLayout = () => {
   const [openMenuMobile, setOpenMenuMobile] = useState(false)
@@ -17,6 +18,7 @@ const ClientLayout = () => {
         <Box sx={{ marginTop: '60px' }}>
           <Outlet />
         </Box>
+        <Toastify />
       </Stack>
       <Footer />
     </>

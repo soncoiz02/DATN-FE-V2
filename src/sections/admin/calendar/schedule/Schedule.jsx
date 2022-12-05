@@ -51,7 +51,8 @@ import DialogConfirm from './DialogConfirm'
 import ModalEditOrder from './modal-form/ModalEditOrder'
 import ModalPay from './modal-pay/ModalPay'
 import { statusId } from '../../../../api/calendar'
-import { formatDateToHour } from '../../../../utils/dateFormat'
+import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
+import FilterForm from '../list/FilterForm'
 
 const socket = getSocket()
 
@@ -71,11 +72,14 @@ const Calendar = () => {
   })
 
   const theme = useTheme()
-  const appointments = useSelector((state) => state.serviceRegister.listFiltered)
   const statuses = useSelector((state) => state.order.status)
+  const appointments = useSelector((state) => state.serviceRegister.list)
   const dispatch = useDispatch()
 
   const { userInfo } = useAuth()
+
+  const [queryParams, setQueryParams] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   // component
 
@@ -113,7 +117,13 @@ const Calendar = () => {
     }
 
     const disableStart = (status) => {
-      return status !== statusId.accepted
+      let haveStaff = true
+
+      if (userInfo.roleId.name === 'Staff') {
+        haveStaff = appointmentData.servicesRegistered[0].staff._id === userInfo._id
+      }
+
+      return status !== statusId.accepted || !haveStaff
     }
 
     const disableAccepted = (status) => {
@@ -293,6 +303,15 @@ const Calendar = () => {
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
       socket.emit('change-status')
+      const detailOrder = appointments.find((item) => item.id === orderId)
+      const data = {
+        content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+          detailOrder.startDate,
+        )} ngày ${dateFormat(detailOrder.startDate)} đã bị hủy`,
+        userId: detailOrder.customer,
+        storeId: userInfo.storeId,
+      }
+      socket.emit('send-notify-to-user', data)
     } catch (error) {
       console.log(error)
     }
@@ -304,11 +323,36 @@ const Calendar = () => {
       const activityLog = {
         userId: userInfo._id,
         orderId,
-        content: `Cập nhật trạng thái thành ${detailStatus.name}`,
+        content:
+          statusType === 'accepted'
+            ? `Đã xác nhận đơn`
+            : `Cập nhật trạng thái thành ${detailStatus.name}`,
       }
       await calendarApi.changeStatus(orderId, statusType)
       await calendarApi.addUpdateActivity(activityLog)
       socket.emit('change-status')
+      const detailOrder = appointments.find((item) => item.id === orderId)
+      if (statusType === 'accepted') {
+        const data = {
+          content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+            detailOrder.startDate,
+          )} ngày ${dateFormat(detailOrder.startDate)} đã được xác nhận`,
+          userId: detailOrder.customer,
+          storeId: userInfo.storeId,
+        }
+        socket.emit('send-notify-to-user', data)
+      }
+      if (statusType === 'paid') {
+        console.log(statusType)
+        const data = {
+          content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+            detailOrder.startDate,
+          )} ngày ${dateFormat(detailOrder.startDate)} đã được thanh toán`,
+          userId: detailOrder.customer,
+          storeId: userInfo.storeId,
+        }
+        socket.emit('send-notify-to-user', data)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -322,9 +366,9 @@ const Calendar = () => {
     }
   }
 
-  const handleGetListOrder = async () => {
+  const handleGetListOrder = async (queryParams) => {
     try {
-      const data = await calendarApi.getFutureOrder(userInfo.storeId)
+      const data = await calendarApi.getFutureOrder(queryParams)
       const appointments = data.map((item) => {
         return {
           id: item._id,
@@ -333,6 +377,7 @@ const Calendar = () => {
           title: item.infoUser.name + ' - ' + item.infoUser.phone,
           status: item.status._id,
           servicesRegistered: item.servicesRegistered,
+          customer: item.userId,
         }
       })
 
@@ -373,9 +418,12 @@ const Calendar = () => {
   }
 
   useEffect(() => {
-    handleGetListOrder()
     handleGetResources()
   }, [])
+
+  useEffect(() => {
+    handleGetListOrder(queryParams)
+  }, [queryParams])
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -392,7 +440,12 @@ const Calendar = () => {
 
   return (
     <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' } }}>
-      <Stack gap={3} width={{ xs: '400px', sm: 'auto' }}>
+      <Stack gap={3}>
+        <FilterForm
+          currentParams={queryParams}
+          setQueryParams={setQueryParams}
+          onLoading={() => setIsLoading(true)}
+        />
         <Scheduler data={appointments} locale='vi-VN' height={800}>
           <ViewState
             currentDate={currentDate}

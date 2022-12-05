@@ -1,6 +1,11 @@
-import React, { Suspense, lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Loading from '../components/Loading'
+import Authentication from '../guards/Authentication'
+import CheckAuth from '../guards/CheckAuth'
+import CheckStaff from '../guards/CheckStaff'
+import StaffForm from '../pages/admin/staff/StaffForm'
+import RevenueStatistic from '../pages/admin/statistic/revenue'
 import AboutPage from '../pages/client/about'
 import ServicePage from '../pages/client/service'
 
@@ -19,7 +24,6 @@ const Voucher = lazy(() => import('../pages/admin/voucher/VoucherList'))
 const Login = lazy(() => import('../pages/auth/Login'))
 const Register = lazy(() => import('../pages/auth/Register'))
 const DetailService = lazy(() => import('../pages/client/detail-service'))
-const DetailStore = lazy(() => import('../pages/client/detail-store'))
 const HomePage = lazy(() => import('../pages/client/home'))
 const ServiceRegister = lazy(() => import('../pages/client/service-register-history'))
 const Store = lazy(() => import('../pages/client/store'))
@@ -31,16 +35,35 @@ const TabPost = lazy(() => import('../sections/client/detail-store/TabsItem/TabP
 const TabRate = lazy(() => import('../sections/client/detail-store/TabsItem/TabRate'))
 const TabServices = lazy(() => import('../sections/client/detail-store/TabsItem/TabServices'))
 const UserList = lazy(() => import('../pages/admin/user/index'))
+const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
+const StaffManagement = lazy(() => import('../pages/admin/staff'))
+const DetailServiceRegistered = lazy(() =>
+  import('../pages/client/service-register-history/detail'),
+)
 
 const Router = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path='/' element={<ClientLayout />}>
+        <Route
+          path='/'
+          element={
+            <CheckAuth>
+              <ClientLayout />
+            </CheckAuth>
+          }
+        >
           <Route index element={<HomePage />} />
           <Route path='store' element={<Store />} />
           <Route path='about' element={<AboutPage />} />
-          <Route path='account-setting' element={<AccountSetting />}>
+          <Route
+            path='account-setting'
+            element={
+              <Authentication>
+                <AccountSetting />
+              </Authentication>
+            }
+          >
             <Route path='account-info' element={<Accountinfo />} />
             <Route path='change-password' element={<Changepassword />} />
           </Route>
@@ -48,13 +71,37 @@ const Router = () => {
             <Route index element={<ServicePage />} />
             <Route path=':id' element={<DetailService />} />
           </Route>
-          <Route path='service-register-history' element={<ServiceRegister />} />
+          <Route path='service-register-history'>
+            <Route
+              index
+              element={
+                <Authentication>
+                  <ServiceRegister />
+                </Authentication>
+              }
+            />
+            <Route
+              path=':id'
+              element={
+                <Authentication>
+                  <DetailServiceRegistered />
+                </Authentication>
+              }
+            />
+          </Route>
         </Route>
         <Route path='auth' element={<AuthLayout />}>
           <Route path='login' element={<Login />} />
           <Route path='register' element={<Register />} />
         </Route>
-        <Route path='/admin' element={<AdminLayout />}>
+        <Route
+          path='/admin'
+          element={
+            <Authentication>
+              <AdminLayout />
+            </Authentication>
+          }
+        >
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='services-statistic' element={<ServiceStatistic />} />
           <Route path='calendar-schedule' element={<CalendarManagement />} />
@@ -65,6 +112,92 @@ const Router = () => {
           <Route path='category-management' element={<CategoryServices />} />
           <Route path='voucher-management' element={<Voucher />} />
           <Route path='users-management' element={<UserList />} />
+          <Route path='services-management'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <ServiceList />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='add'
+              element={
+                <CheckStaff>
+                  <ServiceAdd />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path=':id/rated'
+              element={
+                <CheckStaff>
+                  <ServiceRated />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='edit/:id'
+              element={
+                <CheckStaff>
+                  <ServiceUpdate />
+                </CheckStaff>
+              }
+            />
+          </Route>
+          <Route
+            path='category-management'
+            element={
+              <CheckStaff>
+                <CategoryServices />
+              </CheckStaff>
+            }
+          />
+          <Route path='staff'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <StaffManagement />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path='add'
+              element={
+                <CheckStaff>
+                  <StaffForm />
+                </CheckStaff>
+              }
+            />
+            <Route
+              path=':id/edit'
+              element={
+                <CheckStaff>
+                  <StaffForm />
+                </CheckStaff>
+              }
+            />
+          </Route>
+          <Route
+            path='voucher-management'
+            element={
+              <CheckStaff>
+                <Voucher />
+              </CheckStaff>
+            }
+          />
+          <Route path='statistic'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <RevenueStatistic />
+                </CheckStaff>
+              }
+            />
+          </Route>
         </Route>
       </Routes>
     </Suspense>

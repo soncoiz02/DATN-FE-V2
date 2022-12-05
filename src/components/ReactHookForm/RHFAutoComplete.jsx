@@ -16,7 +16,6 @@ export const RHFAutoComplete = ({ name, options, ...other }) => {
           onChange={(_, data) => onChange(data)}
           options={options}
           getOptionLabel={(option) => option.label || ''}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
           disablePortal
           renderInput={(params) => (
             <TextField

@@ -6,7 +6,7 @@ const Introducetion = () => {
   return (
     <Box
       sx={{
-        background: '#FFBC97',
+        background: 'linear-gradient(to right bottom, #ffcad4, #e9fffe)',
         padding: { md: '70px 0', xs: '50px 0' },
       }}
     >
@@ -32,11 +32,14 @@ const Introducetion = () => {
           >
             <Stack
               sx={{
-                backgroundColor: '#fff',
+                backgroundColor: 'rgba(255,255,255,0.5)',
                 paddingTop: '0px',
                 width: '100%',
                 height: '100%',
                 padding: { lg: '50px', md: '40px', sm: '30px', xs: '25px' },
+                borderRadius: '10px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 0 20px rgba(0,0,0,0.15)',
               }}
             >
               <TitleIntroduce>TRẢI NGHIỆM DỊCH VỤ</TitleIntroduce>
@@ -71,6 +74,8 @@ const StyleBackground = styled('img')`
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 `
 
 const TitleIntroduce = styled(Typography)`

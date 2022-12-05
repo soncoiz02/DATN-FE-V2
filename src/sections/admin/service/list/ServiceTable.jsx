@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { MoreVert, Edit, Delete, Search, FilterAlt } from '@mui/icons-material'
+import { MoreVert, Edit, Delete, Search, FilterAlt, RateReview } from '@mui/icons-material'
 import DataGridCustom from '../../../../components/DataGridCustom'
 import GlassBox from '../../../../components/GlassBox'
 import serviceApi from '../../../../api/service'
@@ -27,6 +27,10 @@ const ServiceTable = () => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
+
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [rowCount, setRowCount] = useState(0)
 
   const handleOpenPopper = (event, id) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -56,9 +60,8 @@ const ServiceTable = () => {
     {
       field: 'categoryId',
       headerName: 'Danh mục',
-      width: isMobile ? 120 : 140,
+      width: isMobile ? 120 : 200,
       valueGetter: (params) => {
-        console.log(params)
         return `${params.row.categoryId.name}`
       },
     },
@@ -77,14 +80,6 @@ const ServiceTable = () => {
       flex: isMobile ? 0 : 1,
       valueGetter: (params) => {
         return `${params.row.duration} phút`
-      },
-    },
-    {
-      field: 'totalStaff',
-      headerName: 'Nhân viên',
-      flex: isMobile ? 0 : 1,
-      valueGetter: (params) => {
-        return `${params.row.totalStaff} người`
       },
     },
     {
@@ -110,6 +105,12 @@ const ServiceTable = () => {
             </IconButton>
             <Popper open={open} anchorEl={anchorEl} placement='left-start'>
               <GlassBox sx={{ padding: '3px', borderRadius: '10px', bgcolor: 'white' }}>
+                <MenuItem component={Link} to={`${idService}/rated`}>
+                  <RateReview fontSize='small' />
+                  <Typography variant='body1' sx={{ padding: '0 5px' }}>
+                    Đánh giá
+                  </Typography>
+                </MenuItem>
                 <MenuItem component={Link} to={`edit/${idService}`}>
                   <Edit fontSize='small' />
                   <Typography variant='body1' sx={{ padding: '0 5px' }}>
@@ -130,47 +131,59 @@ const ServiceTable = () => {
     },
   ]
 
-  const handleGetService = async () => {
+  const handleGetService = async (pageNum) => {
     try {
-      const data = await serviceApi.getAll()
-      const rowData = data.map((item, index) => ({
+      const data = await serviceApi.getServicePerPage(pageNum)
+      const rowData = data.data.map((item, index) => ({
         ...item,
         index: index + 1,
         id: item._id,
       }))
+      setRowCount(data.total)
       setRows(rowData)
+      setIsLoading(false)
     } catch (error) {
       console.log(error)
     }
   }
 
+  const handlePageChange = (pageNum) => {
+    setIsLoading(true)
+    setPage(pageNum + 1)
+  }
+
   useEffect(() => {
-    handleGetService()
-  }, [])
+    handleGetService(page)
+  }, [page])
 
   return (
-    <GlassBox sx={{ overflowX: 'auto', padding: { xs: '15px', sm: '30px' }, height: '800px' }}>
+    <GlassBox
+      sx={{
+        overflowX: 'auto',
+        overflowY: 'none',
+        padding: { xs: '15px', sm: '30px' },
+        height: '850px',
+      }}
+    >
       <Grid container paddingBottom={{ md: '50px', xs: '15px' }}>
         <Grid item xs={10} md={6}>
-          <form action=''>
-            <GlassBox
-              sx={{
-                p: '5px 5px 5px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                width: 1,
-                height: '50px',
-                borderRadius: '10px',
-              }}
-            >
-              <Search />
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder='Tìm kiếm dịch vụ ...'
-                inputProps={{ 'aria-label': 'Tìm kiếm dịch vụ' }}
-              />
-            </GlassBox>
-          </form>
+          <GlassBox
+            sx={{
+              p: '5px 5px 5px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              width: 1,
+              height: '50px',
+              borderRadius: '10px',
+            }}
+          >
+            <Search />
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder='Tìm kiếm dịch vụ ...'
+              inputProps={{ 'aria-label': 'Tìm kiếm dịch vụ' }}
+            />
+          </GlassBox>
         </Grid>
         <Grid
           item
@@ -183,7 +196,18 @@ const ServiceTable = () => {
           </IconButton>
         </Grid>
       </Grid>
-      <DataGridCustom rows={rows} columns={columns} />
+      <DataGridCustom
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        pageSize={10}
+        page={page - 1}
+        paginationMode='server'
+        pagination
+        rowsPerPageOptions={[10]}
+        onPageChange={(page) => handlePageChange(page)}
+        rowCount={rowCount}
+      />
     </GlassBox>
   )
 }

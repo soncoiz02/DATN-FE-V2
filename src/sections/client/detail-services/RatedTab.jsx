@@ -4,10 +4,8 @@ import {
   Box,
   Button,
   Divider,
-  Grid,
   LinearProgress,
   List,
-  ListItem,
   ListItemAvatar,
   Rating,
   Stack,
@@ -15,29 +13,77 @@ import {
   Typography,
 } from '@mui/material'
 import { yellow } from '@mui/material/colors'
-import React, { useState } from 'react'
-import { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import serviceApi from '../../../api/service'
-import ListStar from '../../../components/ListStar'
+import MainButton from '../../../components/MainButton'
 import ModalRated from '../../../components/ModalRated'
+import useAuth from '../../../hook/useAuth'
 import calculateDayLeft from '../../../utils/calculateDayLeft'
+import getSocket from '../../../utils/socket'
+
+const socket = getSocket()
 
 const RatedTab = ({ index, value, serviceId, ...other }) => {
+  const { token } = useAuth()
   const [openModal, setOpenModal] = useState(false)
   const [serviceRated, setServiceRated] = useState()
+  const [userRated, setUserRated] = useState(false)
+  const [haveUsedService, setHaveUsedService] = useState(false)
+  const [page, setPage] = useState(1)
+  const [listRated, setListRated] = useState([])
 
-  const handleGetServiceRated = async (id) => {
+  const handleGetServiceRated = async (id, page) => {
     try {
-      const data = await serviceApi.getRated(id)
-      setServiceRated(data)
+      const data = await serviceApi.getServiceRatedPerPage(page, id)
+      setServiceRated({
+        total: data.total,
+        avg: data.avg,
+        detailRated: data.detailRated,
+      })
+      setListRated([...listRated, ...data.listRated])
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getUserRated = async () => {
+    try {
+      const data = await serviceApi.getUserRated(token, serviceId)
+      setUserRated(data.haveRated)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getServiceUsedByUser = async () => {
+    try {
+      const data = await serviceApi.getServiceUsedByUser(token, serviceId)
+      setHaveUsedService(data.haveUsedService)
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    if (serviceId) handleGetServiceRated(serviceId)
-  }, [serviceId])
+    if (token) {
+      getUserRated()
+      getServiceUsedByUser()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (serviceId) handleGetServiceRated(serviceId, page)
+  }, [serviceId, page])
+
+  useEffect(() => {
+    socket.on('receive-new-rated', () => {
+      handleGetServiceRated(serviceId, page)
+      if (token) {
+        getUserRated()
+        getServiceUsedByUser()
+      }
+    })
+  }, [socket])
 
   return (
     <div
@@ -66,7 +112,7 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
                   <Typography variant='body1'>Đánh giá trung bình</Typography>
                   <Stack direction='row' gap={1} alignItems='center'>
                     <Stack direction='row' alignItems='center'>
-                      <PrimaryColorText>{serviceRated.avgRated}</PrimaryColorText>
+                      <PrimaryColorText>{+serviceRated.avg.toFixed(1)}</PrimaryColorText>
                       <Typography variant='subtitile1'>/5.0</Typography>
                     </Stack>
                     <Star sx={{ color: yellow[600], fontSize: '30px' }} />
@@ -103,6 +149,7 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
                     startIcon={<Edit />}
                     variant='outlined'
                     onClick={() => setOpenModal(true)}
+                    disabled={userRated || !haveUsedService || !token}
                   >
                     Đánh giá của bạn
                   </CustomOutlineButton>
@@ -110,24 +157,35 @@ const RatedTab = ({ index, value, serviceId, ...other }) => {
               </Stack>
               <List sx={{ width: '100%' }}>
                 <Stack gap={3}>
-                  {serviceRated.list.map((item) => (
+                  {listRated?.map((item) => (
                     <Stack direction='row' gap={3} key={item._id}>
                       <ListItemAvatar>
-                        <Avatar sx={{ width: '50px', height: '50px' }} />
+                        <Avatar src={item.userId.avt} sx={{ width: '50px', height: '50px' }} />
                       </ListItemAvatar>
-                      <Stack gap={1}>
+                      <Stack gap={0.5}>
                         <Stack gap={1} direction='row' alignItems='center'>
+                          <Typography variant='h3'>{item.userId.name}</Typography>
+                          |
                           <Rating value={item.rate} readOnly />
                           <Typography variant='body2'>
                             {calculateDayLeft(item.createdAt)}
                           </Typography>
                         </Stack>
-                        <Typography variant='body1'>{item.content}</Typography>
+                        <Typography variant='body2'>{item.content}</Typography>
                       </Stack>
                     </Stack>
                   ))}
                 </Stack>
               </List>
+              {listRated?.length < serviceRated.total && (
+                <MainButton
+                  onClick={() => setPage(page + 1)}
+                  sx={{ alignSelf: 'center', px: 3 }}
+                  colorType='primary'
+                >
+                  Xem thêm
+                </MainButton>
+              )}
             </>
           )}
         </Stack>
@@ -146,7 +204,7 @@ const PrimaryColorText = styled('span')(({ theme }) => ({
   },
 }))
 
-const CustomProgress = styled(LinearProgress)({
+export const CustomProgress = styled(LinearProgress)({
   height: '8px',
   borderRadius: '50px',
   '.MuiLinearProgress-bar': {

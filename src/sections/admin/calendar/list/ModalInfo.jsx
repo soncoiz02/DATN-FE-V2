@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react'
 import serviceApi from '../../../../api/service'
 import GlassBox from '../../../../components/GlassBox'
 import { getStatusColor } from '../../../../utils/aboutColor'
-import { dateFormat } from '../../../../utils/dateFormat'
+import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
 import formatPrice from '../../../../utils/formatPrice'
 
 const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
@@ -63,44 +63,72 @@ const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
               <Close />
             </IconButton>
             <Stack gap={2}>
-              <Typography variant='h2' color='text.secondary'>
-                Thông tin lịch đặt
-              </Typography>
+              <Typography variant='h2'>Thông tin lịch đặt</Typography>
               <Stack gap={1}>
-                <Typography variant='h3' color='text.primaryChannel'>
-                  Thông tin khách hàng
-                </Typography>
+                <Typography variant='h3'>Thông tin khách hàng</Typography>
                 <Stack>
                   <Typography variant='body1'>
-                    Họ tên: <PrimaryText>{registeredServiceInfo.infoUser.name}</PrimaryText>
+                    Họ tên: {registeredServiceInfo.infoUser.name}
                   </Typography>
                   <Typography variant='body1'>
-                    Số điện thoại: <PrimaryText>{registeredServiceInfo.infoUser.phone}</PrimaryText>
-                  </Typography>
-                  <Typography variant='body1'>
-                    Thời gian: {renderDateFormated(registeredServiceInfo.startDate)}
+                    Số điện thoại: {registeredServiceInfo.infoUser.phone}
                   </Typography>
                 </Stack>
               </Stack>
               <Stack gap={1}>
-                <Typography variant='h3' color='text.primaryChannel'>
-                  Dịch vụ đăng ký
-                </Typography>
-                <Stack direction='row' gap={2}>
-                  <Avatar
-                    src={registeredServiceInfo.serviceId.image}
-                    variant='rounded'
-                    sx={{ width: '80px', height: '80px' }}
-                  />
-                  <Stack gap={1}>
-                    <Typography variant='h3' color='primary'>
-                      {registeredServiceInfo?.serviceId.name}
-                    </Typography>
-                    <Typography variant='h4' color='primary'>
-                      {formatPrice(registeredServiceInfo.serviceId.price)}
-                    </Typography>
-                  </Stack>
+                <Typography variant='h3'>Dịch vụ đăng ký</Typography>
+                <Stack direction='row' gap={5}>
+                  {registeredServiceInfo &&
+                    registeredServiceInfo.servicesRegistered.map((item) => (
+                      <Stack direction='row' gap={2}>
+                        <Avatar
+                          src={item.service.image}
+                          variant='rounded'
+                          sx={{ width: '60px', height: '60px' }}
+                        />
+                        <Stack>
+                          <Typography variant='h4'>{item.service.name}</Typography>
+                          <Typography variant='body2' color='primary'>
+                            {formatPrice(item.service.price)}
+                          </Typography>
+                          <Typography variant='body2'>
+                            {formatDateToHour(item.timeStart)} - {formatDateToHour(item.timeEnd)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    ))}
                 </Stack>
+              </Stack>
+              <Stack gap={0.5}>
+                <Typography variant='h3'>Voucher</Typography>
+                {registeredServiceInfo.voucher ? (
+                  <Chip
+                    sx={{ alignSelf: 'flex-start' }}
+                    variant='outlined'
+                    label={`${registeredServiceInfo.voucher.title} - Giảm ${registeredServiceInfo.voucher.discount}%`}
+                    color='primary'
+                  />
+                ) : (
+                  <Typography variant='body2'>Không có voucher nào được sử dụng</Typography>
+                )}
+              </Stack>
+              <Stack gap={1}>
+                <Typography variant='h3'>Lịch sử hoạt động</Typography>
+                {registeredServiceInfo &&
+                  registeredServiceInfo.activityLog.map((item) => (
+                    <Stack direction='row' gap={2}>
+                      <Avatar src={item.userId.avt} sx={{ width: '30px', height: '30px' }} />
+                      <Stack>
+                        <Typography variant='h4'>{item.userId.name}</Typography>
+                        <Typography variant='body2'>{item.content}</Typography>
+                        {item.createdAt && (
+                          <Typography variant='body2'>{`${formatDateToHour(
+                            item.createdAt,
+                          )} - ${dateFormat(item.createdAt)}`}</Typography>
+                        )}
+                      </Stack>
+                    </Stack>
+                  ))}
               </Stack>
               <Chip
                 label={registeredServiceInfo.status.name}
