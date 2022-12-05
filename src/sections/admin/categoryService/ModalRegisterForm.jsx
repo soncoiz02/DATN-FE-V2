@@ -12,6 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import categoryApi from '../../../api/category'
 
 import { Close } from '@mui/icons-material'
+import { toast } from 'react-toastify'
 
 const defaultFormValues = {
   name: '',
@@ -44,9 +45,10 @@ const ModalRegisterForm = ({ openModalRegister, onCloseModal, confirm }) => {
       await categoryApi.registerCategoryService(data)
       reset(defaultFormValues)
       confirm()
+      toast.dark('Thêm mới thành công')
       onCloseModal()
     } catch (error) {
-      console.log(error)
+      toast.dark('Thêm mới thất bại')
     }
   }
 

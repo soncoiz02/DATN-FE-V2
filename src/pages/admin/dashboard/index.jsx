@@ -1,57 +1,33 @@
+import { Equalizer, PieChart, TrendingUp } from '@mui/icons-material'
+import { Box, Card, Grid, IconButton, Skeleton, Stack, Typography } from '@mui/material'
 import React from 'react'
-import { Box, IconButton, Grid, Typography, Card, Stack, Button } from '@mui/material'
-import { ArrowUpward, Equalizer, PieChart, TrendingUp } from '@mui/icons-material'
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js'
-import { Line } from 'react-chartjs-2'
+import { useEffect, useState } from 'react'
+import statisticApi from '../../../api/statistic'
 import GlassBox from '../../../components/GlassBox'
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Doanh thu năm nay',
-    },
-  },
-}
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-
-function randomNumberInRange(min, max) {
-  // 👇️ get number between min (inclusive) and max (inclusive)
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => randomNumberInRange(0, 1000)),
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-  ],
-}
+import StatisticRevenue from '../../../sections/admin/statistic/revenue'
+import formatPrice from '../../../utils/formatPrice'
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true)
+  const [dashboardStatistic, setDashboardStatistic] = useState()
+
+  const handleGetDashBoardStatisitc = async () => {
+    try {
+      const data = await statisticApi.getDashboardStatistic()
+      setDashboardStatistic(data)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    handleGetDashBoardStatisitc()
+  }, [])
+
   return (
-    <>
+    <Stack gap={2}>
       <Box sx={{ flexGrow: 1, marginTop: '63px' }}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
@@ -73,8 +49,8 @@ const Dashboard = () => {
                 justifyContent='space-between'
                 alignItems={{ xs: 'center' }}
               >
-                <Typography variant='body2' color='text.secondary'>
-                  Doanh thu tuần này
+                <Typography variant='h3' color='text.secondary'>
+                  Tổng doanh thu
                 </Typography>
                 <IconButton>
                   <Equalizer
@@ -88,17 +64,14 @@ const Dashboard = () => {
               </Stack>
               <Typography
                 variant='h2'
-                color='text.secondary'
+                color='primary'
                 sx={{ marginTop: '9px', lineHeight: '32.63px' }}
               >
-                12,315,000 VNĐ
-              </Typography>
-              <Typography
-                variant='h6'
-                color='text.secondary'
-                sx={{ display: 'flex', justifyContent: 'end', color: '#229B16', marginTop: '8px' }}
-              >
-                12% <ArrowUpward />
+                {loading ? (
+                  <Skeleton width={150} height={20} />
+                ) : (
+                  formatPrice(dashboardStatistic.totalRevenue)
+                )}
               </Typography>
             </Card>
           </Grid>
@@ -121,8 +94,8 @@ const Dashboard = () => {
                 justifyContent='space-between'
                 alignItems={{ xs: 'center' }}
               >
-                <Typography variant='body2' color='text.secondary'>
-                  Tổng dịch vụ được đăng ký
+                <Typography variant='h3' color='text.secondary'>
+                  Tổng số lịch đặt
                 </Typography>
                 <IconButton>
                   <TrendingUp
@@ -136,17 +109,10 @@ const Dashboard = () => {
               </Stack>
               <Typography
                 variant='h2'
-                color='text.secondary'
+                color='primary'
                 sx={{ marginTop: '9px', lineHeight: '32.63px' }}
               >
-                50
-              </Typography>
-              <Typography
-                variant='h6'
-                color='text.secondary'
-                sx={{ display: 'flex', justifyContent: 'end', color: '#229B16', marginTop: '8px' }}
-              >
-                12% <ArrowUpward />
+                {loading ? <Skeleton width={150} height={20} /> : dashboardStatistic.totalOrder}
               </Typography>
             </Card>
           </Grid>
@@ -169,8 +135,8 @@ const Dashboard = () => {
                 justifyContent='space-between'
                 alignItems={{ xs: 'center' }}
               >
-                <Typography variant='body2' color='text.secondary'>
-                  Số người dùng mới
+                <Typography variant='h3' color='text.secondary'>
+                  Tổng số người dùng
                 </Typography>
                 <IconButton>
                   <PieChart
@@ -184,61 +150,19 @@ const Dashboard = () => {
               </Stack>
               <Typography
                 variant='h2'
-                color='text.secondary'
+                color='primary'
                 sx={{ marginTop: '9px', lineHeight: '32.63px' }}
               >
-                12
-              </Typography>
-              <Typography
-                variant='h6'
-                color='text.secondary'
-                sx={{ display: 'flex', justifyContent: 'end', color: '#229B16', marginTop: '8px' }}
-              >
-                12% <ArrowUpward />
+                {loading ? <Skeleton width={150} height={20} /> : dashboardStatistic.totalUser}
               </Typography>
             </Card>
           </Grid>
         </Grid>
       </Box>
-      ,
       <GlassBox>
-        <Line options={options} data={data} />
-        <Stack
-          direction={{ xs: 'row' }}
-          justifyContent='flex-start'
-          alignItems={{ xs: 'start' }}
-          sx={{ marginTop: '10px' }}
-        >
-          <Button
-            variant='secondary'
-            onClick={(e) => {
-              e.currentTarget.getAttribute('data-button-key')
-            }}
-            data-button-key='day'
-          >
-            Ngày
-          </Button>
-          <Button
-            variant='secondary'
-            onClick={(e) => {
-              e.currentTarget.getAttribute('data-button-key')
-            }}
-            data-button-key='week'
-          >
-            Tuần
-          </Button>
-          <Button
-            variant='secondary'
-            onClick={(e) => {
-              e.currentTarget.getAttribute('data-button-key')
-            }}
-            data-button-key='month'
-          >
-            Tháng
-          </Button>
-        </Stack>
+        <StatisticRevenue />
       </GlassBox>
-    </>
+    </Stack>
   )
 }
 

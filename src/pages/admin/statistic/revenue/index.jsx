@@ -22,15 +22,13 @@ const RevenueStatistic = () => {
         Thông kê chung
       </Typography>
       <Grid container spacing={3} sx={{ pb: 5 }}>
+        <BestStatistic />
         <Grid item xs={12} md={8}>
           <GlassBox>
             <Stack gap={1}>
               <StatisticRevenue />
             </Stack>
           </GlassBox>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <BestStatistic />
         </Grid>
         <ServiceRevenue />
       </Grid>

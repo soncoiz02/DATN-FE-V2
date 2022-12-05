@@ -11,20 +11,8 @@ const AboutPage = () => {
     <Box>
       <Header />
       <Intro />
-      <center>
-        <iframe
-          width='900'
-          height='506'
-          src='https://www.youtube.com/embed/br3ig82_SgI'
-          title='Four Seasons Milan - Luxury Spa Breaks Await'
-          frameborder='0'
-          allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-          allowfullscreen
-          item='center'
-        ></iframe>
-      </center>
       <Staff />
-      <CustomerReview />
+      {/* <CustomerReview /> */}
       <Contact />
     </Box>
   )

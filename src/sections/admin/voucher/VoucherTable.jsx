@@ -45,8 +45,8 @@ const VoucherTable = () => {
     },
     {
       field: 'title',
-      headerName: 'Tên voucher',
-      width: isMobile ? 130 : 180,
+      headerName: 'Tiêu đề voucher',
+      flex: 1,
       valueGetter: (params) => {
         return `${params.row.title}`
       },
@@ -54,7 +54,7 @@ const VoucherTable = () => {
     {
       field: 'discount',
       headerName: 'Giảm',
-      width: isMobile ? 130 : 180,
+      width: isMobile ? 50 : 80,
       valueGetter: (params) => {
         return `${params.row.discount}%`
       },
@@ -78,7 +78,7 @@ const VoucherTable = () => {
     {
       field: 'status',
       headerName: 'Trạng thái',
-      width: isMobile ? 130 : 180,
+      flex: 1,
       renderCell: (params) => {
         const cellData = params.row.isUsed
         if (cellData === true) return <Chip label='Đã sử dụng' color='success' />
@@ -89,18 +89,10 @@ const VoucherTable = () => {
     {
       field: 'action',
       headerName: '',
-      flex: isMobile ? 0 : 1,
+      flex: 1,
       renderCell: (params) => {
         return (
           <Stack direction='row' gap={3}>
-            <MenuItem
-              onClick={() => {
-                setRegisterId(params.id)
-                setOpenModal(true)
-              }}
-            >
-              <RemoveRedEye color='secondary' />
-            </MenuItem>
             <MenuItem
               onClick={() => {
                 setRegisterId(params.id)

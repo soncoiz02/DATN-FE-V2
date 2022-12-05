@@ -7,7 +7,7 @@ export const getStatusColor = (type) => {
   return 'default'
 }
 
-export const getRandomColor = () => {
+export const getColorByIndex = (index) => {
   const listColor = [
     '#54BAB9',
     '#F675A8',
@@ -19,6 +19,5 @@ export const getRandomColor = () => {
     '#CDF0EA',
     '#FFF89A',
   ]
-  const randomColor = listColor[Math.floor(Math.random() * listColor.length)]
-  return randomColor
+  return listColor[index]
 }

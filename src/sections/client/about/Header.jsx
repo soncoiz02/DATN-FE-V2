@@ -52,7 +52,6 @@ const Header = () => {
             }}
           >
             <TextMainBanner>GIỚI THIỆU</TextMainBanner>
-            <TextBanner>Trang chủ/Giới thiệu</TextBanner>
           </Stack>
         </Box>
       </Box>
@@ -75,9 +74,7 @@ const TextMainBanner = styled(Typography)`
   white-space: normal;
   font-size: 80px;
   line-height: 80px;
-  font-weight: 900;
-  font-bold: 600px;
-  font-family: Times New Roman Times;
+  font-weight: 700;
   color: rgb(0, 0, 0);
   visibility: inherit;
   transition: none 0s ease 0s;
@@ -100,7 +97,6 @@ const TextBanner = styled(Typography)`
   font-size: 25px;
   line-height: 25px;
   font-weight: 900;
-  font-family: Arial Helvetica;
   color: rgb(0, 0, 0);
   visibility: inherit;
   transition: none 0s ease 0s;

@@ -1,13 +1,10 @@
-import React from 'react'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, RadialLinearScale } from 'chart.js'
-import { Doughnut, Pie, PolarArea } from 'react-chartjs-2'
-import GlassBox from '../../../../components/GlassBox'
+import { Grid, Stack } from '@mui/material'
+import { ArcElement, Chart as ChartJS, Legend, RadialLinearScale, Tooltip } from 'chart.js'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Pie } from 'react-chartjs-2'
 import statisticApi from '../../../../api/statistic'
-import { useCallback } from 'react'
-import { useEffect } from 'react'
-import { getRandomColor } from '../../../../utils/aboutColor'
-import { useState } from 'react'
-import { Grid } from '@mui/material'
+import GlassBox from '../../../../components/GlassBox'
+import { getColorByIndex } from '../../../../utils/aboutColor'
 
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend)
 
@@ -19,8 +16,8 @@ const ServiceRevenue = () => {
     try {
       const responseData = await statisticApi.getServiceRevenue()
 
-      const listColor1 = responseData.map((item) => getRandomColor())
-      const listColor2 = responseData.map((item) => getRandomColor())
+      const listColor1 = responseData.map((item, index) => getColorByIndex(index))
+      const listColor2 = responseData.map((item, index) => getColorByIndex(index))
 
       const serviceRevenueData = {
         labels: responseData.map((item) => item.service.name),
@@ -61,8 +58,8 @@ const ServiceRevenue = () => {
   }, [])
 
   return (
-    <>
-      <Grid item xs={12} md={6}>
+    <Grid item xs={12} md={4}>
+      <Stack gap={2}>
         <GlassBox>
           {serviceRevenue && (
             <Pie
@@ -78,8 +75,6 @@ const ServiceRevenue = () => {
             />
           )}
         </GlassBox>
-      </Grid>
-      <Grid item xs={12} md={6}>
         <GlassBox>
           {serviceUsed && (
             <Pie
@@ -95,8 +90,8 @@ const ServiceRevenue = () => {
             />
           )}
         </GlassBox>
-      </Grid>
-    </>
+      </Stack>
+    </Grid>
   )
 }
 

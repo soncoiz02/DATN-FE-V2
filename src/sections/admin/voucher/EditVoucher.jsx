@@ -95,7 +95,7 @@ const EditVoucher = ({ openModalEdit, onCloseModal, registerId, resetVoucher, co
         <GlassBox sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }} opacity={1}>
           <Stack gap={3}>
             <Typography variant='h2' color='text.secondary' margin='normal'>
-              Sửa danh mục dịch vụ
+              Sửa voucher
             </Typography>
             <IconButton sx={{ position: 'absolute', top: 20, right: 20 }} onClick={onCloseModal}>
               <Close />

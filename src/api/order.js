@@ -23,6 +23,9 @@ const orderApi = {
       },
     })
   },
+  getOrderByService(serviceId) {
+    return axiosClient.get(`/get-order-by-service?serviceId=${serviceId}`)
+  },
 }
 
 export default orderApi

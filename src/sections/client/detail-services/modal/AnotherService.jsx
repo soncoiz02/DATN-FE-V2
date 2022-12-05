@@ -19,7 +19,7 @@ const AnotherService = ({
   const handleGetListServices = async () => {
     try {
       const data = await userApis.getStaffInTimeSlotAllService(storeId, nextTimeSlot, date)
-      setListServices(data)
+      setListServices(data.filter((item) => item.status))
     } catch (error) {
       console.log(error)
     }

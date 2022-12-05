@@ -29,6 +29,7 @@ import AssignStaff from './AssignStaff'
 import formatPrice from '../../../../../utils/formatPrice'
 import OtherService from './OtherService'
 import getSocket from '../../../../../utils/socket'
+import { toast } from 'react-toastify'
 
 const defaultFormValue = {
   name: '',
@@ -340,29 +341,22 @@ const ModalEditOrder = ({
       }
 
       await serviceApi.registerService(registerData)
+      toast.dark('Thêm lịch đặt thành công')
       getListOrder()
       handleCloseModal()
-      onOpenAlert()
-      setAlertInfo({
-        message: 'Tạo mới lịch đặt thành công',
-        type: 'success',
-      })
     } catch (error) {
-      onOpenAlert()
-      setAlertInfo({
-        message: 'Tạo mới lịch đặt thất bại',
-        type: 'error',
-      })
+      toast.dark('Thêm lịch đặt thất bại')
     }
   }
 
   const updateOrder = async (data) => {
     try {
       await calendarApi.updateOrder(data, currentOrder._id)
+      toast.dark('Cập nhật thành công')
       getListOrder()
       handleCloseModal()
     } catch (error) {
-      console.log(error)
+      toast.dark('Cập nhật thất bại')
     }
   }
 

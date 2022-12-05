@@ -1,5 +1,6 @@
 import { Grid, Stack } from '@mui/material'
 import {
+  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
@@ -7,7 +8,6 @@ import {
   LineElement,
   PointElement,
   Title,
-  BarElement,
   Tooltip,
 } from 'chart.js'
 import { startOfDay } from 'date-fns'
@@ -20,7 +20,7 @@ import MainButton from '../../../../components/MainButton'
 import { RHFAutoComplete } from '../../../../components/ReactHookForm/RHFAutoComplete'
 import RHFDatePicker from '../../../../components/ReactHookForm/RHFDatePicker'
 import RHFProvider from '../../../../components/ReactHookForm/RHFProvider'
-import { getRandomColor } from '../../../../utils/aboutColor'
+import { getColorByIndex } from '../../../../utils/aboutColor'
 import { dateFormat } from '../../../../utils/dateFormat'
 
 const TYPE_OPTS = [
@@ -63,14 +63,6 @@ const lineChartOptions = {
       type: 'linear',
       display: true,
       position: 'left',
-    },
-    y1: {
-      type: 'linear',
-      display: true,
-      position: 'right',
-      grid: {
-        drawOnChartArea: false,
-      },
     },
   },
 }
@@ -166,13 +158,12 @@ const StatisticRevenue = () => {
     })
 
     const chartDataset = listServices.map((service, index) => {
-      const color = getRandomColor()
+      const color = getColorByIndex(index)
       return {
         label: service.name,
         data: dataFilter[index],
         backgroundColor: color,
         borderColor: color,
-        yAxisID: 'y',
         tension: 0.5,
       }
     })

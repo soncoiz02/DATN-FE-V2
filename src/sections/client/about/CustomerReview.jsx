@@ -1,6 +1,5 @@
-import { Box, Container, Divider, Grid, Stack, Typography } from '@mui/material'
+import { Box, Container, Divider, Grid, Stack, Typography, styled } from '@mui/material'
 import React from 'react'
-import styled from 'styled-components'
 const CustomerReview = () => {
   return (
     <Box
@@ -88,19 +87,20 @@ const TitleIntroduce = styled(Typography)`
   font-size: 25px;
   line-height: 20px;
   font-weight: 800;
-  color: #00000;
+  color: #000000;
   text-transform: uppercase;
   margin: 10px 10px 10px 10px;
+
   @media (max-width: 768px) {
     font-size: 12px;
   }
 `
 
 const ImageTool = styled('img')`
-  padding: 10px
+  padding: 10px;
   height: 80px;
   width: 80px;
-  color: #00000;
+  color: #000000;
 `
 const DescriptTion = styled(Typography)`
   text-align: justify;

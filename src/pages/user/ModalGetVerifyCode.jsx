@@ -12,6 +12,7 @@ import {
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import userApis from '../../api/user'
 import GlassBox from '../../components/GlassBox'
 import MainButton from '../../components/MainButton'
@@ -42,7 +43,10 @@ const ModalGetVerifyCode = ({ open, onClose, changePassword }) => {
 
   const handleVerifyCode = () => {
     if (+verifyValue !== +verifyCode) {
-      return alert('Sai mã xác nhận')
+      return toast.dark('Sai mã xác nhận')
+    }
+    if (countDown === 0) {
+      return toast.dark('Mã xác nhận đã hết hạn')
     }
     changePassword()
     closeModal()

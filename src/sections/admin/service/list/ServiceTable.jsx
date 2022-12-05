@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import {
   Avatar,
   Chip,
+  Container,
   Grid,
   IconButton,
   InputBase,
   MenuItem,
+  Modal,
   Popper,
   Stack,
   Typography,
@@ -18,6 +20,9 @@ import DataGridCustom from '../../../../components/DataGridCustom'
 import GlassBox from '../../../../components/GlassBox'
 import serviceApi from '../../../../api/service'
 import formatPrice from '../../../../utils/formatPrice'
+import orderApi from '../../../../api/order'
+import { toast } from 'react-toastify'
+import MainButton from '../../../../components/MainButton'
 
 const ServiceTable = () => {
   const [rows, setRows] = useState([])
@@ -31,6 +36,8 @@ const ServiceTable = () => {
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [rowCount, setRowCount] = useState(0)
+
+  const [openModal, setOpenModal] = useState(false)
 
   const handleOpenPopper = (event, id) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -117,7 +124,7 @@ const ServiceTable = () => {
                     Chỉnh sửa
                   </Typography>
                 </MenuItem>
-                <MenuItem anchorEl={anchorEl}>
+                <MenuItem anchorEl={anchorEl} onClick={() => setOpenModal(true)}>
                   <Delete fontSize='small' color='primary' />
                   <Typography variant='body1' color='primary' sx={{ padding: '0 5px' }}>
                     Xóa
@@ -130,6 +137,37 @@ const ServiceTable = () => {
       },
     },
   ]
+
+  const handleDelete = (id) => {
+    setIsLoading(true)
+    handleGetOrderByService(id)
+  }
+
+  const handleGetOrderByService = async (serviceId) => {
+    try {
+      const data = await orderApi.getOrderByService(serviceId)
+      if (data.length > 0) {
+        toast.dark(`Bạn không thể xóa dịch vụ này khi đã có ${data.length} lịch đặt`)
+        setIsLoading(false)
+      } else {
+        deleteService(serviceId)
+      }
+      setOpenModal(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteService = async (id) => {
+    try {
+      await serviceApi.delete(id)
+      setIsLoading(false)
+      toast.dark(`Xóa dịch vụ thành công`)
+      handleGetService(page)
+    } catch (error) {
+      toast.dark(`Xóa dịch vụ thất bại`)
+    }
+  }
 
   const handleGetService = async (pageNum) => {
     try {
@@ -165,6 +203,36 @@ const ServiceTable = () => {
         height: '850px',
       }}
     >
+      <Modal open={openModal} onClose={() => setOpenModal(true)}>
+        <Container
+          maxWidth='sm'
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100vh',
+            justifyContent: 'center',
+            py: { xs: '15px', md: '30px' },
+          }}
+        >
+          <GlassBox opacity={1}>
+            <Stack gap={2}>
+              <Typography variant='h3'>Bạn chắc chắn muốn xóa dịch vụ này</Typography>
+              <Stack direction='row' justifyContent='space-between'>
+                <MainButton colorType='neutral' onClick={() => setOpenModal(true)}>
+                  Hủy
+                </MainButton>
+                <MainButton
+                  colorType='primary'
+                  disabled={isLoading}
+                  onClick={() => handleDelete(idService)}
+                >
+                  Xác nhận
+                </MainButton>
+              </Stack>
+            </Stack>
+          </GlassBox>
+        </Container>
+      </Modal>
       <Grid container paddingBottom={{ md: '50px', xs: '15px' }}>
         <Grid item xs={10} md={6}>
           <GlassBox
