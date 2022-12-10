@@ -23,6 +23,14 @@ const orderApi = {
       },
     })
   },
+  getAdminUserOrder(page, userId) {
+    return axiosClient.get(`/admin-get-user-order`, {
+      params: {
+        page,
+        userId,
+      },
+    })
+  },
   getOrderByService(serviceId) {
     return axiosClient.get(`/get-order-by-service?serviceId=${serviceId}`)
   },

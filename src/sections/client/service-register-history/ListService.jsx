@@ -31,6 +31,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import calendarApi from '../../../api/calendar'
 import orderApi from '../../../api/order'
 import GlassBox from '../../../components/GlassBox'
+import UserOrder from '../../../components/UserOrder'
 import useAuth from '../../../hook/useAuth'
 import { getStatusColor } from '../../../utils/aboutColor'
 import { dateFormat } from '../../../utils/dateFormat'
@@ -101,23 +102,6 @@ const ListService = () => {
     getOrder(page, statusType)
   }, [page, statusType])
 
-  const renderDateFormated = (data) => {
-    const date = new Date(data)
-    const currentDate = new Date()
-    const hours = date.getHours()
-    const dateFormated = dateFormat(date)
-    const dateLeft = currentDate.getDate() - date.getDate()
-    if (dateLeft === -1) {
-      return `${hours > 9 ? hours : '0' + hours}:00 - ngày mai`
-    } else if (dateLeft === 0) {
-      return `${hours > 9 ? hours : '0' + hours}:00 - hôm nay`
-    } else if (dateLeft === 1) {
-      return `${hours > 9 ? hours : '0' + hours}:00 - hôm qua`
-    }
-
-    return `${hours > 9 ? hours : '0' + hours}:00 - ${dateFormated}`
-  }
-
   const filterByStatus = (type) => {
     navigate(`/service-register-history?page=1&status=${type}`)
   }
@@ -179,34 +163,7 @@ const ListService = () => {
               sx={{ cursor: 'pointer' }}
               onClick={() => navigate(`/service-register-history/${item._id}`)}
             >
-              <GlassBox sx={{ '&:hover': { background: '#ffa0a018' }, p: 3 }}>
-                <Stack direction='row' justifyContent='space-start'>
-                  <Avatar
-                    sx={{ height: '100', width: '100' }}
-                    alt='Image-service'
-                    src={item.servicesRegistered[0].service.image}
-                  />
-                  <Stack
-                    sx={{ ml: '10px' }}
-                    direction='column'
-                    justifyContent='center'
-                    alignItems='flex-start'
-                    spacing={0}
-                  >
-                    <Typography variant='h3' color='text.secondary'>
-                      {item.servicesRegistered[0].service.name}
-                    </Typography>
-                  </Stack>
-                </Stack>
-                <Box mt={1}>
-                  <Typography variant='body1'>Họ tên: {item.infoUser.name}</Typography>
-                  <Typography variant='body1'>Số điện thoại: {item.infoUser.phone}</Typography>
-                  <Typography variant='body1'>{renderDateFormated(item.startDate)}</Typography>
-                </Box>
-                <Stack direction='row' justifyContent='flex-end' mt={1.5}>
-                  <Chip label={item.status.name} color={getStatusColor(item.status.type)} />
-                </Stack>
-              </GlassBox>
+              <UserOrder detailOrder={item} />
             </Grid>
           ))}
         </Grid>
