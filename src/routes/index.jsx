@@ -7,7 +7,6 @@ import CheckStaff from '../guards/CheckStaff'
 import StaffForm from '../pages/admin/staff/StaffForm'
 import RevenueStatistic from '../pages/admin/statistic/revenue'
 import AboutPage from '../pages/client/about'
-import ServicePage from '../pages/client/service'
 
 const AdminLayout = lazy(() => import('../layouts/admin/AdminLayout'))
 const AuthLayout = lazy(() => import('../layouts/auth/AuthLayout'))
@@ -32,6 +31,9 @@ const AccountSetting = lazy(() => import('../pages/user/index'))
 const ServiceRated = lazy(() => import('../pages/admin/service/ServiceRated'))
 const StaffManagement = lazy(() => import('../pages/admin/staff'))
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'))
+const UserManagement = lazy(() => import('../pages/admin/user'))
+const DetailUser = lazy(() => import('../pages/admin/user/detail'))
+const ServicePage = lazy(() => import('../pages/client/service'))
 const DetailServiceRegistered = lazy(() =>
   import('../pages/client/service-register-history/detail'),
 )
@@ -168,6 +170,17 @@ const Router = () => {
                 </CheckStaff>
               }
             />
+          </Route>
+          <Route path='users-management'>
+            <Route
+              index
+              element={
+                <CheckStaff>
+                  <UserManagement />
+                </CheckStaff>
+              }
+            />
+            <Route path=':id' element={<DetailUser />} />
           </Route>
           <Route
             path='voucher-management'

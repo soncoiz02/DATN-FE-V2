@@ -60,6 +60,27 @@ const userApis = {
   resetPassword(data) {
     return axiosClient.post('/reset-password', data)
   },
+  getListUser(page) {
+    return axiosClient.get('/admin-user', {
+      params: {
+        page,
+      },
+    })
+  },
+  getUserRevenue(userId) {
+    return axiosClient.get('/user-revenue', {
+      params: {
+        userId,
+      },
+    })
+  },
+  getUserRated(userId) {
+    return axiosClient.get('/user-rated-service', {
+      params: {
+        userId,
+      },
+    })
+  },
 }
 
 export default userApis
