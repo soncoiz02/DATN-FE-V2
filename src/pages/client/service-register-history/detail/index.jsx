@@ -16,23 +16,31 @@ import {
   Divider,
   Grid,
   Link,
+  Modal,
   Stack,
   Typography,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import calendarApi from '../../../../api/calendar'
+import { Link as RouterLink, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import calendarApi, { statusId } from '../../../../api/calendar'
 import GlassBox from '../../../../components/GlassBox'
+import MainButton from '../../../../components/MainButton'
+import useAuth from '../../../../hook/useAuth'
 import { getStatusColor } from '../../../../utils/aboutColor'
 import { dateFormat, formatDateToHour } from '../../../../utils/dateFormat'
 import formatPrice from '../../../../utils/formatPrice'
-import { Link as RouterLink } from 'react-router-dom'
+import getSocket from '../../../../utils/socket'
+
+const socket = getSocket()
 
 const DetailServiceRegistered = () => {
   const [detailOrder, setDetailOrder] = useState()
   const [totalPrice, setTotalPrice] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [openModal, setOpenModal] = useState(false)
 
+  const { userInfo } = useAuth()
   const { id } = useParams()
 
   const handleGetDetailOrder = async (id) => {
@@ -54,18 +62,93 @@ const DetailServiceRegistered = () => {
     }
   }
 
+  const handleCancelOrder = async () => {
+    try {
+      const data = await calendarApi.updateOrderStatusToCancel(id)
+
+      const storeId = detailOrder.servicesRegistered[0].service.categoryId.storeId._id
+      const storeNotifyData = {
+        storeId: storeId,
+        userId: userInfo._id,
+        content: `${userInfo.name} đã hủy lịch đặt vào lúc ${formatDateToHour(
+          detailOrder.startDate,
+        )} ngày ${dateFormat(detailOrder.startDate)}`,
+      }
+
+      const staffNotifyData = detailOrder.servicesRegistered.map((item) => ({
+        storeId: storeId,
+        userId: item.staff._id,
+        content: `Lịch đặt vào lúc ${formatDateToHour(item.timeStart)} ngày ${dateFormat(
+          item.timeStart,
+        )} của bạn đã bị hủy`,
+      }))
+
+      const notifyData = {
+        storeNotifyData,
+        staffNotifyData,
+      }
+
+      socket.emit('send-notify', { storeId: storeId, notifyData })
+      toast.dark('Hủy lịch thành công')
+      handleGetDetailOrder(id)
+      setOpenModal(false)
+    } catch (error) {
+      setOpenModal(false)
+      toast.dark('Hủy lịch đặt thất bại')
+    }
+  }
+
   useEffect(() => {
     handleGetDetailOrder(id)
   }, [id])
 
   return (
     <Container maxWidth='xl' sx={{ py: 3 }}>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Container
+          maxWidth='sm'
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100vh',
+            justifyContent: 'center',
+            py: { xs: '15px', md: '30px' },
+          }}
+        >
+          <GlassBox opacity={1}>
+            <Stack gap={2}>
+              <Typography variant='h3'>Bạn có chắc muốn hủy lịch này</Typography>
+              <Stack direction='row' justifyContent='space-between'>
+                <MainButton colorType='neutral' onClick={() => setOpenModal(false)}>
+                  Hủy
+                </MainButton>
+                <MainButton colorType='primary' disabled={loading} onClick={handleCancelOrder}>
+                  Xác nhận
+                </MainButton>
+              </Stack>
+            </Stack>
+          </GlassBox>
+        </Container>
+      </Modal>
       <Stack gap={2}>
         <Link component={RouterLink} to='/service-register-history?page=1' underline='none'>
           {' '}
           {'< '} Quay lại
         </Link>
-        <Typography variant='h2'> Chi tiết lịch đặt</Typography>
+        <Stack direction='row' justifyContent='space-between'>
+          <Typography variant='h2'> Chi tiết lịch đặt</Typography>
+          <MainButton
+            colorType='neutral'
+            disabled={
+              detailOrder?.status._id !== statusId.pending ||
+              new Date() > new Date(detailOrder?.startDate)
+            }
+            variant='outlined'
+            onClick={() => setOpenModal(true)}
+          >
+            Hủy lịch
+          </MainButton>
+        </Stack>
         {loading ? (
           <Stack sx={{ height: '80vh' }} justifyContent='center' alignItems='center'>
             <CircularProgress />
