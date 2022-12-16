@@ -73,10 +73,12 @@ const ServiceForm = () => {
     const end = 22
 
     const listTimeSlot = []
+    listTimeSlot.push(start)
     let timeSlot = start
-    for (let i = start; i < end; i++) {
+    let i = 1
+    while (i > 0) {
       timeSlot = timeSlot + (15 + duration) / 60
-      if (end - timeSlot < duration / 60) continue
+      if (end - timeSlot < (15 + duration) / 60) break
       listTimeSlot.push(timeSlot)
     }
 
