@@ -72,7 +72,7 @@ const ListStaff = () => {
       headerName: 'Năm sinh',
       width: 150,
       valueGetter: (params) => {
-        return params.value ? dateFormat(params.value) : ''
+        return params.value ? dateFormat(params.value) : 'Trống'
       },
     },
     {

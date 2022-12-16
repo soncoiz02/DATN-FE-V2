@@ -1,8 +1,10 @@
 import axiosClient from './axiosClient'
 
 const serviceApi = {
-  getAll() {
-    return axiosClient.get('/service')
+  getAll(params) {
+    return axiosClient.get('/service', {
+      params,
+    })
   },
   getOne(id) {
     return axiosClient.get(`/service/${id}`)
@@ -63,8 +65,15 @@ const serviceApi = {
       },
     })
   },
-  getServicePerPage(page) {
-    return axiosClient.get(`services?page=${page}`)
+  getServicePerPage(page, search) {
+    return axiosClient.get(`services`, {
+      params: {
+        page,
+        ...(search && {
+          search,
+        }),
+      },
+    })
   },
   getServiceRatedPerPage(page, serviceId) {
     return axiosClient.get(`service-rated-per-page/${serviceId}?page=${page}`)
