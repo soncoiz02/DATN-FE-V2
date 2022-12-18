@@ -121,11 +121,13 @@ const ForgotPassword = () => {
         <Typography variant='h2' align='center'>
           Quên mật khẩu
         </Typography>
-        <Typography variant='body1' mt={1} align='center'>
-          Nhập email đăng ký
-        </Typography>
+        {!verifyCode && (
+          <Typography variant='body1' mt={1} align='center'>
+            Nhập email đăng ký
+          </Typography>
+        )}
       </Stack>
-      {!verifyCode ? (
+      {!verifyCode && (
         <RHFProvider methods={emailMethods} onSubmit={emailMethods.handleSubmit(onSubmit)}>
           <Stack gap={2} alignItems='center'>
             <RHFTextField label='Email' name='email' />
@@ -134,11 +136,12 @@ const ForgotPassword = () => {
               type='submit'
               sx={{ borderRadius: '50px', mt: 2, px: '45px', py: '10px' }}
             >
-              Đăng nhập
+              Xác nhận email
             </MainButton>
           </Stack>
         </RHFProvider>
-      ) : (
+      )}
+      {verifyCode && !isVerify && (
         <Stack gap={2}>
           <Typography variant='h2'>Mã xác nhận đã được gửi về email của bạn</Typography>
           <Input
@@ -187,7 +190,7 @@ const ForgotPassword = () => {
               type='submit'
               sx={{ borderRadius: '50px', mt: 2, px: '45px', py: '10px' }}
             >
-              Đăng nhập
+              Đổi mật khẩu
             </MainButton>
           </Stack>
         </RHFProvider>

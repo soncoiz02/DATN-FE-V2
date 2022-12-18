@@ -48,11 +48,11 @@ const BestStatistic = () => {
         <GlassBox>
           <Stack gap={1}>
             <Typography variant='h3'>Dịch vụ doanh thu cao nhất</Typography>
-            <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
+            <Stack gap={1}>
               {loading ? (
                 <ServiceSkeleton />
               ) : (
-                <Stack gap={1}>
+                <Stack gap={1} direction='row' alignItems='center'>
                   <Avatar
                     src={bestStatistic?.maxPriceService.service.image}
                     sx={{ width: '50px', height: '50px' }}
@@ -77,11 +77,11 @@ const BestStatistic = () => {
         <GlassBox>
           <Stack gap={1}>
             <Typography variant='h3'>Dịch vụ sử dụng nhiều nhất</Typography>
-            <Stack direction='row' justifyContent='space-between' alignItems='flex-end'>
+            <Stack gap={1}>
               {loading ? (
                 <ServiceSkeleton />
               ) : (
-                <Stack gap={1}>
+                <Stack gap={1} direction='row' alignItems='center'>
                   <Avatar
                     src={bestStatistic?.maxUsedService.service.image}
                     sx={{ width: '50px', height: '50px' }}
