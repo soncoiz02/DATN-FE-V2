@@ -78,7 +78,7 @@ const ServiceForm = () => {
     let i = 1
     while (i > 0) {
       timeSlot = timeSlot + (15 + duration) / 60
-      if (end - timeSlot < (15 + duration) / 60) break
+      if (timeSlot + (15 + duration) / 60 > end) break
       listTimeSlot.push(timeSlot)
     }
 

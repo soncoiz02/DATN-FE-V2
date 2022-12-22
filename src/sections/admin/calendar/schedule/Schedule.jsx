@@ -102,12 +102,8 @@ const Calendar = () => {
     }
 
     const disableSuccess = (status) => {
-      return (
-        status === statusId.pending ||
-        status === statusId.cancel ||
-        status === statusId.done ||
-        status === statusId.accepted
-      )
+      const listStatus = [statusId.pending, statusId.cancel, statusId.done, statusId.accepted]
+      return listStatus.includes(status)
     }
 
     const disablePayment = (status) => {
@@ -136,19 +132,13 @@ const Calendar = () => {
     }
 
     const disableCancel = (status) => {
-      return (
-        status === statusId.doing || status === statusId.cancel || userInfo?.roleId.name === 'Staff'
-      )
+      const listStatus = [statusId.doing, statusId.cancel, statusId.done, statusId.paid]
+      return listStatus.includes(status) || userInfo?.roleId.name === 'Staff'
     }
 
     const disableEdit = (status) => {
-      return (
-        status === statusId.done ||
-        status === statusId.paid ||
-        status === statusId.doing ||
-        status === statusId.cancel ||
-        userInfo?.roleId.name === 'Staff'
-      )
+      const listStatus = [statusId.done, statusId.paid, statusId.doing, statusId.cancel]
+      return listStatus.includes(status) || userInfo?.roleId.name === 'Staff'
     }
 
     return (
@@ -360,6 +350,21 @@ const Calendar = () => {
   const updateOrderStatusToDone = async () => {
     try {
       await calendarApi.updateOrderStatusToDone(orderId)
+      const detailOrder = appointments.find((item) => item.id === orderId)
+      const data = {
+        content: `Lịch đặt của bạn vào lúc ${formatDateToHour(
+          detailOrder.startDate,
+        )} ngày ${dateFormat(detailOrder.startDate)} đã được hoàn thành`,
+        userId: detailOrder.customer,
+        storeId: userInfo.storeId,
+      }
+      const activityLog = {
+        userId: userInfo._id,
+        orderId,
+        content: `Đã hoàn thành dịch vụ`,
+      }
+      await calendarApi.addUpdateActivity(activityLog)
+      socket.emit('send-notify-to-user', data)
       socket.emit('change-status')
     } catch (error) {
       console.log(error)

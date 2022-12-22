@@ -118,6 +118,11 @@ const ModalVoucher = ({ storeId, getVoucherInfo, closePopup }) => {
                 </VoucherWrapper>
               </ListItem>
             ))}
+          {listVouchers.length === 0 && (
+            <Stack justifyContent='center' alignItems='center'>
+              <Typography variant='h3'>Bạn không có mã giảm giá nào</Typography>
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </GlassBox>

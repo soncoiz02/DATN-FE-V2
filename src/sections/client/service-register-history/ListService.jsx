@@ -82,10 +82,10 @@ const ListService = () => {
       const listIcon = [
         <HourglassBottom color='warning' fontSize='small' />,
         <Done color='success' fontSize='small' />,
-        <Cancel color='error' fontSize='small' />,
+        <DoubleArrow color='error' fontSize='small' />,
         <CheckCircle color='info' fontSize='small' />,
         <CreditScore color='secondary' fontSize='small' />,
-        <DoubleArrow color='error' fontSize='small' />,
+        <Cancel color='error' fontSize='small' />,
       ]
       const data = await calendarApi.getListStatus()
       setListStatus(data.map((item, index) => ({ ...item, icon: listIcon[index] })))
