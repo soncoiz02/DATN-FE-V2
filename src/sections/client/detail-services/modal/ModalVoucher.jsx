@@ -38,7 +38,7 @@ const ModalVoucher = ({ storeId, getVoucherInfo, closePopup }) => {
   const handleDisableVoucher = (date) => {
     const currentDate = new Date()
     const expireDate = new Date(date)
-    return currentDate.getDate() > expireDate.getDate()
+    return currentDate > expireDate
   }
 
   const getVoucher = (id) => {

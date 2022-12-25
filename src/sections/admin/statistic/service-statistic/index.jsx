@@ -11,6 +11,7 @@ ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend)
 const ServiceRevenue = () => {
   const [serviceRevenue, setServiceRevenue] = useState()
   const [serviceUsed, setServiceUsed] = useState()
+  const [serviceCancel, setServiceCancel] = useState()
 
   const handleGetServiceRevenue = async () => {
     try {
@@ -44,8 +45,21 @@ const ServiceRevenue = () => {
         ],
       }
 
+      const serviceCancelData = {
+        labels: responseData.map((item) => item.service.name),
+        datasets: [
+          {
+            data: responseData.map((item) => item.totalCancel),
+            backgroundColor: listColor2,
+            borderColor: listColor2,
+            borderWidth: 1,
+          },
+        ],
+      }
+
       setServiceRevenue(serviceRevenueData)
       setServiceUsed(serviceUsedData)
+      setServiceCancel(serviceCancelData)
     } catch (error) {
       console.log(error)
     }
@@ -87,6 +101,21 @@ const ServiceRevenue = () => {
                 },
               }}
               data={serviceUsed}
+            />
+          )}
+        </GlassBox>
+        <GlassBox>
+          {serviceCancel && (
+            <Pie
+              options={{
+                plugins: {
+                  title: {
+                    display: true,
+                    text: 'Biểu đồ thống kê số lượt hủy từng dịch vụ',
+                  },
+                },
+              }}
+              data={serviceCancel}
             />
           )}
         </GlassBox>

@@ -6,6 +6,7 @@ import BestStatistic from '../../../../sections/admin/statistic/best-statistic'
 import StatisticRevenue from '../../../../sections/admin/statistic/revenue'
 import StatisticLineChart from '../../../../sections/admin/statistic/revenue'
 import ServiceRevenue from '../../../../sections/admin/statistic/service-statistic'
+import UserStatistic from '../../../../sections/admin/statistic/user-statistic'
 
 const RevenueStatistic = () => {
   return (
@@ -31,6 +32,9 @@ const RevenueStatistic = () => {
           </GlassBox>
         </Grid>
         <ServiceRevenue />
+        <Grid item xs={12}>
+          <UserStatistic />
+        </Grid>
       </Grid>
     </Stack>
   )

@@ -268,10 +268,10 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
       }
 
       socket.emit('send-notify', { storeId: serviceInfo.categoryId.storeId, notifyData })
-      toast.dark('Đăng ký lịch đặt thành công')
+      toast.dark('Đặt lịch đặt thành công')
       handleCloseModal()
     } catch (error) {
-      toast.dark('Đăng ký thất bại')
+      toast.dark('Đặt lịch thất bại')
     }
   }
 

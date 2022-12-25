@@ -35,7 +35,7 @@ const ServiceInfo = ({ onOpenModal, serviceInfo }) => {
               sx={{ alignSelf: 'center', marginTop: 'auto', padding: '10px 40px' }}
               onClick={onOpenModal}
             >
-              Đăng ký dịch vụ
+              Đặt lịch ngay
             </MainButton>
           </Stack>
         </Grid>
