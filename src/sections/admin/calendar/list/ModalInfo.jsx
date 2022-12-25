@@ -49,10 +49,10 @@ const ModalInfo = ({ openModal, onCloseModal, registerId }) => {
   }, [registerId])
 
   return (
-    <Modal open={openModal} onClose={onCloseModal}>
+    <Modal open={openModal} onClose={onCloseModal} sx={{ py: 2, overflowY: 'auto' }}>
       <Container
         maxWidth='sm'
-        sx={{ display: 'flex', alignItems: 'center', height: '100vh', justifyContent: 'center' }}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         {registeredServiceInfo && (
           <GlassBox opacity={1} sx={{ width: '100%', padding: { xs: '15px', sm: '30px' } }}>

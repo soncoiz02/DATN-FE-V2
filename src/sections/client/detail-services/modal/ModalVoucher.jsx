@@ -38,7 +38,7 @@ const ModalVoucher = ({ storeId, getVoucherInfo, closePopup }) => {
   const handleDisableVoucher = (date) => {
     const currentDate = new Date()
     const expireDate = new Date(date)
-    return currentDate.getDate() > expireDate.getDate()
+    return currentDate > expireDate
   }
 
   const getVoucher = (id) => {
@@ -118,6 +118,11 @@ const ModalVoucher = ({ storeId, getVoucherInfo, closePopup }) => {
                 </VoucherWrapper>
               </ListItem>
             ))}
+          {listVouchers.length === 0 && (
+            <Stack justifyContent='center' alignItems='center'>
+              <Typography variant='h3'>Bạn không có mã giảm giá nào</Typography>
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </GlassBox>

@@ -99,7 +99,7 @@ const ListService = () => {
                       colorType='secondary'
                       onClick={() => handleGetDetailService(item._id)}
                     >
-                      Đăng ký ngay
+                      Đặt lịch ngay
                     </MainButton>
                   </Stack>
                 </ServiceWrapper>

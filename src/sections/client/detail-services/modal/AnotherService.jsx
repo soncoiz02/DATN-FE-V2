@@ -13,6 +13,7 @@ const AnotherService = ({
   nextTimeSlot,
   date,
   currentService,
+  currentTimeSlot,
 }) => {
   const [listServices, setListServices] = useState()
 
@@ -23,6 +24,15 @@ const AnotherService = ({
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const handleDisable = (isDisable, serviceId, serviceDuration) => {
+    console.log(currentTimeSlot + (serviceDuration + 15) / 60)
+    return (
+      isDisable ||
+      serviceId === currentService._id ||
+      currentTimeSlot + (serviceDuration + 15) / 60 > 22
+    )
   }
 
   useEffect(() => {
@@ -50,7 +60,7 @@ const AnotherService = ({
           {listServices &&
             listServices.map((service) => (
               <CustomListItem
-                disabled={service.isDisable || service._id === currentService._id}
+                disabled={handleDisable(service.isDisable, service._id, service.duration)}
                 key={service._id}
                 onClick={() => {
                   getAnotherServiceInfo(service)

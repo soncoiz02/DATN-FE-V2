@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import calendarApi from '../../../../../api/calendar'
 import GlassBox from '../../../../../components/GlassBox'
 import MainButton from '../../../../../components/MainButton'
@@ -80,6 +81,7 @@ const ModalPay = ({ openModal, onCloseModal, orderId, getListOrder }) => {
       }
       socket.emit('send-notify-to-user', notifyData)
       socket.emit('change-status')
+      toast.dark('Xác nhận thanh toán thành công')
       getListOrder()
       handleCloseModal()
     } catch (error) {
