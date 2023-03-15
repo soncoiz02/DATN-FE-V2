@@ -2,12 +2,12 @@ import React from 'react'
 import { Box, Typography, Container, Grid, Stack, Paper } from '@mui/material'
 import styled from 'styled-components'
 
-import service1 from '../../../assets/img/service-1'
-import service2 from '../../../assets/img/service-2'
-import service3 from '../../../assets/img/service-3'
-import service4 from '../../../assets/img/service-4'
-import service5 from '../../../assets/img/service-5'
-import service6 from '../../../assets/img/service-6'
+import service1 from '../../../assets/img/service-1.jpg'
+import service2 from '../../../assets/img/service-2.jpg'
+import service3 from '../../../assets/img/service-3.jpg'
+import service4 from '../../../assets/img/service-4.jpg'
+import service5 from '../../../assets/img/service-5.jpg'
+import service6 from '../../../assets/img/service-6.jpg'
 
 const ListService = () => {
   return (

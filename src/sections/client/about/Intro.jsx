@@ -2,8 +2,8 @@ import { Box, Container, Divider, Grid, Link, Stack, Typography } from '@mui/mat
 import React from 'react'
 import styled from 'styled-components'
 
-import parallax1 from '../../../assets/img/parallax-10'
-import parallax2 from '../../../assets/img/parallax-9'
+import parallax1 from '../../../assets/img/parallax-10.jpg'
+import parallax2 from '../../../assets/img/parallax-9.jpg'
 
 const Intro = () => {
   return (
