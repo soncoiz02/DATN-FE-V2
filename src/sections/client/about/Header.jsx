@@ -2,6 +2,8 @@ import React from 'react'
 import { Box, Typography, Button, Stack } from '@mui/material'
 import styled from 'styled-components'
 
+import parallax from '../../../assets/img/parallax-3.jpg'
+
 const Header = () => {
   return (
     <Box>
@@ -23,7 +25,7 @@ const Header = () => {
             padding: '0',
           }}
         >
-          <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/parallax-3.jpg' />
+          <StyleBackground src={parallax} />
         </Box>
         <Box
           component='div'

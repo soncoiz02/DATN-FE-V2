@@ -315,7 +315,7 @@ const Calendar = () => {
         orderId,
         content:
           statusType === 'accepted'
-            ? `Đã xác nhận đơn`
+            ? `Đã xác nhận lịch đặt`
             : `Cập nhật trạng thái thành ${detailStatus.name}`,
       }
       await calendarApi.changeStatus(orderId, statusType)

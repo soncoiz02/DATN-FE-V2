@@ -2,6 +2,13 @@ import React from 'react'
 import { Box, Typography, Container, Grid, Stack, Paper } from '@mui/material'
 import styled from 'styled-components'
 
+import service1 from '../../../assets/img/service-1'
+import service2 from '../../../assets/img/service-2'
+import service3 from '../../../assets/img/service-3'
+import service4 from '../../../assets/img/service-4'
+import service5 from '../../../assets/img/service-5'
+import service6 from '../../../assets/img/service-6'
+
 const ListService = () => {
   return (
     <Box sx={{ padding: { md: '70px 0', xs: '50px 0' } }}>
@@ -36,7 +43,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-1.png' />
+                <IconService src={service1} />
                 <DesService>Làm đẹp</DesService>
               </Item>
             </Grid>
@@ -53,7 +60,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-2.png' />
+                <IconService src={service2} />
                 <DesService>Làm sạch</DesService>
               </Item>
             </Grid>
@@ -70,7 +77,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-3.png' />
+                <IconService src={service3} />
                 <DesService>Thư giãn</DesService>
               </Item>
             </Grid>
@@ -87,7 +94,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-4.png' />
+                <IconService src={service4} />
                 <DesService>Đắp mặt nạ</DesService>
               </Item>
             </Grid>
@@ -104,7 +111,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-5.png' />
+                <IconService src={service5} />
                 <DesService>Chăm sóc tóc</DesService>
               </Item>
             </Grid>
@@ -121,7 +128,7 @@ const ListService = () => {
               }}
             >
               <Item>
-                <IconService src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/service-6.png' />
+                <IconService src={service6} />
                 <DesService>Làm thơm</DesService>
               </Item>
             </Grid>

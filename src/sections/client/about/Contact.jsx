@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Divider,
-  Grid,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Container, Divider, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -26,18 +14,31 @@ const Contact = () => {
       <Container
         sx={{
           display: 'flex',
+          flexDirection: {
+            md: 'row',
+            xs: 'column',
+          },
           alignItems: 'center',
           width: 'fit-content',
           borderRadius: 1,
           bgcolor: 'background.paper',
           color: 'text.secondary',
-          width: '1100px',
-          height: '350px',
+          width: {
+            xs: '100%',
+            md: '1100px',
+          },
+          height: {
+            xs: '100%',
+            md: '350px',
+          },
         }}
       >
         <Box
           sx={{
-            width: '550px',
+            width: {
+              xs: '100%',
+              md: '550px',
+            },
             height: '300px',
           }}
         >
@@ -46,16 +47,14 @@ const Contact = () => {
           </Des1>
           <Stack
             sx={{
-              width: '250px',
               justifyContent: 'center',
-              alignContent: 'center',
-              marginTop: '40px',
-              marginLeft: '150px',
+              alignItems: 'center',
+              gap: '10px 0',
             }}
           >
-            <TextField id='filled-basic' label='@Email' variant='outlined' sx={{}} />
+            <TextField id='filled-basic' label='@Email' variant='outlined' />
+            <ButtonCustom>ĐĂNG KÝ</ButtonCustom>
           </Stack>
-          <ButtonCustom>ĐĂNG KÝ</ButtonCustom>
         </Box>
         <Divider orientation='vertical' flexItem />
         <Box
@@ -71,6 +70,7 @@ const Contact = () => {
             sx={{
               textAlign: 'center',
               justifyContent: 'center',
+              alignItems: 'center',
               height: '100px',
               fontSize: '30px',
             }}
@@ -125,8 +125,6 @@ const Des3 = styled(Typography)`
 `
 const ButtonCustom = styled(Button)({
   boxShadow: 'none',
-  marginTop: '40px',
-  marginLeft: '215px',
   textTransform: 'none',
   fontSize: '16px',
   padding: '10px 20px',

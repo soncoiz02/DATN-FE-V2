@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Typography, Grid, Container, Stack, Divider, Button } from '@mui/material'
 import styled from 'styled-components'
+import home1 from '../../../assets/img/home1.jpg'
 
 const Introducetion = () => {
   return (
@@ -20,7 +21,7 @@ const Introducetion = () => {
               paddingLeft: '0',
             }}
           >
-            <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/video-1.jpg?id=114' />
+            <StyleBackground src={home1} />
           </Grid>
           <Grid
             item

@@ -232,8 +232,8 @@ const ModalRegisterService = ({ onCloseModal, openModal, serviceInfo }) => {
     const hourDuration = (serviceInfo.duration + 15) / 60
     userServiceRegisteredTime.forEach((item) => {
       if (
-        (time < item.end && item.end - time < hourDuration) ||
-        (time >= item.start && time - item.start < hourDuration)
+        (time <= item.end && item.end - time <= hourDuration) ||
+        (time >= item.start && time - item.start <= hourDuration)
       )
         isDisable = true
     })
