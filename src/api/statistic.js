@@ -33,6 +33,9 @@ const statisticApi = {
   getDashboardStatistic() {
     return axiosClient.get(`get-dashboard-statistic`)
   },
+  getUserStatistic() {
+    return axiosClient.get('user-statistic')
+  },
 }
 
 export default statisticApi

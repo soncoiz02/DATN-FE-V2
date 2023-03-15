@@ -96,9 +96,6 @@ const ListStaff = () => {
             <IconButton color='secondary'>
               <Edit />
             </IconButton>
-            <IconButton color='primary'>
-              <Delete />
-            </IconButton>
           </Stack>
         )
       },

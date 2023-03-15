@@ -29,14 +29,13 @@ const ServiceInfo = ({ onOpenModal, serviceInfo }) => {
             </Typography>
             <Stack>
               <Typography variant='body1'>Thời gian: {serviceInfo.duration} phút</Typography>
-              <Typography variant='body1'>Tổng số bước: 03</Typography>
             </Stack>
             <MainButton
               colorType='secondary'
               sx={{ alignSelf: 'center', marginTop: 'auto', padding: '10px 40px' }}
               onClick={onOpenModal}
             >
-              Đăng ký dịch vụ
+              Đặt lịch ngay
             </MainButton>
           </Stack>
         </Grid>

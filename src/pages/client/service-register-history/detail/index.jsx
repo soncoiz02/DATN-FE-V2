@@ -65,7 +65,12 @@ const DetailServiceRegistered = () => {
   const handleCancelOrder = async () => {
     try {
       const data = await calendarApi.updateOrderStatusToCancel(id)
-
+      const activityLog = {
+        userId: userInfo._id,
+        orderId,
+        content: `Đã hủy lịch đặt`,
+      }
+      await calendarApi.addUpdateActivity(activityLog)
       const storeId = detailOrder.servicesRegistered[0].service.categoryId.storeId._id
       const storeNotifyData = {
         storeId: storeId,

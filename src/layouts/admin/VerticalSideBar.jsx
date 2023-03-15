@@ -75,12 +75,12 @@ const VERTICAL_ITEMS = [
         icon: <WorkspacePremium />,
         path: '/admin/services-management',
       },
-      {
-        key: 'users-management',
-        title: 'Người dùng',
-        icon: <PeopleAlt />,
-        path: '/admin/users-management',
-      },
+      // {
+      //   key: 'users-management',
+      //   title: 'Người dùng',
+      //   icon: <PeopleAlt />,
+      //   path: '/admin/users-management',
+      // },
       {
         key: 'staff',
         title: 'Nhân viên',

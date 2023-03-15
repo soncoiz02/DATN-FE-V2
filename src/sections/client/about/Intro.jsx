@@ -1,6 +1,9 @@
+import { Box, Container, Divider, Grid, Link, Stack, Typography } from '@mui/material'
 import React from 'react'
-import { Box, Typography, Grid, Container, Stack, Divider, Button, Link } from '@mui/material'
 import styled from 'styled-components'
+
+import parallax1 from '../../../assets/img/parallax-10.jpg'
+import parallax2 from '../../../assets/img/parallax-9.jpg'
 
 const Intro = () => {
   return (
@@ -21,7 +24,7 @@ const Intro = () => {
               paddingLeft: '20px',
             }}
           >
-            <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/parallax-10.jpg' />
+            <StyleBackground src={parallax1} />
           </Grid>
           <Grid
             item
@@ -31,7 +34,7 @@ const Intro = () => {
               paddingLeft: '20px',
             }}
           >
-            <StyleBackground src='http://www.nicdarkthemes.com/themes/beauty/wp/demo/beauty-salon/wp-content/uploads/sites/2/2017/01/parallax-9.jpg' />
+            <StyleBackground src={parallax2} />
           </Grid>
           <Grid
             item
